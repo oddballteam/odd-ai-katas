@@ -1,0 +1,16 @@
+{
+  "name": "ai-katas",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "AI Katas — practice the middle part between prompt and result",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^5.0.3",
+    "astro": "^6.1.1"
+  }
+}

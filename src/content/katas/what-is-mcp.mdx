@@ -1,0 +1,50 @@
+---
+feeling: "It's asking me to install something called an MCP server"
+description: "You've heard your AI tool can connect to Slack, Gmail, Figma, your database - but you don't know how to actually wire it up, or how to remove a connection you no longer want."
+order: 2
+related:
+    - "schedule-meeting"
+    - "credentials-trust"
+    - "what-tools-to-give"
+stub: true
+---
+
+## What's happening
+
+Someone on your team mentions that Claude can read their Google Calendar, or that Copilot can pull context from their Jira board. You want that too. But when you go looking for how to set it up, you're immediately in unfamiliar territory. MCP servers. JSON config files. Connectors. Plugins. Extensions. Every tool calls it something different and the setup process ranges from "click a button" to "edit a config file and restart."
+
+And then there's the other side: you connected something a while ago and now you want to *disconnect* it. Where did that connection live? How do you audit what your AI can currently reach?
+
+## Why this is a problem worth naming
+
+Connections are what turn a chatbot into something actually useful in your workflow. Without them, your AI is just answering questions from its training data. With them, it can read your docs, check your calendar, query your database, post to your team's Slack.
+
+But the landscape is a mess right now. Here's the vocabulary you'll encounter:
+
+- **MCP servers** (Model Context Protocol) - an open standard that Claude, Copilot, Cursor, and others support. These are the most powerful integrations but often require editing a JSON config file.
+- **Connectors** - what Claude calls its managed, click-to-enable integrations (Slack, Google Drive, etc.). These are easier to set up but more limited.
+- **Extensions / Plugins** - what Copilot, Gemini, and others call their integrations. Each has its own marketplace or settings page.
+- **Actions** - what ChatGPT calls API-based integrations inside custom GPTs.
+
+The problem isn't that these are hard individually. It's that nobody gives you the map. You don't know what vocabulary to search for, where to look, or what's even possible with the tool you're already using.
+
+## The scenario
+
+> You're using Claude Desktop and a teammate shows you how they ask Claude to summarize their unread Slack messages every morning. You want that. You go to Settings and find "Connectors" - there's a Slack option, you click it, authorize it, and it works. Great. Now you want to connect your team's Postgres database too. There's no connector for that. Your teammate says "you need an MCP server." You Google it and find instructions to edit a `claude_desktop_config.json` file. It's a different mechanism entirely from the connector you just set up. Two integrations, same tool, completely different processes.
+
+## What to sit with
+
+- Do you know where to find the settings for connections in the AI tool you use most?
+- Do you know what's currently connected - and what permissions those connections have?
+- If you wanted to disconnect something right now, would you know how?
+- When you hear "MCP server" vs "connector" vs "plugin" vs "extension" - do you know which one applies to your tool?
+
+## The kata
+
+Open the AI tool you use most often. Find where connections or integrations are managed - it might be in Settings, a config file, or both. Answer three questions:
+
+1. **What's connected right now?** List every integration, plugin, or MCP server that's currently active.
+2. **How would you add one?** Pick a service you actually use at work (Slack, GitHub, Google Calendar, etc.) and find the steps to connect it. Don't actually do it yet - just find the path.
+3. **How would you remove one?** Pick something that's connected and find where you'd go to disconnect it.
+
+The goal isn't to become an expert in MCP configuration. It's to know the lay of the land - what your tool calls these things, where they live, and how to manage them - so that when someone says "just connect it" you know what that actually means.
