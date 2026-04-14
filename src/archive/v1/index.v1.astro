@@ -1,0 +1,455 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { tools, toolGroups, toolThemes } from '../data/tool-content';
+import { kataSequence } from '../data/kata-sequence';
+
+// Priority order for displaying tool tags (lower index = shown first)
+const toolPriority = ['claude-code', 'cowork', 'vscode', 'cursor', 'gemini-cli', 'antigravity', 'codex'];
+function sortTools(toolIds: string[]) {
+  return [...toolIds].sort((a, b) => {
+    const ai = toolPriority.indexOf(a);
+    const bi = toolPriority.indexOf(b);
+    return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+  });
+}
+
+// Fetch all katas and render their MDX content at build time
+const allKatas = await getCollection('katas');
+
+// Filter out deprecated files and sort by kata-sequence.ts (unlisted katas go to the end alphabetically)
+const katas = allKatas
+  .filter(k => !k.data.description?.startsWith('DEPRECATED'))
+  .sort((a, b) => {
+    const ai = kataSequence.indexOf(a.id);
+    const bi = kataSequence.indexOf(b.id);
+    return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+  });
+
+// Build a JSON-serializable kata manifest for client JS
+const kataManifest = katas.map((kata, i) => ({
+  id: kata.id,
+  feeling: kata.data.feeling,
+  takeaway: kata.data.takeaway || '',
+  description: kata.data.description,
+  related: kata.data.related || [],
+  stub: kata.data.stub || false,
+  tools: sortTools(kata.data.tools || []),
+  order: i,
+}));
+
+// Build toolSteps from kata frontmatter (co-located with each kata)
+const toolSteps: Record<string, Record<string, Record<string, string>>> = {};
+for (const kata of katas) {
+  if (kata.data.toolSteps) {
+    toolSteps[kata.id] = kata.data.toolSteps;
+  }
+}
+
+// Build a flat tool lookup: id -> { name, company, accent }
+const toolLookup = toolGroups.flatMap(g =>
+  g.tools.map(t => ({ id: t.id, name: t.name, company: g.company, accent: g.accent, svg: t.svg }))
+);
+
+---
+
+<Base title="AI Katas">
+  <header class="hero">
+    <h1><a href="#" onclick="window.__hideKata && window.__hideKata(); return false;" style="color: inherit; text-decoration: none;"><span>AI</span> Katas</a></h1>
+    <div class="hero-line"></div>
+  </header>
+
+  <!-- Tool filter bar -->
+  <div class="filter-bar">
+    <span class="filter-bar-label">Filter by tool:</span>
+    <div class="filter-pills">
+      <button class="filter-pill active" data-filter="all">All</button>
+      {toolGroups.map(group => (
+        group.tools.map(tool => (
+          <button class="filter-pill" data-filter={tool.id} data-accent={toolThemes[tool.id]?.accent}>
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" set:html={tool.svg} />
+            <span>{tool.name}</span>
+          </button>
+        ))
+      ))}
+    </div>
+  </div>
+
+  <!-- Grid view -->
+  <main class="main" id="main-grid">
+    <div class="section-header">
+      <div class="section-label">What brings you to the dojo?</div>
+      <div class="section-count" id="kata-count">{katas.length} katas</div>
+    </div>
+    <div class="kata-grid">
+      {katas.map((kata, i) => (
+        <a
+          class={`kata-card${kata.data.stub ? ' stub' : ''}`}
+          href="#"
+          data-kata-id={kata.id}
+          data-has-content={!kata.data.stub ? 'true' : 'false'}
+          data-tools={(kata.data.tools || []).join(',')}
+        >
+          <div class="card-content">
+            <span class="number">{String(i + 1).padStart(2, '0')}</span>
+            <span class="feeling">"{kata.data.feeling}"</span>
+            {kata.data.takeaway && <span class="takeaway">{kata.data.takeaway}</span>}
+          </div>
+          <div class="card-tags">
+            {sortTools(kata.data.tools || []).map(toolId => {
+              const t = toolLookup.find(tl => tl.id === toolId);
+              return t ? (
+                <span class="tool-tag" data-tool-tag={toolId} style={`--tag-color: ${toolThemes[toolId]?.accent || '#888'}`}>
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" set:html={t.svg} />
+                </span>
+              ) : null;
+            })}
+          </div>
+        </a>
+      ))}
+    </div>
+  </main>
+
+  <!-- Kata detail view (hidden by default, populated by JS) -->
+  <div class="kata-detail" id="kata-detail"></div>
+
+  <!--
+    Pre-rendered kata bodies (hidden, used as content source for JS).
+    Note: This content is author-controlled MDX rendered at build time,
+    not user-supplied input. The innerHTML usage in the client script
+    only reads from these pre-rendered elements.
+  -->
+  <div id="kata-bodies" style="display:none;">
+    {katas.filter(k => !k.data.stub).map(async (kata) => {
+      const { Content } = await render(kata);
+      return (
+        <div data-kata-body={kata.id}>
+          <Content />
+        </div>
+      );
+    })}
+  </div>
+
+  <!--
+    Embed data for client JS.
+    All data here is author-controlled (from tool-content.ts and MDX files),
+    serialized at build time. No user input flows into these values.
+  -->
+  <script is:inline define:vars={{ kataManifest, toolThemes, toolSteps, toolLookup, toolPriority }}>
+    window.__KATA_DATA__ = {
+      katas: kataManifest,
+      toolThemes: toolThemes,
+      toolSteps: toolSteps,
+      toolLookup: toolLookup,
+      toolPriority: toolPriority,
+    };
+  </script>
+
+  <!--
+    Client-side SPA logic.
+    All dynamic content is sourced from build-time data (MDX renders + tool-content.ts).
+    No user-supplied content is rendered as HTML.
+  -->
+  <script is:inline>
+  (function() {
+    var data = window.__KATA_DATA__;
+    var katas = data.katas;
+    var kataMap = {};
+    katas.forEach(function(k) { kataMap[k.id] = k; });
+
+    var mainEl = document.getElementById('main-grid');
+    var detailEl = document.getElementById('kata-detail');
+    var bodiesEl = document.getElementById('kata-bodies');
+    var countEl = document.getElementById('kata-count');
+
+    // Track active filter and active tool (for detail view tool steps)
+    var activeFilter = 'all';
+    var activeTool = null;
+
+    // ===== Filter pills =====
+    var pills = document.querySelectorAll('.filter-pill');
+    pills.forEach(function(pill) {
+      pill.addEventListener('click', function() {
+        pills.forEach(function(p) { p.classList.remove('active'); });
+        pill.classList.add('active');
+        activeFilter = pill.dataset.filter;
+
+        // Apply theme when a specific tool is selected
+        if (activeFilter !== 'all') {
+          activeTool = activeFilter;
+          applyToolTheme(activeFilter);
+        } else {
+          activeTool = null;
+          applyToolTheme('cowork'); // default
+        }
+
+        filterCards();
+      });
+    });
+
+    function filterCards() {
+      var cards = document.querySelectorAll('.kata-card');
+      var visible = 0;
+      cards.forEach(function(card) {
+        var cardTools = (card.dataset.tools || '').split(',');
+        var show = activeFilter === 'all' || cardTools.indexOf(activeFilter) !== -1;
+        card.style.display = show ? '' : 'none';
+        if (show) visible++;
+      });
+      countEl.textContent = visible + ' kata' + (visible !== 1 ? 's' : '');
+    }
+
+    // ===== Card click handlers =====
+    document.querySelectorAll('.kata-card').forEach(function(card) {
+      card.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (card.dataset.hasContent === 'true') {
+          showKata(card.dataset.kataId);
+        }
+      });
+    });
+
+    function populateToolSteps(kataId) {
+      var steps = data.toolSteps[kataId];
+      if (!steps) return;
+
+      // Determine which tool to show: use active filter if it's a specific tool,
+      // otherwise fall back to the first tool the kata supports
+      var kata = kataMap[kataId];
+      var defaultTool = activeTool || (kata.tools && kata.tools[0]) || 'cowork';
+
+      document.querySelectorAll('.tool-step[data-step]').forEach(function(el) {
+        var stepId = el.dataset.step;
+        var stepData = steps[stepId];
+        if (!stepData) return;
+
+        // Build tab bar + panels for each tool variant
+        var container = document.createElement('div');
+        container.className = 'tool-step-container';
+
+        var tabBar = document.createElement('div');
+        tabBar.className = 'tool-step-tabs';
+
+        var toolIds = Object.keys(stepData).sort(function(a, b) {
+          var ai = data.toolPriority.indexOf(a);
+          var bi = data.toolPriority.indexOf(b);
+          return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+        });
+        toolIds.forEach(function(toolId) {
+          var tab = document.createElement('button');
+          tab.className = 'tool-step-tab' + (toolId === defaultTool ? ' active' : '');
+          tab.dataset.toolTab = toolId;
+          // Find tool name
+          var toolInfo = data.toolLookup.find(function(t) { return t.id === toolId; });
+          tab.textContent = toolInfo ? toolInfo.name : toolId;
+          tab.addEventListener('click', function() {
+            container.querySelectorAll('.tool-step-tab').forEach(function(t) { t.classList.remove('active'); });
+            container.querySelectorAll('.tool-step-panel').forEach(function(p) { p.classList.remove('active'); });
+            tab.classList.add('active');
+            container.querySelector('.tool-step-panel[data-tool-step="' + toolId + '"]').classList.add('active');
+          });
+          tabBar.appendChild(tab);
+        });
+
+        container.appendChild(tabBar);
+
+        toolIds.forEach(function(toolId) {
+          var panel = document.createElement('div');
+          panel.className = 'tool-step-panel' + (toolId === defaultTool ? ' active' : '');
+          panel.dataset.toolStep = toolId;
+          // toolSteps content is author-controlled static data,
+          // embedded at build time. No user input flows into this.
+          panel.innerHTML = stepData[toolId];
+          container.appendChild(panel);
+        });
+
+        el.textContent = '';
+        el.appendChild(container);
+      });
+    }
+
+    function showKata(id) {
+      var kata = kataMap[id];
+      if (!kata) return;
+      var num = String(kata.order + 1).padStart(2, '0');
+
+      // Get pre-rendered body (build-time MDX content)
+      var bodyEl = bodiesEl.querySelector('[data-kata-body="' + id + '"]');
+      var bodyHTML = bodyEl ? bodyEl.innerHTML : '';
+
+      // Tool tags for this kata
+      var toolTagsHTML = '';
+      if (kata.tools && kata.tools.length) {
+        var tags = kata.tools.map(function(toolId) {
+          var toolInfo = data.toolLookup.find(function(t) { return t.id === toolId; });
+          if (!toolInfo) return '';
+          var theme = data.toolThemes[toolId];
+          var color = theme ? theme.accent : '#888';
+          return '<span class="detail-tool-tag" style="--tag-color: ' + color + '">' +
+            '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">' + toolInfo.svg + '</svg>' +
+            toolInfo.name + '</span>';
+        }).join('');
+        toolTagsHTML = '<div class="detail-tool-tags">' + tags + '</div>';
+      }
+
+      // Related katas
+      var relatedHTML = '';
+      if (kata.related && kata.related.length) {
+        var bubbles = kata.related.map(function(rid) {
+          var r = kataMap[rid];
+          if (!r) return '';
+          var rnum = String(r.order + 1).padStart(2, '0');
+          var clickable = !r.stub ? ' onclick="window.__showKata(\'' + rid + '\')"' : '';
+          var dim = r.stub ? ' style="opacity:0.45; cursor:default;"' : '';
+          return '<a class="kata-bubble"' + clickable + dim + '><span class="bubble-num">' + rnum + '</span> "' + r.feeling + '"</a>';
+        }).join('');
+        relatedHTML =
+          '<div class="related-katas">' +
+            '<div class="related-katas-label">Related katas</div>' +
+            '<div class="related-bubbles">' + bubbles + '</div>' +
+          '</div>';
+      }
+
+      // All content here is from build-time sources:
+      // - kata manifest (from MDX frontmatter)
+      // - bodyHTML (pre-rendered MDX)
+      // - relatedHTML (built from kata manifest ids/feelings)
+      detailEl.innerHTML =
+        '<button class="kata-back" onclick="window.__hideKata()">&#8592; Back to all katas</button>' +
+        '<div class="kata-number">KATA ' + num + '</div>' +
+        '<div class="feeling-title">"' + kata.feeling + '"</div>' +
+        (kata.takeaway ? '<div class="detail-takeaway">' + kata.takeaway + '</div>' : '') +
+        toolTagsHTML +
+        '<div class="kata-body">' + bodyHTML + '</div>' +
+        relatedHTML;
+
+      // Populate tool-step placeholders with tabbed tool content
+      populateToolSteps(id);
+
+      // Style prompt blocks and add copy buttons
+      detailEl.querySelectorAll('pre[data-language="plaintext"]').forEach(function(pre) {
+        pre.classList.add('prompt-block');
+        var btn = document.createElement('button');
+        btn.className = 'prompt-copy';
+        btn.textContent = 'Copy';
+        btn.addEventListener('click', function() {
+          var text = pre.querySelector('code').textContent;
+          navigator.clipboard.writeText(text).then(function() {
+            btn.textContent = 'Copied';
+            setTimeout(function() { btn.textContent = 'Copy'; }, 1500);
+          });
+        });
+        pre.appendChild(btn);
+      });
+
+      mainEl.classList.add('hidden');
+      detailEl.classList.add('visible');
+      document.querySelector('.filter-bar').style.display = 'none';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // Update URL without reload
+      history.pushState({ kata: id }, '', '#' + id);
+    }
+
+    function hideKata() {
+      detailEl.classList.remove('visible');
+      mainEl.classList.remove('hidden');
+      document.querySelector('.filter-bar').style.display = '';
+      detailEl.textContent = '';
+      history.pushState({}, '', window.location.pathname);
+    }
+
+    // Expose for inline onclick handlers
+    window.__showKata = showKata;
+    window.__hideKata = hideKata;
+
+    // Handle browser back button
+    window.addEventListener('popstate', function(e) {
+      if (e.state && e.state.kata) {
+        showKata(e.state.kata);
+      } else {
+        hideKata();
+      }
+    });
+
+    // Handle direct link to #kata-id
+    if (window.location.hash) {
+      var hashId = window.location.hash.slice(1);
+      if (kataMap[hashId] && !kataMap[hashId].stub) {
+        showKata(hashId);
+      }
+    }
+
+    // ===== Tool theme =====
+    var toolThemes = data.toolThemes;
+
+    function applyToolTheme(toolId) {
+      var theme = toolThemes[toolId];
+      if (!theme) return;
+      var r = document.documentElement;
+      r.style.setProperty('--accent', theme.accent);
+      r.style.setProperty('--cyan', theme.cyan);
+      r.style.setProperty('--accent-glow', theme.glow);
+      if (window._setDotColor) window._setDotColor(theme.accent);
+    }
+
+    // Apply initial theme
+    applyToolTheme('cowork');
+
+    // ===== Collapsible sections =====
+    document.addEventListener('click', function(e) {
+      var header = e.target.closest('.collapsible-header');
+      if (header) {
+        header.parentElement.classList.toggle('open');
+      }
+    });
+
+    // ===== Animated dot grid canvas =====
+    (function() {
+      var canvas = document.getElementById('dotCanvas');
+      if (!canvas) return;
+      var ctx = canvas.getContext('2d');
+      var spacing = 40;
+      var dotRadius = 1.2;
+      var offsetX = 0, offsetY = 0;
+      var currentColor = toolThemes['cowork'] ? toolThemes['cowork'].accent : '#D97757';
+
+      window._setDotColor = function(hex) { currentColor = hex; };
+
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      function hexToRgb(hex) {
+        var r = parseInt(hex.slice(1,3),16);
+        var g = parseInt(hex.slice(3,5),16);
+        var b = parseInt(hex.slice(5,7),16);
+        return r + ',' + g + ',' + b;
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        var rgb = hexToRgb(currentColor);
+        var startX = (offsetX % spacing) - spacing;
+        var startY = (offsetY % spacing) - spacing;
+        for (var x = startX; x < canvas.width + spacing; x += spacing) {
+          for (var y = startY; y < canvas.height + spacing; y += spacing) {
+            ctx.beginPath();
+            ctx.arc(x, y, dotRadius, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(' + rgb + ', 0.35)';
+            ctx.fill();
+          }
+        }
+        offsetX += 0.15;
+        offsetY += 0.08;
+        requestAnimationFrame(draw);
+      }
+
+      draw();
+    })();
+  })();
+  </script>
+</Base>

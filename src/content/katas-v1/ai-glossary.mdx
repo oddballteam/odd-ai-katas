@@ -1,0 +1,72 @@
+---
+feeling: "Everyone keeps using words I don't know"
+takeaway: "tokens, context window, hallucination, prompt injection"
+status: review
+description: "Hooks, skills, agents, MCP, worktrees — the jargon piles up fast. This is your cheat sheet for every term you'll hear when working with AI coding tools."
+related:
+    - "slash-commands"
+tools:
+    - "claude-code"
+    - "codex"
+    - "gemini-cli"
+    - "vscode"
+    - "cursor"
+---
+
+## The model
+
+| Term | What it means |
+|---|---|
+| **Model** | The AI brain. Different models have different capabilities and speeds. You pick one (like Opus, Sonnet, GPT-5, Gemini) and that's what processes your prompts. |
+| **Context window** | The model's working memory — everything it can "see" at once. Your prompt, the files it's read, tool results, conversation history. When this fills up, older content gets dropped or summarized. Typical sizes: 128K–1M tokens. |
+| **Tokens** | How the model measures text. Roughly 1 token ≈ ¾ of a word. Code is more expensive — a 100-line file might be 400+ tokens. Every file read, every tool result, every message eats tokens from your context window. |
+| **Effort / thinking** | How long the model deliberates before responding. Higher effort = slower but better for complex tasks. Lower effort = faster for simple stuff. Claude Code calls this `/effort`, some models call it "reasoning effort." |
+| **Temperature** | How creative vs. predictable the model's output is. Low temperature = deterministic, same answer every time. High temperature = more varied, sometimes surprising. Most coding agents keep this low. |
+| **Hallucination** | When the model confidently generates something that isn't true — a function that doesn't exist, a flag that was never implemented, a file path that's wrong. Not a bug, it's the default behavior. The model always produces *something*. |
+| **Prompt injection** | When malicious instructions hidden in content the model reads (a web page, a PR description, a README) get treated as real instructions. The model can't tell the difference between your commands and commands embedded in data it processes. |
+
+## The agent
+
+| Term | What it means |
+|---|---|
+| **Agent** | An AI that doesn't just answer questions — it takes actions in a loop: think → use a tool → observe the result → decide what to do next → repeat. Your CLI coding tool is an agent. |
+| **Sub-agent** | A second agent spawned by the main one to handle a subtask. The main agent keeps working while the sub-agent does its thing in parallel. Like delegating a research task to an intern. |
+| **Agent teams** | Multiple agents working together on the same problem, often in separate terminals or worktrees. One might write code while another reviews it. |
+| **Plan mode** | A mode where the agent can read and research but can't edit files or run commands. Useful for thinking through an approach before committing to changes. |
+| **Tool use** | How agents interact with the world. Reading files, running shell commands, making API calls — each of these is a "tool." The model decides which tool to call, with what arguments, based on your request. |
+| **Permissions** | Rules governing which tools the agent can use without asking you first. "Can it run arbitrary shell commands? Can it edit files? Can it make network requests?" You control this. |
+| **Sandbox** | An isolated environment that restricts what the agent can do — limited file access, no network, no system modifications. A safety net for when you want the agent to work but don't fully trust what it might do. |
+
+## Customization
+
+| Term | What it means |
+|---|---|
+| **Skill** | A reusable prompt template you invoke with a slash command. Think of it as a saved workflow — `/review-pr`, `/commit`, `/deploy`. You write the instructions once, then trigger them by name. Called "skills" in Claude Code, "custom prompts" in Codex, "custom slash commands" in Gemini CLI. |
+| **Hook** | A shell command that runs automatically when something happens — before a file is edited, after a command runs, when a session starts. Like Git hooks but for your AI agent. Use them to lint, format, validate, or block actions. |
+| **Plugin** | A packaged extension that adds capabilities to your agent. Unlike skills (which are just prompts), plugins can include tools, hooks, and MCP servers. Think VS Code extensions but for your CLI agent. |
+| **MCP (Model Context Protocol)** | A standard way to connect AI tools to external services. Instead of building a custom integration for every API, MCP servers expose a universal interface. One MCP server for GitHub, one for Slack, one for your database — and any AI tool that speaks MCP can use them all. |
+| **MCP server** | A small program that connects your agent to an external service via MCP. It translates between what the agent wants to do ("list my PRs") and the service's API. You configure these in your agent's settings. |
+| **Connection / connector** | A configured link between your agent and an external service. The non-technical term for "I've set up an MCP server" or "I've installed a plugin that talks to Slack." |
+| **Slash command** | A `/command` you type mid-conversation to control the agent itself — switch models, compact context, manage permissions, invoke skills. Not a prompt to the AI, but a direct instruction to the tool. |
+
+## The workspace
+
+| Term | What it means |
+|---|---|
+| **CLAUDE.md** | A markdown file at the root of your project that Claude Code reads at the start of every session. Put project conventions, architecture notes, and standing instructions here. It's persistent context that survives between conversations. |
+| **AGENTS.md** | Same concept as CLAUDE.md, but for Codex. Project-level instructions that Codex reads automatically. |
+| **GEMINI.md** | Same concept as CLAUDE.md, but for Gemini CLI. Generated with `/init`. |
+| **Memory** | Information the agent persists between sessions — things it learned about you, your project, your preferences. Some agents manage this automatically, others let you edit it directly. Different from context window (which resets each session). |
+| **Context file** | Any file the agent loads into its context window to understand your project. CLAUDE.md is one, but it also includes files it reads during the session, tool results, and conversation history. |
+| **Worktree** | A Git feature that lets you have multiple checkouts of the same repo at different branches, simultaneously. Agents use these to work on a branch without touching your main working directory. You can run multiple agents in parallel, each in its own worktree. |
+| **Compact / compress** | When your context window fills up, this summarizes the conversation so far into a shorter version, freeing up space. You lose some detail but can keep working. Like clearing your desk but keeping notes. |
+
+## The kata
+
+Scan the tables above. For each term, ask yourself:
+
+1. **Could I explain this to a coworker?** If not, that's your gap.
+2. **Does my tool have this?** Not all tools have all features. Check what's available in yours.
+3. **Have I actually used it?** Knowing what a worktree is and having used one are different things.
+
+Pick three terms you've never used and try them today.

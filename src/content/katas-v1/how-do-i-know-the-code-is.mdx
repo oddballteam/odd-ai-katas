@@ -1,0 +1,91 @@
+---
+feeling: "How do I know the code is ___?"
+takeaway: "self-review prompts, reducing bias, critical thinking"
+status: review
+description: "Secure? Accessible? The right approach? The AI won't question itself unless you ask it to. Here's how to make it think critically about its own output."
+related:
+    - "stopped-thinking-like-a-developer"
+    - "why-would-you-do-that"
+    - "make-it-know-what-a-teammate-knows"
+tools:
+    - "claude-code"
+    - "codex"
+    - "gemini-cli"
+    - "vscode"
+    - "cursor"
+---
+
+## What's happening
+
+The AI gave you code. It works. But is it the right approach? Is it accessible? Is it going to break something else? Is it maintainable? You don't know, and the AI isn't going to volunteer concerns on its own.
+
+The AI is biased toward whatever you asked for. If you said "use Redux," it'll use Redux and defend that choice. If you said "add a useEffect," it'll add one even if there's a better way. It doesn't push back. It doesn't flag tradeoffs. A good teammate would -- but only if you ask.
+
+## The kata
+
+### Ask it to challenge itself
+
+After the AI finishes a task, don't just move on. Ask:
+
+```prompt
+Any concerns with this approach?
+```
+
+That one question changes the dynamic. The AI shifts from "execute mode" to "review mode." You'll often get back things like "actually, this could cause a re-render loop" or "this doesn't handle the error case."
+
+Other prompts that trigger critical thinking:
+
+```prompt
+What would a senior developer on this team push back on in this PR?
+```
+
+```prompt
+What are the tradeoffs of the approach you chose? What did you consider and reject?
+```
+
+```prompt
+Is there a simpler way to do this?
+```
+
+### Fill in the blank
+
+Depending on what matters for this change, get specific:
+
+```prompt
+Is this accessible? Check against WCAG 2.2 AA.
+```
+
+```prompt
+Could this introduce a regression? What existing behavior might break?
+```
+
+```prompt
+Is this secure? Check for injection, XSS, and anything in the OWASP top 10.
+```
+
+```prompt
+Is this maintainable? Will the next developer understand what's going on?
+```
+
+```prompt
+Does this match how we do things in the rest of the codebase?
+```
+
+### Avoid leading the witness
+
+How you phrase your request changes what you get back. If you tell the AI what to do, it'll justify that choice. If you describe what you need, it'll pick the approach.
+
+**Biased:** "Use a useEffect to fetch the data when the component mounts."
+The AI will use a useEffect, even if a loader or server component is better.
+
+**Open:** "This component needs to fetch user data before rendering. What's the best approach given how the rest of the app works?"
+Now the AI can consider the options and pick based on your actual codebase.
+
+**Biased:** "Add Redux to manage the form state."
+**Open:** "This form has complex state with validation. How should we manage it?"
+
+The pattern: describe the problem, not the solution. Let the AI make the architectural choice, then question it.
+
+## What to sit with
+
+The AI will always give you something that works. The question is whether it's good. Building the habit of asking "any concerns?" after every task is the simplest way to raise the bar. It costs 10 seconds and regularly catches things you'd miss.

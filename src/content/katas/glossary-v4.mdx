@@ -1,0 +1,41 @@
+---
+feeling: "Glossary"
+lastUpdated: "2026-04-14"
+description: "Quick reference for the AI terms you'll actually encounter in your coding tools."
+status: draft
+tags:
+    - "basics"
+tools: []
+---
+
+## Core concepts
+
+| Term | What it means |
+|------|--------------|
+| **Token** | The unit AI reads and writes in. Roughly 3/4 of a word. Everything costs tokens. |
+| **Context window** | How much the AI can hold in memory at once. When it fills up, older stuff gets dropped. |
+| **Prompt** | Everything sent to the model, not just what you typed. Includes system instructions, files, and history. |
+| **System prompt** | Hidden instructions your tool sends before you say anything. Your CLAUDE.md lives here. |
+| **Model** | The specific AI brain (Opus, Sonnet, GPT-4). Different speed, cost, and smarts. You can usually switch. |
+
+## How your tool works
+
+| Term | What it means |
+|------|--------------|
+| **Agent** | An AI that takes actions: reads files, runs tests, edits code. Most coding tools are agents now. |
+| **MCP** | Model Context Protocol. A plug-in system that connects your AI to external services like GitHub or Slack. |
+| **Memory** | What your tool remembers across sessions. Preferences, facts about you, project context. |
+| **Temperature** | Controls randomness. Low = predictable code. High = creative writing. Coding tools keep it low. |
+
+## Things to watch for
+
+| Term | What it means |
+|------|--------------|
+| **Hallucination** | When the AI confidently makes something up. A fake function, a wrong API. Normal, not a bug. Verify. |
+| **RAG** | Retrieval-Augmented Generation. The AI searches real docs before answering instead of guessing from memory. |
+| **Context engineering** | The practice of controlling what information the AI sees so it gives better answers. |
+
+## Exercise
+
+1. Ask your tool: "What model are you, and what's your context window size?"
+2. Ask: "How many tokens have we used so far?"

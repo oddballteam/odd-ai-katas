@@ -38,7 +38,7 @@ a:hover {
 *, *::before, *::after {
   transition: border-color 0.4s ease, box-shadow 0.4s ease;
 }
-.hero h1 span, .hero-line, .tool-btn.active {
+.hero h1 span, .hero-line, .filter-pill.active {
   transition: all 0.4s ease;
 }
 
@@ -57,7 +57,7 @@ a:hover {
 }
 
 /* Everything sits above the dots */
-.oddball-banner, .hero, .tool-bar, .main, .kata-detail, .footer {
+.oddball-banner, .hero, .filter-bar, .main, .kata-detail, .footer {
   position: relative; z-index: 1;
 }
 
@@ -81,6 +81,16 @@ a:hover {
   opacity: 0.85;
   font-weight: 400;
   font-size: 0.8rem;
+}
+
+/* ===== Progress counter ===== */
+.hero-progress {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  margin-top: 0.75rem;
 }
 
 /* ===== Hero ===== */
@@ -122,74 +132,81 @@ a:hover {
   margin: 1.5rem auto 0; border-radius: 1px;
 }
 
-/* ===== Tool picker bar ===== */
-.tool-bar {
+/* ===== Filter bar ===== */
+.filter-bar {
   max-width: 1120px;
   margin: 0 auto;
   padding: 1.25rem 1.5rem 0;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 0.75rem;
   flex-wrap: wrap;
 }
-.tool-bar-label {
+.filter-bar-label {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 0.85rem; font-weight: 600;
   text-transform: uppercase; letter-spacing: 0.12em;
   color: var(--text-muted);
-  margin-right: 0.5rem;
-  margin-top: 1.1rem;
+  flex-shrink: 0;
 }
-
-/* Company groups */
-.tool-group {
+.filter-pills {
   display: flex;
-  flex-direction: column;
   gap: 0.3rem;
+  flex-wrap: wrap;
 }
-.tool-group-label {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.65rem; font-weight: 600;
-  text-transform: uppercase; letter-spacing: 0.1em;
-  color: var(--text-muted);
-  opacity: 0.6;
-  padding-left: 4px;
-}
-.tool-group-buttons {
-  display: flex;
-  gap: 0.25rem;
-}
-
-.tool-btn {
-  display: flex; align-items: center; gap: 6px;
+.filter-pill {
+  display: flex; align-items: center; gap: 5px;
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 6px 10px;
+  border-radius: 20px;
+  padding: 5px 12px;
   cursor: pointer;
-  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
-  position: relative;
-}
-.tool-btn:hover {
-  border-color: var(--border-hover);
-  background: var(--bg-card-hover);
-}
-.tool-btn.active {
-  border-color: var(--accent);
-  background: var(--bg-card-hover);
-  box-shadow: 0 0 12px var(--accent-glow);
-}
-.tool-btn svg {
-  width: 20px; height: 20px;
-  display: block; flex-shrink: 0;
-}
-.tool-btn .tool-name {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 0.8rem; font-weight: 500;
   color: var(--text-muted);
-  transition: color 0.15s;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s, color 0.15s;
 }
-.tool-btn.active .tool-name { color: var(--text-bright); }
+.filter-pill:hover {
+  border-color: var(--border-hover);
+  background: var(--bg-card-hover);
+  color: var(--text-bright);
+}
+.filter-pill.active {
+  border-color: var(--accent);
+  background: var(--bg-card-hover);
+  box-shadow: 0 0 12px var(--accent-glow);
+  color: var(--text-bright);
+}
+.filter-pill svg {
+  width: 16px; height: 16px;
+  display: block; flex-shrink: 0;
+}
+
+/* ===== Tag filter pills ===== */
+.tag-filter-bar { padding-top: 0.5rem; }
+.tag-pill {
+  display: flex; align-items: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 5px 12px;
+  cursor: pointer;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.8rem; font-weight: 500;
+  color: var(--text-muted);
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s, color 0.15s;
+}
+.tag-pill:hover {
+  border-color: var(--border-hover);
+  background: var(--bg-card-hover);
+  color: var(--text-bright);
+}
+.tag-pill.active {
+  border-color: var(--cyan);
+  background: var(--bg-card-hover);
+  box-shadow: 0 0 12px rgba(74, 234, 220, 0.12);
+  color: var(--text-bright);
+}
 
 /* ===== Main ===== */
 .main {
@@ -202,6 +219,47 @@ a:hover {
   justify-content: space-between;
   margin-bottom: 1rem;
   flex-wrap: wrap; gap: 0.5rem;
+}
+.section-controls {
+  display: flex; align-items: center; gap: 0.75rem;
+}
+.reset-progress {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.35rem 0.7rem;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+.reset-progress:hover {
+  border-color: #e05050;
+  color: #e05050;
+}
+.draft-toggle {
+  display: flex; align-items: center; gap: 0.5rem;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  cursor: pointer;
+  user-select: none;
+  border: 1px dashed var(--border);
+  border-radius: 4px;
+  padding: 0.35rem 0.7rem;
+  transition: border-color 0.2s, color 0.2s;
+}
+.draft-toggle:hover {
+  border-color: var(--accent);
+  color: var(--text-bright);
+}
+.draft-toggle input {
+  accent-color: var(--accent);
 }
 .section-label {
   font-family: 'Space Grotesk', sans-serif;
@@ -229,9 +287,10 @@ a:hover {
   text-decoration: none; color: var(--text);
   transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
   cursor: pointer;
-  display: flex; align-items: baseline; gap: 0.65rem;
+  display: flex; flex-direction: column; gap: 0.6rem;
 }
 .kata-card:hover {
+  text-decoration: none;
   border-color: var(--accent);
   background: var(--bg-card-hover);
   box-shadow: 0 0 24px var(--accent-glow);
@@ -245,6 +304,78 @@ a:hover {
   background: var(--bg-card);
   box-shadow: none;
 }
+/* ===== Draft badge ===== */
+.kata-card.draft {
+  border-style: dashed;
+}
+.kata-card.draft .card-content::after {
+  content: 'DRAFT';
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--bg);
+  background: var(--text-muted);
+  padding: 0.15rem 0.4rem;
+  border-radius: 3px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+.draft-slug {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.7rem;
+  color: var(--accent);
+  opacity: 0.7;
+  width: 100%;
+  margin-top: 0.1rem;
+}
+.feeling-title .draft-badge {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--bg);
+  background: var(--text-muted);
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+  vertical-align: middle;
+  margin-left: 0.5rem;
+}
+/* ===== Completion checkmark on cards ===== */
+.kata-check {
+  width: 18px; height: 18px;
+  border: 2px solid var(--border);
+  border-radius: 50%;
+  flex-shrink: 0;
+  position: relative;
+  transition: border-color 0.2s, background 0.2s;
+}
+.kata-check.done {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+.kata-check.done::after {
+  content: '';
+  position: absolute;
+  top: 1px; left: 4px;
+  width: 5px; height: 8px;
+  border: solid var(--bg);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.kata-card.completed {
+  opacity: 0.6;
+}
+.kata-card.completed:hover {
+  opacity: 1;
+}
+
+.card-content {
+  display: flex; align-items: flex-start; gap: 0.65rem;
+}
+.card-content .kata-check {
+  margin-top: 0.15rem;
+}
 .kata-card .number {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 0.8rem; color: var(--text-muted);
@@ -255,6 +386,51 @@ a:hover {
   font-size: 1.05rem; font-weight: 500;
   line-height: 1.5;
   color: var(--text-bright);
+}
+.kata-card .takeaway {
+  font-size: 0.8rem;
+  color: var(--accent);
+  opacity: 0.7;
+  letter-spacing: 0.02em;
+}
+
+/* Tool tags on cards */
+.card-tags {
+  display: flex; gap: 0.3rem;
+  flex-wrap: wrap;
+}
+.tool-tag {
+  display: inline-flex; align-items: center;
+  width: 20px; height: 20px;
+  opacity: 0.45;
+  transition: opacity 0.15s;
+}
+.tool-tag svg {
+  width: 14px; height: 14px;
+  display: block;
+}
+.kata-card:hover .tool-tag { opacity: 0.7; }
+
+/* Tool tags in detail view */
+.detail-tool-tags {
+  display: flex; gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+.detail-tool-tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 3px 10px 3px 6px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.7rem; font-weight: 500;
+  color: var(--tag-color, var(--text-muted));
+  letter-spacing: 0.02em;
+}
+.detail-tool-tag svg {
+  width: 14px; height: 14px;
+  display: block; flex-shrink: 0;
 }
 
 /* ===== Kata detail view ===== */
@@ -283,13 +459,63 @@ a:hover {
   font-family: 'Space Grotesk', sans-serif;
   font-size: clamp(1.6rem, 4vw, 2.4rem);
   font-weight: 700; color: var(--text-bright);
-  line-height: 1.35; margin-bottom: 0.5rem;
+  line-height: 1.35; margin-bottom: 0.25rem;
+}
+.kata-detail .detail-takeaway {
+  font-size: 0.9rem;
+  color: var(--accent);
+  opacity: 0.7;
+  margin-bottom: 0.75rem;
+  letter-spacing: 0.02em;
 }
 .kata-detail .kata-number {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 0.85rem; color: var(--accent);
   font-weight: 600; letter-spacing: 0.08em;
   margin-bottom: 0.75rem;
+}
+
+/* ===== Kata description in detail view ===== */
+.kata-detail .kata-description {
+  font-size: 1.1rem;
+  color: var(--text);
+  line-height: 1.65;
+  margin-top: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.kata-detail .kata-last-updated {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+/* ===== Completion button ===== */
+.kata-complete-btn {
+  display: block;
+  width: 100%;
+  padding: 1rem;
+  margin: 2.5rem 0 1.5rem;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--text-bright);
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+.kata-complete-btn:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 20px var(--accent-glow);
+}
+.kata-complete-btn.done {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--bg);
 }
 
 .kata-detail .kata-body {
@@ -355,6 +581,64 @@ a:hover {
   font-size: 0.88rem;
 }
 
+/* ===== Tables in kata body ===== */
+.kata-detail .kata-body table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 1rem 0 1.5rem;
+  font-size: 0.95rem;
+}
+.kata-detail .kata-body th,
+.kata-detail .kata-body td {
+  padding: 0.6rem 1.2rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.kata-detail .kata-body th {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  background: var(--bg-card);
+  position: sticky;
+  top: 0;
+}
+.kata-detail .kata-body td {
+  color: var(--text);
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.85rem;
+}
+.kata-detail .kata-body td:first-child {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 0.95rem;
+  color: var(--text-bright);
+}
+.kata-detail .kata-body tr:hover td {
+  background: var(--bg-card);
+}
+.kata-detail .kata-body table code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: inherit;
+  color: var(--cyan);
+}
+@media (max-width: 640px) {
+  .kata-detail .kata-body table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .kata-detail .kata-body th,
+  .kata-detail .kata-body td {
+    padding: 0.5rem 0.8rem;
+    white-space: nowrap;
+  }
+}
+
 /* ===== Callout boxes ===== */
 .callout {
   background: var(--bg-card);
@@ -374,6 +658,68 @@ a:hover {
 }
 .callout.warn .callout-label { color: #e8a838; }
 .callout.safe .callout-label { color: #34a853; }
+
+/* ===== Prompt blocks ===== */
+.kata-detail .kata-body pre.prompt-block {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.2rem;
+  padding-right: 4rem;
+  margin: 1rem 0;
+  position: relative;
+}
+.kata-detail .kata-body pre.prompt-block code {
+  font-family: 'Inter', system-ui, sans-serif !important;
+  font-size: 1rem;
+  color: var(--text-bright) !important;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  line-height: 1.6;
+  background: none !important;
+  border: none;
+  padding: 0;
+}
+.kata-detail .kata-body pre.prompt-block span {
+  color: var(--text-bright) !important;
+}
+.prompt-copy {
+  position: absolute;
+  top: 0.6rem; right: 0.6rem;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.7rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--text-muted);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.3rem 0.6rem;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+.prompt-copy:hover {
+  color: var(--text-bright);
+  border-color: var(--border-hover);
+}
+.table-copy-wrapper {
+  position: relative;
+}
+.table-copy {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.8rem; font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--bg);
+  background: var(--accent);
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 1.2rem;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  margin-top: 0.75rem;
+}
+.table-copy:hover {
+  opacity: 0.85;
+}
 
 /* ===== Code blocks ===== */
 .kata-code {
@@ -435,44 +781,6 @@ a:hover {
 .perm-yes { color: #34a853; }
 .perm-no { color: #e8a838; }
 
-/* ===== Inline tool-step panels ===== */
-.tool-step-container {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--accent);
-  border-radius: 0 8px 8px 0;
-  padding: 1rem 1.2rem;
-  margin: 0.75rem 0 1.25rem;
-}
-.tool-step-panel { display: none; }
-.tool-step-panel.active { display: block; }
-.tool-step-panel strong {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.8rem; font-weight: 600;
-  text-transform: uppercase; letter-spacing: 0.06em;
-  color: var(--accent);
-  display: block;
-  margin-bottom: 0.5rem;
-}
-.tool-step-panel p {
-  margin-bottom: 0.5rem;
-  font-size: 1rem;
-  line-height: 1.6;
-}
-.tool-step-panel p:last-child { margin-bottom: 0; }
-.tool-step-panel code {
-  background: #0a0c16;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 0.15rem 0.45rem;
-  font-family: 'SF Mono', 'Fira Code', monospace;
-  font-size: 0.85rem; color: var(--cyan);
-}
-.tool-step-note {
-  font-size: 0.9rem;
-  color: var(--text-muted);
-  font-style: italic;
-}
 .setup-link {
   color: var(--accent);
   text-decoration: underline;
@@ -560,10 +868,9 @@ a:hover {
 /* ===== Responsive ===== */
 @media (max-width: 640px) {
   .kata-grid { grid-template-columns: 1fr; gap: 6px; }
-  .tool-btn .tool-name { display: none; }
-  .tool-btn svg { width: 28px; height: 28px; }
-  .tool-btn { padding: 8px; }
-  .tool-bar { gap: 0.4rem; }
-  .tool-group-label { font-size: 0.55rem; }
-  .tool-group-buttons { gap: 0.2rem; }
+  .filter-pill span { display: none; }
+  .filter-pill svg { width: 20px; height: 20px; }
+  .filter-pill { padding: 6px 8px; }
+  .filter-pill[data-filter="all"] { padding: 6px 12px; }
+  .filter-bar { gap: 0.4rem; }
 }

@@ -16,9 +16,9 @@ const { kata } = Astro.props;
 const { Content } = await render(kata);
 ---
 
-<Base title={`${kata.data.feeling} — AI Katas`}>
+<Base title={`${kata.data.feeling} — AI Katas`} minimal>
   <main class="kata-detail" style="display: block; position: relative; z-index: 1;">
-    <a href={`${import.meta.env.BASE_URL}`} class="kata-back">&#8592; Back to all katas</a>
+    <a href={`${import.meta.env.BASE_URL}`} class="kata-back"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2L4 8l6 6"/></svg> Back to all katas</a>
 
     <div class="feeling-title">"{kata.data.feeling}"</div>
 

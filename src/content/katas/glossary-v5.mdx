@@ -1,0 +1,47 @@
+---
+feeling: "Glossary"
+lastUpdated: "2026-04-14"
+description: "Quick reference for the AI terms you'll actually encounter in your coding tools."
+status: draft
+tags:
+    - "basics"
+tools: []
+---
+
+## What you're paying for
+
+| Term | The gist |
+|------|----------|
+| **Token** | The smallest unit of text the AI processes. ~3/4 of a word. A 200-line file is about 800 tokens. |
+| **Context window** | The AI's total working memory for one session. 200k tokens sounds big, but fills fast with files and history. |
+| **Model** | Which AI you're talking to. Opus/Sonnet/Haiku, GPT-4/4o-mini. Bigger = smarter and slower. |
+
+## What's happening behind the scenes
+
+| Term | The gist |
+|------|----------|
+| **Prompt** | The full package sent to the model: your message + system instructions + file contents + conversation history. |
+| **System prompt** | Instructions injected before your first message. Your project config file (CLAUDE.md, copilot-instructions.md) ends up here. |
+| **Agent** | AI that acts, not just answers. Reads files, runs commands, writes code. If it's editing your repo, it's an agent. |
+| **MCP** | Model Context Protocol. How your AI connects to external tools like GitHub, databases, Slack. Think USB-C for AI. |
+| **Temperature** | Dial from predictable (0) to creative (1). Coding tools stay low. That's why code suggestions are consistent. |
+
+## What can go wrong
+
+| Term | The gist |
+|------|----------|
+| **Hallucination** | The AI invents something that doesn't exist and says it with total confidence. Check its work. |
+| **Context overflow** | When your session exceeds the context window. The AI starts dropping older messages. Sessions degrade over time. |
+
+## Concepts you'll hear about
+
+| Term | The gist |
+|------|----------|
+| **RAG** | Retrieval-Augmented Generation. AI searches real documents before answering instead of relying on training data alone. |
+| **Context engineering** | Deliberately shaping what information the AI sees to get better results. The skill behind good AI tool use. |
+| **Memory** | Persistent info your tool carries across sessions. Preferences, project facts, past corrections. |
+
+## Exercise
+
+1. Ask your tool: "What model are you using right now? What's the context window?"
+2. Ask: "Without doing any research, what do these terms mean: token, context window, hallucination?"

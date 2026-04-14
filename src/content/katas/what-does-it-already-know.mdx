@@ -1,0 +1,37 @@
+---
+feeling: "What context does a session start with?"
+lastUpdated: "2026-04-14"
+description: "Before you type a word, your AI tool has context. Here's where it comes from and how to see it."
+tags:
+    - "basics"
+    - "context"
+tools:
+    - "claude-code"
+    - "vscode"
+---
+
+## Your session isn't blank
+
+Every AI coding tool loads context before you say anything. Before you type a single word, you're already using 20-30k tokens. This usually includes:
+
+- **Project instructions** from a file in your repo (`CLAUDE.md`, `.github/copilot-instructions.md`, `.cursor/rules/`, `GEMINI.md`). This is how you tell the tool about your stack, conventions, and preferences.
+- **Connected tools** like MCP servers that give the AI access to external services.
+- **Memory** from past sessions, things the tool learned about you or your project over time.
+- **User-level config** stored outside your repo (like `~/.claude/`, `~/.gemini/`, or VS Code's user settings). These follow you across every project.
+
+Most tools have a way to inspect what's loaded. Find yours.
+
+In **Claude Code**, type `/context` to see everything in the current session.
+
+![Claude Code /context output showing token breakdown](/ai-katas/images/katas/what-does-it-already-know/claude-code-see-context.png)
+
+In **VS Code Copilot**, hover the token circle at the bottom right of the chat input.
+
+![VS Code Copilot context window showing token usage](/ai-katas/images/katas/what-does-it-already-know/vscode-see-context.png)
+
+## Exercise
+
+1. Open your tool and find where it shows loaded context. Not sure how? Ask the AI itself, check your tool's settings, or look at the docs.
+2. Try these prompts and see what comes back:
+    - "Without looking at any code, what do you know about this project?"
+    - "Without doing any research, what are my preferences?"

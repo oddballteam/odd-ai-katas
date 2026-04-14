@@ -1,0 +1,38 @@
+---
+feeling: "What do all these AI terms mean?"
+lastUpdated: "2026-04-14"
+description: "A plain-English glossary of the terms you'll run into when working with AI coding tools."
+status: draft
+tags:
+    - "basics"
+tools: []
+---
+
+## The short list
+
+You don't need to know everything about how LLMs work. But these terms come up constantly when configuring and using AI coding tools. Knowing them saves you from guessing at settings and helps you understand why your tool behaves the way it does.
+
+**Token** - The unit AI models think in. Not exactly a word. Roughly 3/4 of a word on average. "function" is one token. "backgroundColor" might be three. Everything you send and receive costs tokens, and your tool has a budget per session.
+
+**Context window** - The total number of tokens a model can hold at once. Think of it as working memory. A 200k context window sounds huge, but project instructions, file contents, and conversation history fill it fast. When it's full, older messages get dropped.
+
+**Prompt** - Everything you send to the model. Not just what you type. Your tool bundles your message with system instructions, file contents, and other context into one prompt behind the scenes.
+
+**System prompt** - Instructions your tool gives the model before you say anything. This is where project instructions (like CLAUDE.md) end up. You usually don't see it, but it shapes every response.
+
+**Temperature** - Controls randomness. Low temperature (0) means the model picks the most likely next word every time. Higher temperature means more creative, less predictable output. Most coding tools keep this low for you.
+
+**Model** - The specific AI you're talking to. Claude Opus, Sonnet, GPT-4, Gemini. Different models have different strengths, speeds, and costs. Your tool usually lets you switch between them.
+
+**Agent** - An AI that can take actions, not just answer questions. When your coding tool reads files, runs tests, and edits code on its own, it's acting as an agent. Most modern coding tools are agents.
+
+**MCP (Model Context Protocol)** - A standard way to connect AI tools to external services. Like a plugin system. An MCP server might give your AI access to your database, Slack, or GitHub. Check what's connected, it matters.
+
+**Hallucination** - When the model confidently states something that isn't true. It might reference a function that doesn't exist or invent an API. This is why verification matters.
+
+**RAG (Retrieval-Augmented Generation)** - A technique where the AI searches a knowledge base before answering, so it's working from real data instead of just its training. Some tools use this to search your codebase.
+
+## Exercise
+
+1. Open your AI tool's settings and find where it shows the model name and context window size.
+2. Ask your tool: "How many tokens have we used in this conversation so far?"

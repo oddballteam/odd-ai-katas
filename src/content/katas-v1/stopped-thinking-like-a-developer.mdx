@@ -1,0 +1,70 @@
+---
+feeling: "How do I prevent AI slop?"
+takeaway: "commits, tests, scope checks"
+status: review
+description: "You've seen AI-generated code that looks fine but feels wrong. The way to prevent slop isn't a better prompt -- it's applying the developer instincts you already have."
+related:
+    - "why-would-you-do-that"
+    - "quality-drops"
+tools:
+    - "claude-code"
+    - "codex"
+    - "gemini-cli"
+    - "vscode"
+    - "cursor"
+---
+
+## What's happening
+
+Slop isn't buggy code. It's code that works but nobody would be proud of. Unnecessary abstractions, patterns that don't match the codebase, missing tests, a refactor tangled into a feature, changes you can't explain in a PR description.
+
+You already know how to prevent all of that. You do it every day when you code by hand -- commit at checkpoints, write tests, keep changes focused, match existing patterns, watch for scope creep. None of that goes away because an AI is typing.
+
+The problem is that talking to an AI puts you in a different mode. You're prompting, reviewing, approving. The developer part of your brain goes quiet. The AI is fast, so you keep going. Nobody stops to ask if the work is actually good.
+
+Slop is what happens when you stop being the developer and start being a passenger.
+
+## The kata
+
+### The check
+
+Next time you're 10 minutes into a session, stop. Ask yourself:
+
+- Have I committed anything yet?
+- Did I ask for tests?
+- Is it matching the patterns in the codebase or inventing new ones?
+- Did the scope grow past what I originally asked?
+- Could I explain this PR to a reviewer right now?
+- Is there a refactor mixed in with the feature?
+
+If the answer to most of those is no -- that's where slop comes from.
+
+### Fix it in the moment
+
+You don't need to start over. Just bring your standards back in:
+
+```prompt
+Commit what we have so far.
+```
+
+```prompt
+Before we keep going -- are there tests for what we just changed?
+```
+
+```prompt
+Show me what files you've touched. Did anything change that I didn't ask for?
+```
+
+```prompt
+Does this follow the patterns already in the codebase, or did you introduce something new?
+```
+
+```prompt
+Let's separate the refactor from the feature change. Commit the refactor first.
+```
+
+None of these are AI tricks. They're the same things you'd do if you were coding by hand. Slop happens when you stop doing them.
+
+## What to sit with
+
+The AI will never remind you to be a developer. It will never say "should we commit before moving on?" or "this is getting too big for one PR." That's on you. The best practice for working with AI is the same as the best practice for writing code: care about the output.

@@ -1,0 +1,45 @@
+---
+feeling: "What do all these AI terms mean?"
+lastUpdated: "2026-04-14"
+description: "A plain-English glossary of the terms you'll run into when working with AI coding tools."
+status: draft
+tags:
+    - "basics"
+tools: []
+---
+
+## Terms that affect your daily workflow
+
+These are grouped by when you'll actually encounter them.
+
+### When you start a session
+
+**Context window** - Your AI's working memory. Measured in tokens. Everything in a session has to fit inside it: your messages, the AI's responses, project instructions, file contents. When it fills up, the AI starts forgetting earlier parts of the conversation.
+
+**Token** - The smallest piece of text the AI processes. Roughly 3/4 of a word. "Hello" is one token. A 500-line file might be 2,000 tokens. You're always spending tokens, even before you type anything.
+
+**System prompt** - Hidden instructions sent to the model before your first message. Your project instructions file (CLAUDE.md, copilot-instructions.md) becomes part of this. It's why the AI already knows about your project.
+
+### When you're working
+
+**Agent** - An AI that does things, not just suggests things. Reads your files, runs commands, edits code, creates commits. If your tool is making changes to your codebase, it's an agent.
+
+**Model** - The specific AI brain behind your tool. Claude Opus is different from Sonnet is different from GPT-4. Each has different speed, cost, and capability tradeoffs. You can usually switch between them.
+
+**Temperature** - How much the AI improvises. Low = predictable, deterministic. High = creative, varied. Coding tools default to low because you want consistent, correct code.
+
+**Hallucination** - When the AI makes something up with total confidence. A function that doesn't exist. A flag that was never added. This is normal, not a bug. Verify what it tells you.
+
+### When you're configuring tools
+
+**MCP (Model Context Protocol)** - A plug-in standard that connects your AI tool to external services like GitHub, databases, or Slack. Think of it like USB for AI tools. Check what's connected.
+
+**RAG (Retrieval-Augmented Generation)** - When the AI searches real documents before answering, instead of relying on memory alone. Some tools use this to search your codebase or docs.
+
+**Prompt** - Everything that gets sent to the model. Not just your message, but all the context your tool bundles with it. Understanding this helps you understand why responses change depending on what's loaded.
+
+## Exercise
+
+1. Ask your tool: "How many tokens are in this conversation right now?" See if it can tell you.
+2. Ask: "What model are you? What's your context window size?"
+3. Try asking the same question twice. Notice how the answer varies slightly. That's temperature at work.

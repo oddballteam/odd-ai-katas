@@ -2,81 +2,136 @@
 import { getCollection, render } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import { tools, toolGroups, toolThemes } from '../data/tool-content';
+import { kataSequence } from '../data/kata-sequence';
+
+// Priority order for displaying tool tags (lower index = shown first)
+const toolPriority = ['claude-code', 'cowork', 'vscode', 'cursor', 'gemini-cli', 'antigravity', 'codex'];
+function sortTools(toolIds: string[]) {
+  return [...toolIds].sort((a, b) => {
+    const ai = toolPriority.indexOf(a);
+    const bi = toolPriority.indexOf(b);
+    return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+  });
+}
 
 // Fetch all katas and render their MDX content at build time
 const allKatas = await getCollection('katas');
 
-// Filter out deprecated files and sort by order
+// Filter out deprecated files and sort by kata-sequence.ts (unlisted katas go to the end alphabetically)
 const katas = allKatas
   .filter(k => !k.data.description?.startsWith('DEPRECATED'))
-  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
+  .sort((a, b) => {
+    const ai = kataSequence.indexOf(a.id);
+    const bi = kataSequence.indexOf(b.id);
+    return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+  });
 
 // Build a JSON-serializable kata manifest for client JS
+// For drafts, extract version from filename (e.g. glossary-v4 -> v4) and append to title
+function draftFeeling(kata: { id: string; data: { feeling: string; status?: string } }) {
+  if (kata.data.status !== 'draft') return kata.data.feeling;
+  const match = kata.id.match(/-v(\d+)$/);
+  return match ? `${kata.data.feeling} (v${match[1]})` : kata.data.feeling;
+}
 const kataManifest = katas.map((kata, i) => ({
   id: kata.id,
-  feeling: kata.data.feeling,
+  feeling: draftFeeling(kata),
+  takeaway: kata.data.takeaway || '',
   description: kata.data.description,
   related: kata.data.related || [],
   stub: kata.data.stub || false,
+  status: kata.data.status || '',
+  tools: sortTools(kata.data.tools || []),
+  tags: kata.data.tags || [],
+  lastUpdated: kata.data.lastUpdated || '',
   order: i,
 }));
 
-// Build toolSteps from kata frontmatter (co-located with each kata)
-const toolSteps: Record<string, Record<string, Record<string, string>>> = {};
-for (const kata of katas) {
-  if (kata.data.toolSteps) {
-    toolSteps[kata.id] = kata.data.toolSteps;
-  }
-}
+// Collect all unique tags across katas
+const allTags = [...new Set(katas.flatMap(k => k.data.tags || []))].sort();
 
-// Serialize tool groups for client JS
-const toolGroupsData = toolGroups.map(g => ({
-  company: g.company,
-  accent: g.accent,
-  tools: g.tools.map(t => ({ id: t.id, name: t.name })),
-}));
+// Build a flat tool lookup: id -> { name, company, accent }
+const toolLookup = toolGroups.flatMap(g =>
+  g.tools.map(t => ({ id: t.id, name: t.name, company: g.company, accent: g.accent, svg: t.svg }))
+);
+
 ---
 
 <Base title="AI Katas">
   <header class="hero">
-    <h1><span>AI</span> Katas</h1>
+    <h1><a href="#" onclick="window.__hideKata && window.__hideKata(); return false;" style="color: inherit; text-decoration: none;"><span>AI</span> Katas</a></h1>
+    <div class="hero-progress" id="hero-progress">0/{katas.length} completed</div>
     <div class="hero-line"></div>
   </header>
 
-  <!-- Tool picker grouped by company -->
-  <div class="tool-bar">
-    <span class="tool-bar-label">Show for:</span>
-    {toolGroups.map((group, gi) => (
-      <div class="tool-group">
-        <span class="tool-group-label">{group.company}</span>
-        <div class="tool-group-buttons">
-          {group.tools.map((tool, ti) => (
-            <div class={`tool-btn${gi === 0 && ti === 0 ? ' active' : ''}`} data-tool={tool.id}>
-              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" set:html={tool.svg} />
-              <span class="tool-name">{tool.name}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    ))}
+  <!-- Tool filter bar -->
+  <div class="filter-bar">
+    <span class="filter-bar-label">Filter by tool:</span>
+    <div class="filter-pills">
+      <button class="filter-pill active" data-filter="all">All</button>
+      {toolGroups.map(group => (
+        group.tools.map(tool => (
+          <button class="filter-pill" data-filter={tool.id} data-accent={toolThemes[tool.id]?.accent}>
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" set:html={tool.svg} />
+            <span>{tool.name}</span>
+          </button>
+        ))
+      ))}
+    </div>
+  </div>
+
+  <!-- Tag filter bar -->
+  <div class="filter-bar tag-filter-bar">
+    <span class="filter-bar-label">Filter by tag:</span>
+    <div class="filter-pills">
+      <button class="tag-pill active" data-tag-filter="all">All</button>
+      {allTags.map(tag => (
+        <button class="tag-pill" data-tag-filter={tag}>{tag}</button>
+      ))}
+    </div>
   </div>
 
   <!-- Grid view -->
   <main class="main" id="main-grid">
     <div class="section-header">
-      <div class="section-label">What brings you to the dojo?</div>
-      <div class="section-count">{katas.length} katas</div>
+      <div class="section-label">Level up</div>
+      <div class="section-count" id="kata-count">{katas.length} katas</div>
+      <div class="section-controls">
+        <label class="draft-toggle">
+          <input type="checkbox" id="show-drafts" />
+          <span>Show drafts</span>
+        </label>
+        <button class="reset-progress" id="reset-progress">Reset progress</button>
+      </div>
     </div>
     <div class="kata-grid">
       {katas.map((kata, i) => (
         <a
-          class={`kata-card${kata.data.stub ? ' stub' : ''}`}
+          class={`kata-card${kata.data.stub ? ' stub' : ''}${kata.data.status === 'draft' ? ' draft' : ''}`}
           href="#"
           data-kata-id={kata.id}
           data-has-content={!kata.data.stub ? 'true' : 'false'}
+          data-tools={(kata.data.tools || []).join(',')}
+          data-tags={(kata.data.tags || []).join(',')}
+          data-status={kata.data.status || 'done'}
         >
-          <span class="number">{String(i + 1).padStart(2, '0')}</span>
-          <span class="feeling">"{kata.data.feeling}"</span>
+          <div class="card-content">
+            <span class="kata-check" data-check-id={kata.id}></span>
+            <span class="number">{String(i + 1).padStart(2, '0')}</span>
+            <span class="feeling">{draftFeeling(kata)}</span>
+            {kata.data.takeaway && <span class="takeaway">{kata.data.takeaway}</span>}
+          </div>
+          {kata.data.status === 'draft' && <span class="draft-slug">{kata.id}</span>}
+          <div class="card-tags">
+            {sortTools(kata.data.tools || []).map(toolId => {
+              const t = toolLookup.find(tl => tl.id === toolId);
+              return t ? (
+                <span class="tool-tag" data-tool-tag={toolId} style={`--tag-color: ${toolThemes[toolId]?.accent || '#888'}`}>
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" set:html={t.svg} />
+                </span>
+              ) : null;
+            })}
+          </div>
         </a>
       ))}
     </div>
@@ -107,12 +162,13 @@ const toolGroupsData = toolGroups.map(g => ({
     All data here is author-controlled (from tool-content.ts and MDX files),
     serialized at build time. No user input flows into these values.
   -->
-  <script is:inline define:vars={{ kataManifest, toolThemes, toolSteps, toolGroupsData }}>
+  <script is:inline define:vars={{ kataManifest, toolThemes, toolLookup, toolPriority, basePath: import.meta.env.BASE_URL }}>
     window.__KATA_DATA__ = {
       katas: kataManifest,
       toolThemes: toolThemes,
-      toolSteps: toolSteps,
-      toolGroups: toolGroupsData,
+      basePath: basePath,
+      toolLookup: toolLookup,
+      toolPriority: toolPriority,
     };
   </script>
 
@@ -131,9 +187,118 @@ const toolGroupsData = toolGroups.map(g => ({
     var mainEl = document.getElementById('main-grid');
     var detailEl = document.getElementById('kata-detail');
     var bodiesEl = document.getElementById('kata-bodies');
+    var countEl = document.getElementById('kata-count');
 
-    // Track selected tool
-    var activeTool = 'cowork';
+    // Track active filter and active tool (for detail view tool steps)
+    var activeFilter = 'all';
+    var activeTagFilter = 'all';
+    var showDrafts = false;
+    var activeTool = null;
+
+    // ===== Draft toggle =====
+    var draftToggle = document.getElementById('show-drafts');
+    draftToggle.addEventListener('change', function() {
+      showDrafts = draftToggle.checked;
+      filterCards();
+    });
+
+    // ===== Completion tracking =====
+    var STORAGE_KEY = 'ai-katas-completed';
+    function getCompleted() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch(e) { return []; }
+    }
+    function setCompleted(list) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    }
+    function isCompleted(id) {
+      return getCompleted().indexOf(id) !== -1;
+    }
+    function toggleCompleted(id) {
+      var list = getCompleted();
+      var idx = list.indexOf(id);
+      if (idx === -1) { list.push(id); } else { list.splice(idx, 1); }
+      setCompleted(list);
+      updateCompletionUI();
+    }
+    function updateCompletionUI() {
+      var completed = getCompleted();
+      // Update progress counter
+      var progressEl = document.getElementById('hero-progress');
+      if (progressEl) progressEl.textContent = completed.length + '/' + katas.length + ' completed';
+      // Update card checkmarks
+      document.querySelectorAll('.kata-check').forEach(function(el) {
+        var done = completed.indexOf(el.dataset.checkId) !== -1;
+        el.classList.toggle('done', done);
+        el.closest('.kata-card').classList.toggle('completed', done);
+      });
+      // Update detail button if visible
+      var btn = document.getElementById('kata-complete-btn');
+      if (btn) {
+        var done = completed.indexOf(btn.dataset.kataId) !== -1;
+        btn.textContent = done ? 'Completed' : 'Got it';
+        btn.classList.toggle('done', done);
+      }
+    }
+    // Reset progress button
+    document.getElementById('reset-progress').addEventListener('click', function() {
+      if (confirm('Reset all progress?')) {
+        localStorage.removeItem(STORAGE_KEY);
+        updateCompletionUI();
+      }
+    });
+
+    // Init on load
+    updateCompletionUI();
+    filterCards();
+
+    // ===== Filter pills =====
+    var pills = document.querySelectorAll('.filter-pill');
+    pills.forEach(function(pill) {
+      pill.addEventListener('click', function() {
+        pills.forEach(function(p) { p.classList.remove('active'); });
+        pill.classList.add('active');
+        activeFilter = pill.dataset.filter;
+
+        // Apply theme when a specific tool is selected
+        if (activeFilter !== 'all') {
+          activeTool = activeFilter;
+          applyToolTheme(activeFilter);
+        } else {
+          activeTool = null;
+          applyToolTheme('cowork'); // default
+        }
+
+        filterCards();
+      });
+    });
+
+    // ===== Tag filter pills =====
+    var tagPills = document.querySelectorAll('.tag-pill');
+    tagPills.forEach(function(pill) {
+      pill.addEventListener('click', function() {
+        tagPills.forEach(function(p) { p.classList.remove('active'); });
+        pill.classList.add('active');
+        activeTagFilter = pill.dataset.tagFilter;
+        filterCards();
+      });
+    });
+
+    function filterCards() {
+      var cards = document.querySelectorAll('.kata-card');
+      var visible = 0;
+      cards.forEach(function(card) {
+        var cardTools = (card.dataset.tools || '').split(',');
+        var cardTags = (card.dataset.tags || '').split(',');
+        var isDraft = card.dataset.status === 'draft';
+        var toolMatch = activeFilter === 'all' || cardTools.indexOf(activeFilter) !== -1;
+        var tagMatch = activeTagFilter === 'all' || cardTags.indexOf(activeTagFilter) !== -1;
+        var draftMatch = !isDraft || showDrafts;
+        var show = toolMatch && tagMatch && draftMatch;
+        card.style.display = show ? '' : 'none';
+        if (show) visible++;
+      });
+      countEl.textContent = visible + ' kata' + (visible !== 1 ? 's' : '');
+    }
 
     // ===== Card click handlers =====
     document.querySelectorAll('.kata-card').forEach(function(card) {
@@ -145,35 +310,6 @@ const toolGroupsData = toolGroups.map(g => ({
       });
     });
 
-    function populateToolSteps(kataId) {
-      var steps = data.toolSteps[kataId];
-      if (!steps) return;
-
-      document.querySelectorAll('.tool-step[data-step]').forEach(function(el) {
-        var stepId = el.dataset.step;
-        var stepData = steps[stepId];
-        if (!stepData) return;
-
-        // Build DOM with all tool variants, only active one visible.
-        // Content is from build-time tool-content.ts (author-controlled).
-        var container = document.createElement('div');
-        container.className = 'tool-step-container';
-
-        Object.keys(stepData).forEach(function(toolId) {
-          var panel = document.createElement('div');
-          panel.className = 'tool-step-panel' + (toolId === activeTool ? ' active' : '');
-          panel.dataset.toolStep = toolId;
-          // toolSteps content is author-controlled static data from tool-content.ts,
-          // embedded at build time. No user input flows into this.
-          panel.innerHTML = stepData[toolId];
-          container.appendChild(panel);
-        });
-
-        el.textContent = '';
-        el.appendChild(container);
-      });
-    }
-
     function showKata(id) {
       var kata = kataMap[id];
       if (!kata) return;
@@ -182,6 +318,21 @@ const toolGroupsData = toolGroups.map(g => ({
       // Get pre-rendered body (build-time MDX content)
       var bodyEl = bodiesEl.querySelector('[data-kata-body="' + id + '"]');
       var bodyHTML = bodyEl ? bodyEl.innerHTML : '';
+
+      // Tool tags for this kata
+      var toolTagsHTML = '';
+      if (kata.tools && kata.tools.length) {
+        var tags = kata.tools.map(function(toolId) {
+          var toolInfo = data.toolLookup.find(function(t) { return t.id === toolId; });
+          if (!toolInfo) return '';
+          var theme = data.toolThemes[toolId];
+          var color = theme ? theme.accent : '#888';
+          return '<span class="detail-tool-tag" style="--tag-color: ' + color + '">' +
+            '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">' + toolInfo.svg + '</svg>' +
+            toolInfo.name + '</span>';
+        }).join('');
+        toolTagsHTML = '<div class="detail-tool-tags">' + tags + '</div>';
+      }
 
       // Related katas
       var relatedHTML = '';
@@ -205,18 +356,73 @@ const toolGroupsData = toolGroups.map(g => ({
       // - kata manifest (from MDX frontmatter)
       // - bodyHTML (pre-rendered MDX)
       // - relatedHTML (built from kata manifest ids/feelings)
+      // All content below is author-controlled static data from build-time sources
+      // (MDX frontmatter, pre-rendered MDX bodies, tool-content.ts). No user input.
+      var completedClass = isCompleted(id) ? ' done' : '';
+      var completedText = isCompleted(id) ? 'Completed' : 'Got it';
       detailEl.innerHTML =
-        '<button class="kata-back" onclick="window.__hideKata()">&#8592; Back to all katas</button>' +
+        '<button class="kata-back" onclick="window.__hideKata()"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2L4 8l6 6"/></svg> Back to all katas</button>' +
         '<div class="kata-number">KATA ' + num + '</div>' +
-        '<div class="feeling-title">"' + kata.feeling + '"</div>' +
+        '<div class="feeling-title">' + kata.feeling + (kata.status === 'draft' ? ' <span class="draft-badge">DRAFT</span>' : '') + '</div>' +
+        '<div class="kata-description">' + kata.description + '</div>' +
+        (kata.lastUpdated ? '<div class="kata-last-updated">Last updated ' + kata.lastUpdated + '</div>' : '') +
+        toolTagsHTML +
         '<div class="kata-body">' + bodyHTML + '</div>' +
+        '<button class="kata-complete-btn' + completedClass + '" id="kata-complete-btn" data-kata-id="' + id + '">' + completedText + '</button>' +
         relatedHTML;
 
-      // Populate tool-step placeholders with active tool content
-      populateToolSteps(id);
+      // Wire up completion button
+      document.getElementById('kata-complete-btn').addEventListener('click', function() {
+        toggleCompleted(id);
+        if (isCompleted(id)) {
+          setTimeout(function() { hideKata(); }, 800);
+        }
+      });
+
+      // Style prompt blocks and add copy buttons
+      detailEl.querySelectorAll('pre[data-language="plaintext"]').forEach(function(pre) {
+        pre.classList.add('prompt-block');
+        var btn = document.createElement('button');
+        btn.className = 'prompt-copy';
+        btn.textContent = 'Copy';
+        btn.addEventListener('click', function() {
+          var text = pre.querySelector('code').textContent;
+          navigator.clipboard.writeText(text).then(function() {
+            btn.textContent = 'Copied';
+            setTimeout(function() { btn.textContent = 'Copy'; }, 1500);
+          });
+        });
+        pre.appendChild(btn);
+      });
+
+      // Add copy button to tables
+      detailEl.querySelectorAll('table').forEach(function(table) {
+        var wrapper = document.createElement('div');
+        wrapper.className = 'table-copy-wrapper';
+        table.parentNode.insertBefore(wrapper, table);
+        wrapper.appendChild(table);
+        var btn = document.createElement('button');
+        btn.className = 'table-copy';
+        btn.textContent = 'Copy';
+        btn.addEventListener('click', function() {
+          var rows = table.querySelectorAll('tbody tr');
+          var text = Array.from(rows).map(function(row) {
+            var cells = row.querySelectorAll('td');
+            return cells[0].textContent.trim() + ': ' + cells[1].textContent.trim();
+          }).join('\n');
+          navigator.clipboard.writeText(text).then(function() {
+            btn.textContent = 'Copied';
+            setTimeout(function() { btn.textContent = 'Copy'; }, 1500);
+          });
+        });
+        wrapper.appendChild(btn);
+      });
 
       mainEl.classList.add('hidden');
       detailEl.classList.add('visible');
+      document.querySelectorAll('.filter-bar').forEach(function(el) { el.style.display = 'none'; });
+      document.querySelector('.hero').style.display = 'none';
+      document.querySelector('.oddball-banner').style.display = 'none';
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
       // Update URL without reload
@@ -226,6 +432,9 @@ const toolGroupsData = toolGroups.map(g => ({
     function hideKata() {
       detailEl.classList.remove('visible');
       mainEl.classList.remove('hidden');
+      document.querySelectorAll('.filter-bar').forEach(function(el) { el.style.display = ''; });
+      document.querySelector('.hero').style.display = '';
+      document.querySelector('.oddball-banner').style.display = '';
       detailEl.textContent = '';
       history.pushState({}, '', window.location.pathname);
     }
@@ -251,7 +460,7 @@ const toolGroupsData = toolGroups.map(g => ({
       }
     }
 
-    // ===== Tool picker =====
+    // ===== Tool theme =====
     var toolThemes = data.toolThemes;
 
     function applyToolTheme(toolId) {
@@ -263,26 +472,6 @@ const toolGroupsData = toolGroups.map(g => ({
       r.style.setProperty('--accent-glow', theme.glow);
       if (window._setDotColor) window._setDotColor(theme.accent);
     }
-
-    function switchToolPanels(toolId) {
-      document.querySelectorAll('.tool-step-panel').forEach(function(p) {
-        if (p.dataset.toolStep === toolId) {
-          p.classList.add('active');
-        } else {
-          p.classList.remove('active');
-        }
-      });
-    }
-
-    document.querySelectorAll('.tool-btn').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        document.querySelectorAll('.tool-btn').forEach(function(b) { b.classList.remove('active'); });
-        btn.classList.add('active');
-        activeTool = btn.dataset.tool;
-        applyToolTheme(activeTool);
-        switchToolPanels(activeTool);
-      });
-    });
 
     // Apply initial theme
     applyToolTheme('cowork');

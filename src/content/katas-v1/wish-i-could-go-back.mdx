@@ -1,0 +1,62 @@
+---
+feeling: "I wish I could go back to when it was working"
+takeaway: "conversation undo, branching, session resume"
+status: review
+description: "The AI was on the right track 10 minutes ago. You pushed it a different direction and now everything is worse. You can undo code -- can you undo a conversation?"
+related:
+    - "quality-drops"
+tools:
+    - "claude-code"
+    - "codex"
+    - "gemini-cli"
+    - "vscode"
+    - "cursor"
+---
+
+## What's happening
+
+You were making progress, then you asked it to try a different approach. Now the code is worse and the AI is heading the wrong direction. You can `git checkout` the code, but the conversation has moved on.
+
+## The kata
+
+### Rewind
+
+Roll back to before the last exchange -- both the messages and the code changes.
+
+```prompt
+/rewind
+```
+
+Keep rewinding to go further back. Try it right now, even if things are fine. Better to know how it works before you need it.
+
+### Branch before you experiment
+
+Next time you're about to say "actually, let's try a different approach" -- save your spot first.
+
+```prompt
+/branch before-refactor
+```
+
+If the new direction doesn't work, you can come back to where things were good. You wouldn't refactor code without a git branch. Same idea here.
+
+### Resume tomorrow
+
+Closed your terminal? Your session isn't gone.
+
+```prompt
+/resume
+```
+
+Pick a recent session and you're back where you left off. You don't have to finish everything in one sitting.
+
+### Use them together
+
+1. Working on a feature -- hit a decision point -- `/branch`
+2. Try approach A -- doesn't work -- `/rewind` to the branch
+3. Try approach B -- works -- keep going
+4. End of day -- close the terminal
+5. Tomorrow -- `/resume`
+
+## What to sit with
+
+The conversation is part of your work. It has state worth preserving. Treat it like source control, not a chat window.

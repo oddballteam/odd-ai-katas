@@ -1,0 +1,163 @@
+---
+feeling: "I don't know what slash commands are available"
+takeaway: "slash commands, session control, configuration"
+status: review
+description: "Your CLI tool has dozens of built-in commands you've never seen. This kata walks you through the ones worth knowing."
+related: []
+tools:
+    - "claude-code"
+    - "codex"
+    - "gemini-cli"
+---
+
+## The basics
+
+Every CLI coding tool has slash commands — shortcuts you type mid-conversation to control the session itself, not the code. Type `/` and pause. You'll see the full list. Start typing to filter.
+
+Here's every built-in command worth knowing, organized by what you're trying to do.
+
+## Session control
+
+| What you want | Claude Code | Codex CLI | Gemini CLI | Copilot CLI |
+|---|---|---|---|---|
+| Start fresh | `/clear` | `/clear` | `/clear` | `/clear` |
+| Exit | `/exit` | `/exit` | `/quit` | `/exit` |
+| Resume old session | `/resume` | `/resume` | `/chat` | — |
+| Fork/branch conversation | `/branch` | `/fork` | — | — |
+| Rewind to earlier point | `/rewind` | — | `/rewind` | `/undo` |
+| Export conversation | `/export` | — | — | `/share` |
+| Copy last response | `/copy` | `/copy` | `/copy` | `/copy` |
+| Change working directory | `/add-dir` | — | `/directory` | `/cwd` |
+
+## Model & performance
+
+| What you want | Claude Code | Codex CLI | Gemini CLI | Copilot CLI |
+|---|---|---|---|---|
+| Switch model | `/model` | `/model` | `/model` | `/model` |
+| Toggle fast mode | `/fast` | `/fast` | — | — |
+| How long should the model think | `/effort` | — | — | — |
+| Compact/summarize context | `/compact` | `/compact` | `/compress` | `/compact` |
+| Check context usage | `/context` | `/status` | `/stats` | `/session` |
+| See token costs | `/cost` | `/status` | `/stats` | `/usage` |
+
+## Permissions & safety
+
+| What you want | Claude Code | Codex CLI | Gemini CLI | Copilot CLI |
+|---|---|---|---|---|
+| Manage permissions | `/permissions` | `/permissions` | `/permissions` | `/reset-allowed-tools` |
+| Toggle sandbox | `/sandbox` | — | — | — |
+| Review security of changes | `/security-review` | `/review` | — | — |
+| View diff of changes | `/diff` | `/diff` | — | `/diff` |
+
+## Tools & integrations
+
+| What you want | Claude Code | Codex CLI | Gemini CLI | Copilot CLI |
+|---|---|---|---|---|
+| Manage MCP servers | `/mcp` | `/mcp` | `/mcp` | `/mcp` |
+| List available tools | `/skills` | `/apps` | `/tools` | — |
+| Manage extensions/plugins | `/plugin` | `/experimental` | `/extensions` | `/plugin` |
+| Manage subagents | `/agents` | `/agent` | `/agents` | `/agent` |
+| Delegate to background agent | — | — | — | `/delegate` |
+| IDE integration | `/ide` | — | `/ide` | — |
+| Chrome/browser control | `/chrome` | — | — | — |
+
+## Project setup
+
+| What you want | Claude Code | Codex CLI | Gemini CLI | Copilot CLI |
+|---|---|---|---|---|
+| Init project config | `/init` | `/init` | `/init` | — |
+| Edit memory/context files | `/memory` | — | `/memory` | — |
+| Manage hooks | `/hooks` | — | `/hooks` | — |
+| Add working directory | `/add-dir` | — | `/directory` | `/add-dir` |
+| Manage custom commands | `/skills` | — | `/commands` | — |
+| List allowed directories | — | — | — | `/list-dirs` |
+
+## Account & config
+
+| What you want | Claude Code | Codex CLI | Gemini CLI | Copilot CLI |
+|---|---|---|---|---|
+| Open settings | `/config` | `/debug-config` | `/settings` | — |
+| Log in/out | `/login` `/logout` | `/logout` | `/auth` | `/login` `/logout` |
+| Switch accounts | — | — | — | `/user` |
+| Check install health | `/doctor` | — | — | — |
+| File a bug | `/feedback` | `/feedback` | `/bug` | `/feedback` |
+| Check usage/limits | `/usage` | `/status` | `/stats` | `/usage` |
+| Change theme | `/theme` | — | `/theme` | `/theme` |
+| Toggle vim mode | `/vim` | — | `/vim` | — |
+| Configure statusline | `/statusline` | `/statusline` | — | — |
+| Enter plan mode | `/plan` | `/plan` | `/plan` | — |
+| Terminal keybinding setup | `/terminal-setup` | — | `/terminal-setup` | `/terminal-setup` |
+
+## Unique commands by tool
+
+### Claude Code
+
+- `/btw` — Side question without polluting context
+- `/pr-comments` — Pull GitHub PR comments into context
+- `/voice` — Push-to-talk voice dictation
+- `/remote-control` — Let claude.ai control this terminal session
+- `/schedule` — Create recurring cloud tasks
+- `/install-github-app` — Set up Claude GitHub Actions
+- `/color` — Set prompt bar color
+- `/security-review` — Scan branch changes for vulnerabilities
+- `/stickers` — Order Claude Code stickers
+
+### Gemini CLI
+
+- `/restore` — Revert files to state before a tool ran
+- `/checkpoint` — Save conversation state to branch from later
+- `/shells` — Toggle background shell process view
+- `/setup-github` — Set up GitHub Actions for issue triage & PR review
+- `/policies` — View active policies grouped by mode
+- `/privacy` — View and consent to privacy notice
+- `/about` — Show version info for bug reports
+
+### Copilot CLI
+
+- `/delegate` — Hand off a task to a background agent that opens a PR
+- `/share` — Export session to Markdown or GitHub Gist
+- `/user` — Switch between GitHub accounts
+- `/list-dirs` — Show which directories the tool can access
+- `/chronicle` — Generate standup reports and tips from session history
+
+### Codex CLI
+
+- `/apps` — Browse and insert available connectors
+- `/personality` — Set communication style (friendly, pragmatic, none)
+- `/ps` — Show background terminals and recent output
+
+## The kata
+
+### Step 1: Discover what you have
+
+Type `/` in your tool and scroll through. Count how many commands you didn't know existed.
+
+### Step 2: Check your context
+
+Run the context/stats command for your tool. How much of your context window is used? Is it more than you expected?
+
+```prompt
+/compact
+```
+
+Now check again. How much did it free up?
+
+### Step 3: Try the dangerous-sounding ones
+
+Commands like `/rewind`, `/sandbox`, and `/permissions` sound scary but they're the ones that give you control. Try each one — they all ask for confirmation before doing anything destructive.
+
+### Step 4: Build muscle memory
+
+Pick three commands you'll actually use. Use them for the rest of the week instead of typing out full requests.
+
+Good starter set:
+- **Context management:** `/compact` (or `/compress`)
+- **Quick reference:** `/copy`
+- **Safety check:** `/diff` or `/permissions`
+
+## What to sit with
+
+- How many commands did you not know about?
+- Which ones change how you'd use the tool day-to-day?
+- Are you managing context, or just hoping it doesn't run out?
+- Do you know what permissions your tool currently has?

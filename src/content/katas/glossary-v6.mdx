@@ -1,0 +1,29 @@
+---
+feeling: "Glossary"
+lastUpdated: "2026-04-14"
+description: "Quick reference for the AI terms you'll actually encounter in your coding tools."
+status: draft
+tags:
+    - "basics"
+tools: []
+---
+
+| Term | What you need to know |
+|------|----------------------|
+| **Token** | How AI measures text. ~3/4 of a word. You're spending tokens every time you send a message or the AI reads a file. |
+| **Context window** | The AI's memory limit for one session. Everything has to fit: your messages, its responses, files, instructions. When full, old stuff gets dropped. |
+| **Model** | The AI behind your tool (Opus, Sonnet, GPT-4). You can usually switch. Faster models are cheaper but less capable. |
+| **Prompt** | Everything sent to the model. Not just your message, but system instructions, files, and history bundled together. |
+| **System prompt** | Hidden instructions your tool sends before you type anything. Your CLAUDE.md or copilot-instructions.md lives here. |
+| **Agent** | AI that takes actions: reads files, runs tests, edits code, creates commits. Most AI coding tools are agents. |
+| **MCP** | Model Context Protocol. Plug-in system connecting your AI to external services (GitHub, Slack, databases). Like USB-C for AI tools. |
+| **Memory** | What your tool remembers between sessions. Your preferences, project context, past corrections. |
+| **Temperature** | Randomness dial. Low = deterministic, predictable code. High = creative, varied output. Coding tools keep it low. |
+| **Hallucination** | AI confidently stating something false. A function that doesn't exist, a wrong API signature. Normal. Always verify. |
+| **RAG** | Retrieval-Augmented Generation. AI searches real documents before answering instead of guessing from training data. |
+| **Context engineering** | The practice of controlling what the AI sees so it gives better results. The real skill in using AI tools well. |
+
+## Exercise
+
+1. Ask your tool: "What model are you? What's your context window? How much have we used?"
+2. Ask: "Explain these to me like I'm a developer, not a data scientist: token, prompt, agent, hallucination."

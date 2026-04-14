@@ -1,0 +1,70 @@
+---
+feeling: "I have to keep feeding it information to debug"
+takeaway: "test-fix loops, persistent instructions"
+status: review
+description: "You hit a bug, you run the thing, you paste the error, the AI suggests a fix, you try it, paste the new error. Stop being the middleman. Teach it how to look for itself."
+related:
+    - "give-it-eyes"
+tools:
+    - "claude-code"
+    - "codex"
+    - "gemini-cli"
+    - "vscode"
+    - "cursor"
+---
+
+## What's happening
+
+You hit a bug. You run the tests, copy the error, paste it into the chat. The AI suggests a fix. You apply it, run the tests again, copy the new error, paste it back. You're the middleman -- running back and forth between your terminal and the AI, doing all the looking while the AI just reacts to what you bring it.
+
+Every AI coding tool can run commands and read the output. It can run your tests, see what failed, fix the code, and run them again -- without you copying anything. But it doesn't know how unless you tell it.
+
+Stop giving it a fish. Teach it how to fish.
+
+## The kata
+
+### Step 1: Let it run the tests
+
+Next time you hit a failing test, don't paste the error. Try this:
+
+```prompt
+Run the tests for this file and fix whatever fails. Keep running them until they pass.
+```
+
+That's it. The AI runs the test command, reads the error output, edits the code, runs the tests again. You watch instead of being the go-between.
+
+If the AI doesn't know how to run your tests, tell it once:
+
+```prompt
+The test command for this project is `yarn test:unit src/applications/my-app/**/*.unit.spec.js`. Run it, see what fails, and fix it.
+```
+
+### Step 2: Make it permanent
+
+You just told the AI how to run your tests. Next session, you'll have to tell it again -- unless you write it down.
+
+Add your test commands, common errors, and debugging steps to your project's instruction file. That way every session starts with the AI already knowing how to verify its own work.
+
+```prompt
+Add a "Testing" section to CLAUDE.md that documents how to run unit tests, how to run a specific test file, and how to run tests for a single app.
+```
+
+This is the real shift. You're not just teaching it to debug this one bug. You're teaching it to debug every bug in this project, forever.
+
+### Step 3: What about visual bugs?
+
+Tests cover logic, but some bugs are visual -- the AI can't see what your app looks like from test output alone. That's a whole separate skill. See the **"It can't see what I'm seeing"** kata for how to give your AI tool actual eyes on a running app.
+
+### Step 4: Stop being the messenger
+
+From now on, every time you're about to paste something into the chat -- an error message, a screenshot, an API response -- pause and ask: could I just tell it how to go get this itself?
+
+- Instead of pasting a build error: `Run the build and fix what breaks.`
+- Instead of describing a 500 response: `Curl the /api/users endpoint and look at what comes back.`
+- Instead of pasting a stack trace: `Read the error log at /tmp/app.log and tell me what happened.`
+
+The first time takes longer. But now it knows how, and you're out of the loop.
+
+## What to sit with
+
+The AI can do more than wait for you to bring it information. But it only knows what you teach it. The less you paste, the more it learns to look for itself -- and the less you become the bottleneck.

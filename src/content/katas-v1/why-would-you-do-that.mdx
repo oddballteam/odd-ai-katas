@@ -1,0 +1,76 @@
+---
+feeling: "Why would you do it like that?"
+takeaway: "instruction files, clearing context"
+status: review
+description: "The AI made a choice that makes you wince. That reaction is a signal -- something is either missing from your instructions or there's too much noise in the conversation."
+related:
+    - "quality-drops"
+tools:
+    - "claude-code"
+    - "codex"
+    - "gemini-cli"
+    - "vscode"
+    - "cursor"
+---
+
+## What's happening
+
+You look at what the AI just did and something is wrong. Not a bug -- it works. But no experienced developer on your team would do it that way. It picked the wrong pattern, used the wrong abstraction, ignored a convention, or just made a choice that feels off.
+
+That reaction is useful. Don't just fix it and move on. It's telling you one of two things:
+
+**The AI doesn't know enough.** Your project instructions are missing something that you take for granted. A convention, a preference, a pattern. You know it because you've worked here. The AI doesn't because nobody wrote it down.
+
+**The AI knows too much.** The conversation has been going for a while. Old errors, dead ends, abandoned approaches -- it's all still in the context. The AI is making bad decisions because it's confused, not because it's uninformed.
+
+## The kata
+
+### Figure out which one
+
+Ask yourself: is this early in the session or deep into one?
+
+**If it's early,** the AI is probably missing context. Try this:
+
+```prompt
+Why did you do it that way? What pattern were you following?
+```
+
+Listen to the answer. If it says "I chose this approach because..." and the reasoning is based on nothing in your codebase, that's a missing instruction.
+
+Now write it down so it doesn't happen again:
+
+```prompt
+Add a note to CLAUDE.md that in this project, we always [the thing it should have known].
+```
+
+Some things worth putting in your instructions:
+- Which patterns to follow (and where to find examples)
+- Which libraries/approaches to prefer or avoid
+- How your team structures components, tests, files
+- Anything you've corrected the AI on more than once
+
+**If it's deep into a session,** the context is probably the problem. The AI has been accumulating conversation history -- your prompts, its responses, errors, fixes, more errors. All of that is still in its working memory, competing for attention.
+
+Try clearing the noise:
+
+```prompt
+/clear
+```
+
+Or check what's in context and trim it:
+
+```prompt
+/context
+```
+
+Or start a fresh session with your instructions intact:
+
+```prompt
+/init
+```
+
+After clearing, re-state what you're working on in one sentence and try again. If the quality jumps back up, the context was the problem.
+
+## What to sit with
+
+Every wince is a feedback loop. Early in a session, it means your instructions have a gap. Deep in a session, it means the context needs a reset. Either way, the fix takes 30 seconds and saves you from the same frustration next time.

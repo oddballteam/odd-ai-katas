@@ -1,0 +1,60 @@
+---
+feeling: "I don't know what to tell it"
+takeaway: "let it interview you, ask-first prompts"
+status: review
+description: "You don't need to write the perfect prompt. Just tell it what you need and let it ask you the right questions."
+related:
+    - "make-it-know-what-a-teammate-knows"
+    - "how-do-i-know-the-code-is"
+    - "stopped-thinking-like-a-developer"
+tools:
+    - "claude-code"
+    - "codex"
+    - "gemini-cli"
+    - "vscode"
+    - "cursor"
+---
+
+## What's happening
+
+You have a task. You know what you need. But you're staring at the prompt box trying to figure out how to explain it -- what context to include, what to leave out, how specific to be. You either write too little and get a bad result, or write a wall of text trying to cover everything.
+
+You don't need to figure out what the AI needs to know. The AI can figure that out.
+
+## The kata
+
+### Let it interview you
+
+Next time you start a task, try this:
+
+```prompt
+I need to add form validation to the profile page. Before you start, ask me anything you need to know.
+```
+
+The AI will ask about your tech stack, existing patterns, specific requirements, edge cases -- things you might not have thought to mention. Answer the questions, and now it has better context than any prompt you would have written.
+
+### Make it a habit
+
+This works for anything:
+
+```prompt
+I need to fix a bug where the submit button doesn't work after the first click. Ask me questions before you start investigating.
+```
+
+```prompt
+I want to refactor how we handle API errors. Interview me about how it works today before proposing anything.
+```
+
+```prompt
+I need to write tests for the auth flow. What do you need to know before you start?
+```
+
+### Why this works
+
+You know things about your project that you don't know you know. The AI's questions surface that implicit knowledge. "What happens when the session expires?" -- you know the answer, but you wouldn't have thought to include it in your prompt.
+
+It also prevents the AI from making assumptions. Without questions, it guesses. With questions, it knows.
+
+## What to sit with
+
+The best prompt isn't the most detailed one. It's the one that starts a conversation. You don't need to be good at prompting. You just need to let the AI be good at asking.

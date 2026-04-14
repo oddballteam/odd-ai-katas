@@ -1,0 +1,87 @@
+---
+feeling: "It can't see what I'm seeing"
+takeaway: "browser tools, E2E tests as eyes, screenshots"
+status: review
+description: "The AI fixed the logic but the page looks broken. It can't see your app unless you give it a way to look. Here's how to give it eyes."
+related:
+    - "stop-explaining-let-it-look"
+tools:
+    - "claude-code"
+    - "codex"
+    - "gemini-cli"
+    - "vscode"
+    - "cursor"
+toolSteps:
+    browser:
+        claude-code: '<strong>Claude Code</strong><p>Run <code>claude --chrome</code> to connect to your Chrome browser. Claude can open tabs, navigate, click, read console errors, and take screenshots in your actual browser session -- including pages that need login.</p>'
+        vscode: '<strong>VS Code (Copilot)</strong><p>Enable browser tools in the chat tools picker. The agent can open pages, navigate, click elements, take screenshots, and run Playwright code. Use "Share with Agent" to give it access to a page you already have open with your cookies.</p>'
+        codex: '<strong>Codex CLI</strong><p>No native browser. Add a Playwright MCP server: <code>codex mcp add playwright npx @anthropic-ai/mcp-server-playwright</code></p>'
+        gemini-cli: '<strong>Gemini CLI</strong><p>No native browser. Add a Playwright MCP server: <code>gemini mcp add playwright -- npx @anthropic-ai/mcp-server-playwright</code></p>'
+        cursor: '<strong>Cursor</strong><p>No native browser. Add a Playwright MCP server in Cursor Settings > MCP, or use <code>browser-tools-mcp</code> with the companion Chrome extension for console logs and screenshots.</p>'
+---
+
+## What's happening
+
+The AI fixed a bug and the tests pass. You open the page and something looks wrong -- a component is missing, the layout is broken, a button does nothing. You describe the problem in the chat. The AI guesses at a fix. You check again. Still wrong. You describe it differently. Back and forth.
+
+The AI has no idea what your app looks like. It's working blind. You're its eyes, and you're a bottleneck.
+
+Every AI coding tool can be given some form of sight -- a way to look at your running app, take screenshots, click around, read console errors. The options range from native browser integration to MCP servers to just using your existing E2E tests. Not all of them are equal, but all of them are better than you describing things in chat.
+
+## The kata
+
+### Step 1: Connect it to a browser
+
+<div class="tool-step" data-step="browser"></div>
+
+### Step 2: Let it look
+
+Start your dev server, then point the AI at a page:
+
+```prompt
+Open http://localhost:3001/my-page. Does the form render correctly? Check the console for any errors.
+```
+
+Watch what it does. It should navigate to the page, look at what's there, and report back. If something is wrong, it can fix the code and check again -- the same run-fix-verify loop as tests, but visual.
+
+```prompt
+The submit button should show a loading spinner when clicked. Click it and tell me what actually happens.
+```
+
+```prompt
+Take a screenshot of the dashboard page. Does anything look off?
+```
+
+### Step 3: Use E2E tests as eyes
+
+If browser integration isn't practical for your setup, your existing E2E tests already know how to look at your app. Cypress and Playwright tests navigate pages, interact with elements, and assert what's visible. The AI can run them, read the failures, and fix the code.
+
+```prompt
+Run the Cypress tests for the login page and fix whatever fails.
+```
+
+You can also ask the AI to write a quick visual check when you don't have an existing test:
+
+```prompt
+Write a Cypress test that loads /my-page, checks that the header says "Dashboard", and that the table has at least one row. Run it.
+```
+
+Now the AI has written its own eyes. It can run that test any time it needs to verify what the page looks like.
+
+### Step 4: Screenshots for tricky visual issues
+
+Sometimes you need to see exactly what the AI sees. Screenshots make the debugging loop concrete -- you're both looking at the same thing.
+
+```prompt
+Take a screenshot of http://localhost:3001/my-page and show me.
+```
+
+If your tool supports it, this is also useful for before/after comparisons:
+
+```prompt
+Take a screenshot of the form page. Then fix the alignment on the submit button. Take another screenshot so I can compare.
+```
+
+## What to sit with
+
+The AI doesn't need to see everything. But for visual bugs, describing the problem in words is slow and lossy. The more ways your AI tool can look at the running app, the less time you spend being a translator between what you see and what it understands.

@@ -1,0 +1,52 @@
+---
+feeling: "What do all these AI terms mean?"
+lastUpdated: "2026-04-14"
+description: "A plain-English glossary of the terms you'll run into when working with AI coding tools."
+status: draft
+tags:
+    - "basics"
+tools:
+    - "claude-code"
+---
+
+## The terms that actually matter
+
+You'll see a lot of AI jargon. Most of it doesn't matter for day-to-day coding. Here's what does, explained through things you can see in your tool right now.
+
+### Tokens and context
+
+Everything your AI tool processes is measured in **tokens**. One token is roughly 3/4 of a word. A typical source file is 500-2,000 tokens.
+
+Your tool has a **context window**, a hard limit on how many tokens it can hold at once. This includes everything: your messages, the AI's responses, files it reads, project instructions, and memory. When the window fills up, your tool starts compressing or dropping older content.
+
+In **Claude Code**, type `/context` to see exactly how your tokens are being spent.
+
+{/* TODO: screenshot of /context showing token breakdown */}
+
+This is why long sessions get worse over time. The AI isn't getting tired, it's losing context.
+
+### Models
+
+A **model** is the specific AI behind your tool. You can usually switch between them:
+
+- Faster, cheaper models (Sonnet, Haiku, GPT-4o-mini) for simple tasks
+- Slower, smarter models (Opus, GPT-4, Gemini Ultra) for complex reasoning
+
+The model you pick changes speed, cost, and quality. Experiment.
+
+### Agents and tools
+
+An **agent** is an AI that takes actions. If your tool reads files, runs tests, and edits code without you doing it manually, that's an agent. Most modern AI coding tools are agents.
+
+Agents connect to external services through **MCP (Model Context Protocol)**, a standard plug-in system. An MCP server might give your AI access to GitHub, your database, or Slack. You should know what's connected.
+
+### Things that go wrong
+
+**Hallucination** is when the model states something false with confidence. It might reference a function that doesn't exist or use an API incorrectly. This is normal. Always verify.
+
+**Temperature** controls randomness. Your coding tool keeps it low so code is predictable. But it's never zero for most tools, which is why asking the same question twice gives slightly different answers.
+
+## Exercise
+
+1. Find your tool's context window size. Ask it: "What's your context window, and how much have we used?"
+2. If your tool lets you switch models, try the same prompt with a fast model and a smart model. Notice the difference.

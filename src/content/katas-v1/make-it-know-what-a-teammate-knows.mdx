@@ -1,0 +1,74 @@
+---
+feeling: "How do I make it know what a teammate would know?"
+takeaway: "instruction files, memory, file refs, indexing, external context"
+status: review
+description: "A teammate who's been on the project for 6 months just knows things. The AI starts every session from scratch. Here's how to close that gap."
+related:
+    - "why-would-you-do-that"
+    - "quality-drops"
+    - "stop-explaining-let-it-look"
+tools:
+    - "claude-code"
+    - "codex"
+    - "gemini-cli"
+    - "vscode"
+    - "cursor"
+---
+
+## What's happening
+
+A teammate who's been on your project for 6 months knows your naming conventions, your test patterns, the weird workaround in the auth module, which libraries you prefer, where the bodies are buried. Nobody explains it every time. They just know.
+
+The AI doesn't. Every session starts from zero. So you explain the same things, it makes the same mistakes, and you correct it again. That's not a conversation -- it's onboarding the same new hire every day.
+
+The fix is the same way a real teammate learns: write things down, point them at the right files, and let them build up knowledge over time.
+
+## The kata
+
+### Write down what a new teammate would need to know
+
+Every tool has a project instruction file -- CLAUDE.md, .cursorrules, codex.md, AGENTS.md. This is your AI's onboarding doc. Start small:
+
+```prompt
+Create a CLAUDE.md for this project. Include: what the tech stack is, how to run tests, how to run the dev server, and any conventions a new developer should know.
+```
+
+Don't try to write everything at once. Add to it the same way your team wiki grows -- every time you correct the AI on something, ask yourself: should this be in the instruction file?
+
+### Let it remember across sessions
+
+Some tools have memory that persists between conversations. Use it.
+
+```prompt
+Remember that in this project we always use React Testing Library, never Enzyme.
+```
+
+```prompt
+Remember that form components live in src/components/forms and follow the pattern in FormBase.jsx.
+```
+
+Memory is for the things that aren't worth putting in the instruction file but that you're tired of repeating. Preferences, conventions, team-specific knowledge.
+
+### Point it at context before you start
+
+Don't explain your project -- show it. Reference files directly at the start of a session:
+
+```prompt
+Read src/utils/validation.js and src/components/FormPage.jsx. I want to add a new form that follows the same patterns.
+```
+
+The more it reads before you start, the fewer wrong assumptions it makes. This is the equivalent of telling a new teammate "go read these files first."
+
+### Connect it to external knowledge
+
+Your project knowledge doesn't all live in code. It's in wikis, Confluence pages, design docs, Slack threads. MCP servers can bridge that gap:
+
+```prompt
+Connect to our Confluence space so you can look up our API documentation when you need it.
+```
+
+This is how you go from "it knows my codebase" to "it knows my project." The code is half the picture. The docs, decisions, and context are the other half.
+
+## What to sit with
+
+A teammate gets better over months because they accumulate context. Your AI can too -- but only if you invest in the infrastructure. Every instruction file update, every memory, every connected service is a deposit. The AI won't get to 6-month-teammate on its own. You have to build that up deliberately.
