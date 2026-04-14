@@ -13,6 +13,8 @@ const katas = defineCollection({
     lastUpdated: z.string().optional(),
     status: z.enum(['draft', 'review', 'done']).optional(),
     tools: z.array(z.string()).optional(),
+    variant: z.string().optional(),
+    variantOf: z.string().optional(),
   }),
 });
 

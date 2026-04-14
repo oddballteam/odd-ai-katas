@@ -1,0 +1,42 @@
+---
+feeling: "What does tool already know before you talk?"
+lastUpdated: "2026-04-14"
+description: "Before you grunt, magic box already have stuff in head. Here where it come from."
+status: done
+variant: caveman
+variantOf: what-does-it-already-know
+tags:
+    - "basics"
+    - "context"
+tools:
+    - "claude-code"
+    - "vscode"
+---
+
+## Magic box not empty
+
+You open tool. You say nothing. But magic box ALREADY KNOW THINGS. It eat 20-30 thousand tiny word-pieces before you even grunt.
+
+How? Magic box eat these things:
+
+- **Cave rules file** in your code cave (`CLAUDE.md`, `.github/copilot-instructions.md`). This tell magic box "how we do things in THIS cave."
+- **Connected magic pipes** (MCP). Other tools magic box can reach. Maybe it grab things from GitHub cave or Slack cave. You not know unless you look.
+- **Old memories**. Magic box remember things from LAST TIME. What you like, what make you angry, what you told it about your code cave.
+- **Your personal cave markings** stored outside code cave (like `~/.claude/`). Follow you everywhere, every cave.
+
+Most tool have way to see what already inside. Find yours.
+
+In **Claude Code**, type `/context`. See everything magic box already eating.
+
+![Claude Code /context output showing token breakdown](/ai-katas/images/katas/what-does-it-already-know/claude-code-see-context.png)
+
+In **VS Code Copilot**, hover little circle at bottom right. It show how full magic box belly is.
+
+![VS Code Copilot context window showing token usage](/ai-katas/images/katas/what-does-it-already-know/vscode-see-context.png)
+
+## Exercise
+
+1. Open tool. Find where it show what already inside. Not know how? Grunt at it: "How me see what you already know?"
+2. Try these:
+    - "Without peeking at code, what you know about this place?"
+    - "Without snooping around, what you know about ME?"

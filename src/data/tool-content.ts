@@ -62,13 +62,14 @@ export const toolGroups: ToolGroup[] = [
 /** Flat list of all tools (for convenience) */
 export const tools: Tool[] = toolGroups.flatMap(g => g.tools);
 
-/** Tool theme colors - brand color drives the page accent when selected */
+/** Tool theme colors - all oddball green */
+const oddball = { accent: '#00A187', cyan: '#33c4ad', glow: 'rgba(0,161,135,0.12)' };
 export const toolThemes: Record<string, { accent: string; cyan: string; glow: string }> = {
-  'cowork':       { accent: '#D97757', cyan: '#f0a882', glow: 'rgba(217,119,87,0.12)' },
-  'claude-code':  { accent: '#D97757', cyan: '#f0a882', glow: 'rgba(217,119,87,0.12)' },
-  'codex':        { accent: '#10A37F', cyan: '#5ee8c5', glow: 'rgba(16,163,127,0.12)' },
-  'gemini-cli':   { accent: '#8E75B2', cyan: '#c4a8f0', glow: 'rgba(142,117,178,0.12)' },
-  'antigravity':  { accent: '#34A853', cyan: '#7be89a', glow: 'rgba(52,168,83,0.12)' },
-  'vscode':       { accent: '#007ACC', cyan: '#5ec4ff', glow: 'rgba(0,122,204,0.12)' },
-  'cursor':       { accent: '#888888', cyan: '#bbbbbb', glow: 'rgba(136,136,136,0.12)' },
+  'cowork':       oddball,
+  'claude-code':  oddball,
+  'codex':        oddball,
+  'gemini-cli':   oddball,
+  'antigravity':  oddball,
+  'vscode':       oddball,
+  'cursor':       oddball,
 };
