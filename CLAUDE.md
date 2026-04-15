@@ -8,6 +8,7 @@ Astro 6, MDX, Node 22+.
 ## Claude Code Conventions
 
 - When starting the dev server, run it in the background and always provide the clickable link: http://localhost:4321/ai-katas
+- **New files require a server restart**: Astro's glob loader only scans at startup. Edits to existing MDX files hot-reload fine, but adding new `.mdx` files requires stopping and restarting the dev server.
 - **Graduate a draft**: To graduate a draft (e.g. `glossary-v7`), duplicate it to the final slug (`glossary.mdx`), set `status: done`, and remove it from `kata-sequence.ts`. Keep all draft versions in place with `status: draft`. Future edits go on the final version, no more version numbers.
 
 ## Key Commands

@@ -14,4 +14,10 @@ export const kataSequence: string[] = [
   'glossary-v5',
   'glossary-v6',
   'glossary-v7',
+  'what-tool-v1',
+  'what-tool-v2',
+  'what-tool-v3',
+  'what-tool-v4',
+  'what-tool-v5',
+  'what-tool-v6',
 ];

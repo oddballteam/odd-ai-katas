@@ -1,0 +1,78 @@
+---
+feeling: "What tool should I use?"
+lastUpdated: "2026-04-14"
+description: "AI coding tools now come in five flavors. Knowing what exists matters more than picking a winner."
+status: draft
+tags:
+    - "basics"
+tools:
+    - "claude-code"
+    - "vscode"
+---
+
+## How we work is changing
+
+There used to be one way to write code: you, an editor, a terminal. Now there are at least five different interfaces for working with AI on code. Each one changes how you think, what you delegate, and what you keep control of.
+
+This kata isn't a recommendation. It's a map.
+
+## The terminal
+
+A conversation in your terminal. You talk, the agent acts. It reads files, runs tests, edits code. You watch it work. Transparent and direct.
+
+**Tools**: Claude Code, Codex CLI, Gemini CLI, GitHub Copilot CLI
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; max-width: 100%;">
+  <img src="/ai-katas/images/katas/what-tool/agent-start-cli-claude.png" alt="Claude Code start screen" style="width: 100%; height: 240px; object-fit: contain;" />
+  <img src="/ai-katas/images/katas/what-tool/agent-start-cli-codex.png" alt="OpenAI Codex CLI start screen" style="width: 100%; height: 240px; object-fit: contain;" />
+  <img src="/ai-katas/images/katas/what-tool/agent-start-cli-gemini.png" alt="Gemini CLI start screen" style="width: 100%; height: 240px; object-fit: contain;" />
+  <img src="/ai-katas/images/katas/what-tool/agent-start-cli-copilot.png" alt="GitHub Copilot CLI start screen" style="width: 100%; height: 240px; object-fit: contain;" />
+</div>
+
+## The editor
+
+Your IDE, with AI layered in. Inline completions, a chat panel, agent modes that work across files. You stay in the flow of editing. The AI meets you where you already work.
+
+**Tools**: VS Code + Copilot, Cursor, Antigravity, Windsurf
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; max-width: 100%;">
+  <img src="/ai-katas/images/katas/what-tool/agent-start-ide-vscode.png" alt="VS Code start screen" style="width: 100%; height: auto;" />
+  <img src="/ai-katas/images/katas/what-tool/agent-start-ide-cursor.png" alt="Cursor start screen" style="width: 100%; height: auto;" />
+  <img src="/ai-katas/images/katas/what-tool/agent-start-ide-antigravity.png" alt="Antigravity start screen" style="width: 100%; height: auto;" />
+  <img src="/ai-katas/images/katas/what-tool/agent-start-ide-windsurf.png" alt="Windsurf start screen" style="width: 100%; height: auto;" />
+</div>
+
+## The browser
+
+No install, no clone, no local environment. You open a URL, describe what you want, and a working app appears. Some include hosting, databases, and deployment. The target audience includes developers prototyping fast and non-developers building for the first time.
+
+**Tools**: Replit, bolt.new, v0, Lovable
+
+## The agent dashboard
+
+You manage tasks, not code. Spin up agents, assign work, review results. Some tools let you run multiple agents in parallel. You're a reviewer, not a typist.
+
+**Tools**: Devin, Cursor Agents Window, Codex desktop app
+
+## The background
+
+You don't interact at all. An agent picks up a GitHub issue, writes code, runs tests, and opens a PR. You review asynchronously, like reviewing a teammate's work.
+
+**Tools**: GitHub Copilot coding agent, Claude Code background agents, Devin
+
+## What this means for you
+
+You don't need to pick one. Most developers are already using 2-3 tools across these categories. The right question isn't "which tool" but "which mode of working fits this moment":
+
+- Writing new code in a familiar codebase? The editor.
+- Debugging a hairy cross-file problem? The terminal.
+- Prototyping an idea from scratch? The browser.
+- Delegating grunt work? The background.
+- Managing a batch of tasks? The agent dashboard.
+
+The tools are converging fast. Cursor has an editor and a dashboard. Claude Code runs interactively and in the background. Copilot lives in the CLI, the editor, and the browser. Awareness of the landscape matters more than loyalty to a single tool.
+
+## Exercise
+
+1. Count how many AI coding interfaces you've used in the last month. Terminal? Editor? Browser? Background?
+2. Think about a task you did recently. Was the interface you used the best fit, or just the one you had open?

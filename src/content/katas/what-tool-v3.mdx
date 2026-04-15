@@ -1,0 +1,68 @@
+---
+feeling: "What tool should I use?"
+lastUpdated: "2026-04-14"
+description: "There are three types of AI coding tools. Pick based on how you work, not which logo you like."
+status: draft
+tags:
+    - "basics"
+tools:
+    - "claude-code"
+    - "vscode"
+---
+
+## The three interfaces
+
+The AI model behind your tool matters less than the interface you use to work with it. The same model can feel completely different depending on whether you're in a terminal, an editor, or an agent dashboard.
+
+### CLI
+
+You're in a terminal. You and the agent have a conversation. It reads your files, runs your tests, edits your code, all visible. You're pair programming.
+
+**Good for**: Complex multi-file tasks. Debugging. Working across repos. Developers who think in commands.
+
+**Tools**: Claude Code, Gemini CLI, Codex CLI, Aider
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; max-width: 100%;">
+  <img src="/ai-katas/images/katas/what-tool/agent-start-cli-claude.png" alt="Claude Code start screen" style="width: 100%; height: 240px; object-fit: contain;" />
+  <img src="/ai-katas/images/katas/what-tool/agent-start-cli-codex.png" alt="OpenAI Codex CLI start screen" style="width: 100%; height: 240px; object-fit: contain;" />
+  <img src="/ai-katas/images/katas/what-tool/agent-start-cli-gemini.png" alt="Gemini CLI start screen" style="width: 100%; height: 240px; object-fit: contain;" />
+  <img src="/ai-katas/images/katas/what-tool/agent-start-cli-copilot.png" alt="GitHub Copilot CLI start screen" style="width: 100%; height: 240px; object-fit: contain;" />
+</div>
+
+### IDE
+
+You're in your editor. AI suggests completions, answers questions in a sidebar, and can edit files in the background. Your code stays front and center.
+
+**Good for**: Daily editing. Quick questions. Inline suggestions. Developers who don't want to change their workflow.
+
+**Tools**: VS Code + Copilot, Cursor, Windsurf, Antigravity
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; max-width: 100%;">
+  <img src="/ai-katas/images/katas/what-tool/agent-start-ide-vscode.png" alt="VS Code start screen" style="width: 100%; height: auto;" />
+  <img src="/ai-katas/images/katas/what-tool/agent-start-ide-cursor.png" alt="Cursor start screen" style="width: 100%; height: auto;" />
+  <img src="/ai-katas/images/katas/what-tool/agent-start-ide-antigravity.png" alt="Antigravity start screen" style="width: 100%; height: auto;" />
+  <img src="/ai-katas/images/katas/what-tool/agent-start-ide-windsurf.png" alt="Windsurf start screen" style="width: 100%; height: auto;" />
+</div>
+
+### Agent-first app
+
+You're looking at an agent dashboard. You describe tasks, spin up agents (sometimes many at once), and review results when they're done. Code is secondary to task management.
+
+**Good for**: Parallel tasks. Delegation. Reviewing rather than writing. Developers managing agents rather than writing every line.
+
+**Tools**: Codex desktop app, Cursor 3's Agents Window
+
+## You'll probably use more than one
+
+90% of developers use at least one AI tool at work. Most productive ones use 2-3. A common stack:
+
+- **IDE** for everyday editing (Copilot for completions)
+- **CLI** for the hard stuff (Claude Code for complex refactors)
+- **Agent-first** for background work (spin up tasks and review later)
+
+The tools are converging. Cursor has both an IDE and an agent window. Claude Code has Cowork for background tasks. Copilot added agent mode. Don't pick one forever. Pick one to start, then expand.
+
+## Exercise
+
+1. Ask your current tool: "What type of tool are you? Describe your interface model."
+2. Think about a recent frustrating coding task. Would a different category of tool have been a better fit?
