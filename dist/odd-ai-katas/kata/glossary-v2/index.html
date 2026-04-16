@@ -1,0 +1,60 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>What do all these AI terms mean? — AI Katas</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+JP:wght@700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/odd-ai-katas/_astro/Base.Bjv_6grX.css"></head> <body> <div class="dot-grid"><canvas id="dotCanvas"></canvas></div>   <main class="kata-detail" style="display: block; position: relative; z-index: 1;"> <a href="/odd-ai-katas" class="kata-back"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2L4 8l6 6"></path></svg> Back to all katas</a> <div class="feeling-title">"What do all these AI terms mean?"</div> <div class="kata-body"> <h2 id="terms-that-affect-your-daily-workflow">Terms that affect your daily workflow</h2>
+<p>These are grouped by when you’ll actually encounter them.</p>
+<h3 id="when-you-start-a-session">When you start a session</h3>
+<p><strong>Context window</strong> - Your AI’s working memory. Measured in tokens. Everything in a session has to fit inside it: your messages, the AI’s responses, project instructions, file contents. When it fills up, the AI starts forgetting earlier parts of the conversation.</p>
+<p><strong>Token</strong> - The smallest piece of text the AI processes. Roughly 3/4 of a word. “Hello” is one token. A 500-line file might be 2,000 tokens. You’re always spending tokens, even before you type anything.</p>
+<p><strong>System prompt</strong> - Hidden instructions sent to the model before your first message. Your project instructions file (CLAUDE.md, copilot-instructions.md) becomes part of this. It’s why the AI already knows about your project.</p>
+<h3 id="when-youre-working">When you’re working</h3>
+<p><strong>Agent</strong> - An AI that does things, not just suggests things. Reads your files, runs commands, edits code, creates commits. If your tool is making changes to your codebase, it’s an agent.</p>
+<p><strong>Model</strong> - The specific AI brain behind your tool. Claude Opus is different from Sonnet is different from GPT-4. Each has different speed, cost, and capability tradeoffs. You can usually switch between them.</p>
+<p><strong>Temperature</strong> - How much the AI improvises. Low = predictable, deterministic. High = creative, varied. Coding tools default to low because you want consistent, correct code.</p>
+<p><strong>Hallucination</strong> - When the AI makes something up with total confidence. A function that doesn’t exist. A flag that was never added. This is normal, not a bug. Verify what it tells you.</p>
+<h3 id="when-youre-configuring-tools">When you’re configuring tools</h3>
+<p><strong>MCP (Model Context Protocol)</strong> - A plug-in standard that connects your AI tool to external services like GitHub, databases, or Slack. Think of it like USB for AI tools. Check what’s connected.</p>
+<p><strong>RAG (Retrieval-Augmented Generation)</strong> - When the AI searches real documents before answering, instead of relying on memory alone. Some tools use this to search your codebase or docs.</p>
+<p><strong>Prompt</strong> - Everything that gets sent to the model. Not just your message, but all the context your tool bundles with it. Understanding this helps you understand why responses change depending on what’s loaded.</p>
+<h2 id="exercise">Exercise</h2>
+<ol>
+<li>Ask your tool: “How many tokens are in this conversation right now?” See if it can tell you.</li>
+<li>Ask: “What model are you? What’s your context window size?”</li>
+<li>Try asking the same question twice. Notice how the answer varies slightly. That’s temperature at work.</li>
+</ol> </div> </main>  <script>
+  (function() {
+    const canvas = document.getElementById('dotCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const spacing = 40, dotRadius = 1.2;
+    let offsetX = 0, offsetY = 0;
+    const color = '#D97757';
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    function hexToRgb(hex) {
+      return `${parseInt(hex.slice(1,3),16)},${parseInt(hex.slice(3,5),16)},${parseInt(hex.slice(5,7),16)}`;
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const rgb = hexToRgb(color);
+      const startX = (offsetX % spacing) - spacing;
+      const startY = (offsetY % spacing) - spacing;
+      for (let x = startX; x < canvas.width + spacing; x += spacing) {
+        for (let y = startY; y < canvas.height + spacing; y += spacing) {
+          ctx.beginPath();
+          ctx.arc(x, y, dotRadius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${rgb}, 0.35)`;
+          ctx.fill();
+        }
+      }
+      offsetX += 0.15;
+      offsetY += 0.08;
+      requestAnimationFrame(draw);
+    }
+    draw();
+  })();
+  </script>  </body></html>

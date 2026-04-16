@@ -1,0 +1,127 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>What tool should I use? — AI Katas</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+JP:wght@700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/odd-ai-katas/_astro/Base.Bjv_6grX.css"></head> <body> <div class="dot-grid"><canvas id="dotCanvas"></canvas></div>   <main class="kata-detail" style="display: block; position: relative; z-index: 1;"> <a href="/odd-ai-katas" class="kata-back"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2L4 8l6 6"></path></svg> Back to all katas</a> <div class="feeling-title">"What tool should I use?"</div> <div class="kata-body"> <h2 id="the-way-we-write-code-is-changing">The way we write code is changing</h2>
+<p>Here’s what the landscape looks like right now.</p>
+<h2 id="terminal-agents">Terminal agents</h2>
+<p>Lightweight, portable, and easy to run multiple sessions at once. No IDE overhead in the context window.</p>
+<p><strong>Examples</strong>: <a href="https://claude.ai/download">Claude Code</a>, <a href="https://github.com/openai/codex">Codex CLI</a>, <a href="https://github.com/google-gemini/gemini-cli">Gemini CLI</a>, <a href="https://docs.github.com/en/copilot/github-copilot-in-the-cli">GitHub Copilot CLI</a></p>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; max-width: 100%;"><img src="/odd-ai-katas/images/katas/what-tool/agent-start-cli-claude.png" alt="Claude Code start screen" style="width: 100%; height: 240px; object-fit: contain;"/><img src="/odd-ai-katas/images/katas/what-tool/agent-start-cli-codex.png" alt="OpenAI Codex CLI start screen" style="width: 100%; height: 240px; object-fit: contain;"/><img src="/odd-ai-katas/images/katas/what-tool/agent-start-cli-gemini.png" alt="Gemini CLI start screen" style="width: 100%; height: 240px; object-fit: contain;"/><img src="/odd-ai-katas/images/katas/what-tool/agent-start-cli-copilot.png" alt="GitHub Copilot CLI start screen" style="width: 100%; height: 240px; object-fit: contain;"/></div>
+<ul>
+<li><strong><a href="https://claude.ai/download">Claude Code</a></strong> popularized the terminal agent category. Has the most built-in features of any CLI agent. Not open source, but the source was <a href="https://findskill.ai/blog/is-claude-code-open-source/">accidentally published</a> in March 2026. No data retention for training.</li>
+<li><strong><a href="https://github.com/openai/codex">Codex CLI</a></strong> is open source (Rust). Telemetry is opt-in and disabled by default.</li>
+<li><strong><a href="https://github.com/google-gemini/gemini-cli">Gemini CLI</a></strong> is open source. Telemetry configurable via <code>.gemini/settings.json</code>.</li>
+<li><strong><a href="https://docs.github.com/en/copilot/github-copilot-in-the-cli">GitHub Copilot CLI</a></strong> is closed source. Telemetry opt-in. Supports <code>COPILOT_OFFLINE=true</code> to disable all telemetry.</li>
+</ul>
+<h2 id="ides">IDEs</h2>
+<p>Completions, chat, agent modes. Your code stays front and center. This is mostly about preference.</p>
+<p><strong>Examples</strong>: <a href="https://code.visualstudio.com">VS Code + Copilot</a>, <a href="https://cursor.com">Cursor</a>, <a href="https://antigravity.dev">Antigravity</a>, <a href="https://windsurf.com">Windsurf</a></p>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; max-width: 100%;"><img src="/odd-ai-katas/images/katas/what-tool/agent-start-ide-vscode.png" alt="VS Code start screen" style="width: 100%; height: auto;"/><img src="/odd-ai-katas/images/katas/what-tool/agent-start-ide-cursor.png" alt="Cursor start screen" style="width: 100%; height: auto;"/><img src="/odd-ai-katas/images/katas/what-tool/agent-start-ide-antigravity.png" alt="Antigravity start screen" style="width: 100%; height: auto;"/><img src="/odd-ai-katas/images/katas/what-tool/agent-start-ide-windsurf.png" alt="Windsurf start screen" style="width: 100%; height: auto;"/></div>
+<ul>
+<li><strong><a href="https://code.visualstudio.com">VS Code + Copilot</a></strong> is the biggest ecosystem. VS Code is open source, Copilot is not. Telemetry enabled by default but configurable. Enterprise tier offers no-code-retention.</li>
+<li><strong><a href="https://cursor.com">Cursor</a></strong> is closed source. Cursor 3 (April 2026) added an Agents Window for running parallel agents across repos. Privacy Mode disables telemetry and code retention.</li>
+<li><strong><a href="https://antigravity.dev">Antigravity</a></strong> is closed source (Google, Gemini-powered). Has both an Editor view and a Manager view for orchestrating multiple agents in parallel.</li>
+<li><strong><a href="https://windsurf.com">Windsurf</a></strong> is a VS Code fork (open source base, closed extensions). Cascade streams agent changes in real time with automatic context retrieval.</li>
+</ul>
+<h2 id="agent-first-workflows">Agent-first workflows</h2>
+<p>Every major tool is building a dedicated surface for this.</p>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; max-width: 100%;"><img src="/odd-ai-katas/images/katas/what-tool/agent-start-app-claude.png" alt="Claude desktop app" style="width: 100%; height: auto;"/><img src="/odd-ai-katas/images/katas/what-tool/agent-start-app-codex.png" alt="Codex App" style="width: 100%; height: auto;"/><img src="/odd-ai-katas/images/katas/what-tool/agent-start-app-cursor.png" alt="Cursor Agents Window" style="width: 100%; height: auto;"/><img src="/odd-ai-katas/images/katas/what-tool/agent-start-app-vscode.png" alt="VS Code Agents app" style="width: 100%; height: auto;"/></div>
+<ul>
+<li><strong><a href="https://claude.ai">Claude desktop app</a></strong> visual diffs, drag-and-drop pane layout, parallel sessions with git isolation. Good entry point if you don’t live in the terminal.</li>
+<li><strong><a href="https://openai.com/codex/">Codex App</a></strong> is a standalone command center. Parallel agents in isolated worktrees. Free tier available.</li>
+<li><strong><a href="https://cursor.com">Cursor Agents Window</a></strong> (Cursor 3, April 2026) is a full-screen tiled workspace for running agents across repos, locally or in the cloud.</li>
+<li><strong><a href="https://code.visualstudio.com/blogs/2026/02/05/multi-agent-development">VS Code Agents app</a></strong> is a companion app for running agents across multiple repos in parallel. Expected May 2026.</li>
+</ul>
+<h2 id="the-same-agent-everywhere">The same agent, everywhere</h2>
+<p>The biggest shift in 2026: the tool you use matters less than the agent behind it. The same agent now shows up across terminal, IDE, desktop, web, and phone. Pick the one you trust, then use it from whatever surface fits the moment.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th></th><th>Terminal</th><th>IDE (extension)</th><th>Desktop</th><th>Web</th><th>Phone</th></tr></thead><tbody><tr><td><strong>Anthropic</strong></td><td><a href="https://claude.ai/download">Claude Code</a></td><td><a href="https://marketplace.visualstudio.com/items?itemName=anthropic.claude-code">extension</a></td><td><a href="https://claude.ai">Cowork</a></td><td><a href="https://claude.ai/code">claude.ai/code</a></td><td>Claude app</td></tr><tr><td><strong>OpenAI</strong></td><td><a href="https://github.com/openai/codex">Codex CLI</a></td><td><a href="https://marketplace.visualstudio.com/items?itemName=openai.chatgpt">extension</a></td><td><a href="https://openai.com/codex/">Codex App</a></td><td><a href="https://chatgpt.com/codex/">chatgpt.com/codex</a></td><td>ChatGPT app</td></tr><tr><td><strong>GitHub</strong></td><td><a href="https://docs.github.com/en/copilot/github-copilot-in-the-cli">Copilot CLI</a></td><td>built-in</td><td>—</td><td><a href="https://github.com/copilot/agents">github.com/copilot</a></td><td>GitHub Mobile</td></tr><tr><td><strong>Google</strong></td><td><a href="https://github.com/google-gemini/gemini-cli">Gemini CLI</a></td><td><a href="https://antigravity.dev">Antigravity</a></td><td>—</td><td><a href="https://gemini.google.com">gemini.google.com</a></td><td>—</td></tr></tbody></table>
+<div class="callout"><p><div class="callout-label">Voice typing</div>
+You’re typing more natural language than ever. Speaking is 3x faster. Built-in dictation is free (macOS F5 🎤, Windows Win+H). For more, see <a href="https://superwhisper.com">SuperWhisper</a> (on-device), <a href="https://wisprflow.ai">Wispr Flow</a> (cloud), or <a href="https://talonvoice.com">Talon</a> (full hands-free control).</p></div>
+<hr/>
+<p>The lines are blurring. Most tools now span multiple categories. This page only covers a few - there are many more worth exploring.</p>
+<h2 id="exercise">Exercise</h2>
+<ol>
+<li>Pick the AI tool you use most. Check what other interfaces it offers - web, mobile, desktop app, IDE extension, CLI. Try one you haven’t used before.</li>
+<li>Explore a tool you’ve never used. Open a project and see how it feels.</li>
+</ol> </div> </main>  <script>
+  (function() {
+    const canvas = document.getElementById('dotCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const spacing = 40, dotRadius = 1.2;
+    let offsetX = 0, offsetY = 0;
+    const color = '#D97757';
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    function hexToRgb(hex) {
+      return `${parseInt(hex.slice(1,3),16)},${parseInt(hex.slice(3,5),16)},${parseInt(hex.slice(5,7),16)}`;
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const rgb = hexToRgb(color);
+      const startX = (offsetX % spacing) - spacing;
+      const startY = (offsetY % spacing) - spacing;
+      for (let x = startX; x < canvas.width + spacing; x += spacing) {
+        for (let y = startY; y < canvas.height + spacing; y += spacing) {
+          ctx.beginPath();
+          ctx.arc(x, y, dotRadius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${rgb}, 0.35)`;
+          ctx.fill();
+        }
+      }
+      offsetX += 0.15;
+      offsetY += 0.08;
+      requestAnimationFrame(draw);
+    }
+    draw();
+  })();
+  </script>  </body></html>

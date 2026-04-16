@@ -1,0 +1,65 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>What do all these AI terms mean? — AI Katas</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+JP:wght@700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/odd-ai-katas/_astro/Base.Bjv_6grX.css"></head> <body> <div class="dot-grid"><canvas id="dotCanvas"></canvas></div>   <main class="kata-detail" style="display: block; position: relative; z-index: 1;"> <a href="/odd-ai-katas" class="kata-back"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2L4 8l6 6"></path></svg> Back to all katas</a> <div class="feeling-title">"What do all these AI terms mean?"</div> <div class="kata-body"> <h2 id="the-terms-that-actually-matter">The terms that actually matter</h2>
+<p>You’ll see a lot of AI jargon. Most of it doesn’t matter for day-to-day coding. Here’s what does, explained through things you can see in your tool right now.</p>
+<h3 id="tokens-and-context">Tokens and context</h3>
+<p>Everything your AI tool processes is measured in <strong>tokens</strong>. One token is roughly 3/4 of a word. A typical source file is 500-2,000 tokens.</p>
+<p>Your tool has a <strong>context window</strong>, a hard limit on how many tokens it can hold at once. This includes everything: your messages, the AI’s responses, files it reads, project instructions, and memory. When the window fills up, your tool starts compressing or dropping older content.</p>
+<p>In <strong>Claude Code</strong>, type <code>/context</code> to see exactly how your tokens are being spent.</p>
+
+<p>This is why long sessions get worse over time. The AI isn’t getting tired, it’s losing context.</p>
+<h3 id="models">Models</h3>
+<p>A <strong>model</strong> is the specific AI behind your tool. You can usually switch between them:</p>
+<ul>
+<li>Faster, cheaper models (Sonnet, Haiku, GPT-4o-mini) for simple tasks</li>
+<li>Slower, smarter models (Opus, GPT-4, Gemini Ultra) for complex reasoning</li>
+</ul>
+<p>The model you pick changes speed, cost, and quality. Experiment.</p>
+<h3 id="agents-and-tools">Agents and tools</h3>
+<p>An <strong>agent</strong> is an AI that takes actions. If your tool reads files, runs tests, and edits code without you doing it manually, that’s an agent. Most modern AI coding tools are agents.</p>
+<p>Agents connect to external services through <strong>MCP (Model Context Protocol)</strong>, a standard plug-in system. An MCP server might give your AI access to GitHub, your database, or Slack. You should know what’s connected.</p>
+<h3 id="things-that-go-wrong">Things that go wrong</h3>
+<p><strong>Hallucination</strong> is when the model states something false with confidence. It might reference a function that doesn’t exist or use an API incorrectly. This is normal. Always verify.</p>
+<p><strong>Temperature</strong> controls randomness. Your coding tool keeps it low so code is predictable. But it’s never zero for most tools, which is why asking the same question twice gives slightly different answers.</p>
+<h2 id="exercise">Exercise</h2>
+<ol>
+<li>Find your tool’s context window size. Ask it: “What’s your context window, and how much have we used?”</li>
+<li>If your tool lets you switch models, try the same prompt with a fast model and a smart model. Notice the difference.</li>
+</ol> </div> </main>  <script>
+  (function() {
+    const canvas = document.getElementById('dotCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const spacing = 40, dotRadius = 1.2;
+    let offsetX = 0, offsetY = 0;
+    const color = '#D97757';
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    function hexToRgb(hex) {
+      return `${parseInt(hex.slice(1,3),16)},${parseInt(hex.slice(3,5),16)},${parseInt(hex.slice(5,7),16)}`;
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const rgb = hexToRgb(color);
+      const startX = (offsetX % spacing) - spacing;
+      const startY = (offsetY % spacing) - spacing;
+      for (let x = startX; x < canvas.width + spacing; x += spacing) {
+        for (let y = startY; y < canvas.height + spacing; y += spacing) {
+          ctx.beginPath();
+          ctx.arc(x, y, dotRadius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${rgb}, 0.35)`;
+          ctx.fill();
+        }
+      }
+      offsetX += 0.15;
+      offsetY += 0.08;
+      requestAnimationFrame(draw);
+    }
+    draw();
+  })();
+  </script>  </body></html>

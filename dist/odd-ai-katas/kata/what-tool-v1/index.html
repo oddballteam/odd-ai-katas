@@ -1,0 +1,60 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>What tool should I use? — AI Katas</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+JP:wght@700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/odd-ai-katas/_astro/Base.Bjv_6grX.css"></head> <body> <div class="dot-grid"><canvas id="dotCanvas"></canvas></div>   <main class="kata-detail" style="display: block; position: relative; z-index: 1;"> <a href="/odd-ai-katas" class="kata-back"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2L4 8l6 6"></path></svg> Back to all katas</a> <div class="feeling-title">"What tool should I use?"</div> <div class="kata-body"> <h2 id="three-ways-to-work-with-ai">Three ways to work with AI</h2>
+<p>Every AI coding tool falls somewhere across three categories. They’re not rigid boxes. Most tools are blurring the lines, and most developers use more than one. But understanding the categories helps you pick a starting point.</p>
+<p><strong>CLI</strong> - The terminal is your interface. You type alongside the agent, it reads files, runs commands, edits code. You see everything it does. Best for developers who live in the terminal and want full control.</p>
+<p>Examples: Claude Code, Gemini CLI, Codex CLI, Aider</p>
+<p><strong>IDE</strong> - Your code editor is the interface. AI lives in a sidebar, suggests completions, answers questions in chat, and can make edits across files. Your code is always front and center.</p>
+<p>Examples: VS Code + Copilot, JetBrains + AI Assistant</p>
+<p><strong>Agent-first app</strong> - The agent dashboard is the interface. You give tasks, the agent works, you review results. Code editing is secondary to task management. Think of it as going from writing code to managing agents who write code.</p>
+<p>Examples: Codex desktop, Cursor 3’s Agents Window</p>
+<h2 id="its-not-one-or-the-other">It’s not one or the other</h2>
+<p>Most productive developers in 2026 use 2-3 tools. A common setup:</p>
+<ul>
+<li>IDE for daily editing and quick completions</li>
+<li>CLI for complex multi-file tasks and hard problems</li>
+<li>Agent-first for parallel tasks you want to run in the background</li>
+</ul>
+<p>The tools are also converging. Cursor is an IDE that added an agent-first window. Claude Code is a CLI that has Cowork for background tasks. Copilot added agent mode. The categories describe where the tool started, not where it’s stuck.</p>
+<h2 id="exercise">Exercise</h2>
+<ol>
+<li>Ask your tool: “What kind of tool are you? CLI, IDE, or agent-first?”</li>
+<li>Think about your last coding session. Were you mostly editing code, running terminal commands, or delegating tasks? That tells you which category fits your current workflow.</li>
+</ol> </div> </main>  <script>
+  (function() {
+    const canvas = document.getElementById('dotCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const spacing = 40, dotRadius = 1.2;
+    let offsetX = 0, offsetY = 0;
+    const color = '#D97757';
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    function hexToRgb(hex) {
+      return `${parseInt(hex.slice(1,3),16)},${parseInt(hex.slice(3,5),16)},${parseInt(hex.slice(5,7),16)}`;
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const rgb = hexToRgb(color);
+      const startX = (offsetX % spacing) - spacing;
+      const startY = (offsetY % spacing) - spacing;
+      for (let x = startX; x < canvas.width + spacing; x += spacing) {
+        for (let y = startY; y < canvas.height + spacing; y += spacing) {
+          ctx.beginPath();
+          ctx.arc(x, y, dotRadius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${rgb}, 0.35)`;
+          ctx.fill();
+        }
+      }
+      offsetX += 0.15;
+      offsetY += 0.08;
+      requestAnimationFrame(draw);
+    }
+    draw();
+  })();
+  </script>  </body></html>

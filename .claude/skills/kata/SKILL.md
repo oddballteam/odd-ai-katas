@@ -88,7 +88,7 @@ tools:
 Store screenshots at `public/images/katas/<kata-slug>/`. Reference them in MDX as:
 
 ```markdown
-![Alt text describing the screenshot](/ai-katas/images/katas/<kata-slug>/filename.png)
+![Alt text describing the screenshot](/odd-ai-katas/images/katas/<kata-slug>/filename.png)
 ```
 
 If you don't have a screenshot yet, note where one should go with a comment:

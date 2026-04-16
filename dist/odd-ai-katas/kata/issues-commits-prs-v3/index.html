@@ -1,0 +1,72 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>How do I create issues, commits, and PRs using AI? — AI Katas</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+JP:wght@700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/odd-ai-katas/_astro/Base.Bjv_6grX.css"></head> <body> <div class="dot-grid"><canvas id="dotCanvas"></canvas></div>   <main class="kata-detail" style="display: block; position: relative; z-index: 1;"> <a href="/odd-ai-katas" class="kata-back"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2L4 8l6 6"></path></svg> Back to all katas</a> <div class="feeling-title">"How do I create issues, commits, and PRs using AI?"</div> <div class="kata-body"> <h2 id="match-the-prompt-to-the-evidence">Match the prompt to the evidence</h2>
+<p>Issues, commits, and PRs look similar because they are all text. But they need different evidence:</p>
+<ul>
+<li>An <strong>issue</strong> should come from problem context.</li>
+<li>A <strong>commit</strong> should come from the staged diff.</li>
+<li>A <strong>PR</strong> should come from the whole branch diff plus reviewer intent.</li>
+</ul>
+<p>When people get weak results, they often ask one chat window to do all three without changing the context.</p>
+<h2 id="three-options">Three options</h2>
+<h3 id="option-1-notes-to-issue">Option 1: Notes to issue</h3>
+<p>Feed AI bug notes, a support ticket, or a design comment and ask it to turn that into a real issue. Good output has scope and acceptance criteria. Bad output sounds polished but says nothing testable.</p>
+<h3 id="option-2-staged-diff-to-commit">Option 2: Staged diff to commit</h3>
+<p>Generate the commit message only after staging. This is where <strong>Cursor</strong> is strong: its commit generation is based on staged changes, not a vague memory of the session.</p>
+<h3 id="option-3-branch-diff-to-pr">Option 3: Branch diff to PR</h3>
+<p>Generate the PR description from the actual branch diff. GitHub’s PR summary tools can save time, but GitHub also warns that the output may be inaccurate and needs review. Treat the generated draft as scaffolding, not truth.</p>
+<h2 id="tool-examples">Tool examples</h2>
+<p>In <strong>VS Code Copilot</strong>, try this sequence:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="text"><code><span class="line"><span>Turn these notes into a GitHub issue.</span></span>
+<span class="line"><span>Keep only facts supported by the notes.</span></span>
+<span class="line"><span>Add acceptance criteria as a checklist.</span></span></code></pre>
+<p>Then later:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="text"><code><span class="line"><span>Write a PR description from the current branch diff.</span></span>
+<span class="line"><span>Explain reviewer focus areas.</span></span>
+<span class="line"><span>Do not claim tests passed unless I explicitly told you they passed.</span></span></code></pre>
+
+<p>In <strong>Cursor</strong>, use AI commit generation after you stage one logical chunk. If the generated subject line tries to summarize unrelated changes, your staging is probably too broad.</p>
+
+<h2 id="exercise">Exercise</h2>
+<ol>
+<li>Choose one recent branch and separate your source material into notes, staged diff, and full diff.</li>
+<li>Use AI once for each artifact with only the matching source material.</li>
+<li>Ask yourself which artifact improved most when the context was tighter.</li>
+</ol> </div> </main>  <script>
+  (function() {
+    const canvas = document.getElementById('dotCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const spacing = 40, dotRadius = 1.2;
+    let offsetX = 0, offsetY = 0;
+    const color = '#D97757';
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    function hexToRgb(hex) {
+      return `${parseInt(hex.slice(1,3),16)},${parseInt(hex.slice(3,5),16)},${parseInt(hex.slice(5,7),16)}`;
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const rgb = hexToRgb(color);
+      const startX = (offsetX % spacing) - spacing;
+      const startY = (offsetY % spacing) - spacing;
+      for (let x = startX; x < canvas.width + spacing; x += spacing) {
+        for (let y = startY; y < canvas.height + spacing; y += spacing) {
+          ctx.beginPath();
+          ctx.arc(x, y, dotRadius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${rgb}, 0.35)`;
+          ctx.fill();
+        }
+      }
+      offsetX += 0.15;
+      offsetY += 0.08;
+      requestAnimationFrame(draw);
+    }
+    draw();
+  })();
+  </script>  </body></html>

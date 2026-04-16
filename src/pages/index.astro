@@ -409,7 +409,7 @@ const toolLookup = toolGroups.flatMap(g =>
         completeBtn.addEventListener('click', function() {
           toggleCompleted(id);
           if (isCompleted(id)) {
-            setTimeout(function() { hideKata(); }, 800);
+            hideKata();
           }
         });
       }

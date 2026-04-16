@@ -1,0 +1,90 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>How do I create issues, commits, and PRs using AI? — AI Katas</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+JP:wght@700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/odd-ai-katas/_astro/Base.Bjv_6grX.css"></head> <body> <div class="dot-grid"><canvas id="dotCanvas"></canvas></div>   <main class="kata-detail" style="display: block; position: relative; z-index: 1;"> <a href="/odd-ai-katas" class="kata-back"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2L4 8l6 6"></path></svg> Back to all katas</a> <div class="feeling-title">"How do I create issues, commits, and PRs using AI?"</div> <div class="kata-body"> <h2 id="use-ai-for-compression-not-delegation">Use AI for compression, not delegation</h2>
+<p>The best use of AI in your Git workflow is to compress work you already understand:</p>
+<ul>
+<li>Turn scattered notes into a clean issue.</li>
+<li>Turn staged changes into a readable commit message.</li>
+<li>Turn a diff into a PR summary reviewers can scan fast.</li>
+</ul>
+<p>The risky use is asking AI to invent intent after the fact. If the model cannot see your real goal, it fills the gap with plausible filler. Keep it close to the source material and make one human pass before you publish.</p>
+<h2 id="three-good-options">Three good options</h2>
+<h3 id="option-1-github-native">Option 1: GitHub-native</h3>
+<p>This is the lowest-friction path if your team already lives in GitHub.</p>
+<ul>
+<li>Draft the issue with AI from a bug report, Slack thread, or TODO list.</li>
+<li>Use Copilot commit message generation when committing in GitHub’s web UI.</li>
+<li>Use Copilot PR summary generation from a blank PR description, then edit the result for reviewer context.</li>
+</ul>
+<p>Research note: GitHub’s docs say PR summaries work best from a blank description, and they explicitly recommend manual review because summaries can be inaccurate.</p>
+<h3 id="option-2-editor-first">Option 2: Editor-first</h3>
+<p>This is usually the fastest if you do most of your work locally.</p>
+<ul>
+<li>Ask your editor chat to draft an issue from repo context: “Turn this bug into a GitHub issue with problem, repro, expected behavior, and acceptance criteria.”</li>
+<li>Stage your files, then let <strong>Cursor</strong> generate the commit message from staged changes.</li>
+<li>Ask chat for a PR body before you open GitHub: “Summarize these changes for reviewers. Include what changed, why, risks, and test notes.”</li>
+</ul>
+<p>Research note: Cursor’s docs say commit generation uses staged changes plus repo history, which makes it better than asking for a commit message in a blank chat.</p>
+<h3 id="option-3-agent-handoff">Option 3: Agent handoff</h3>
+<p>This is the highest automation option.</p>
+<ul>
+<li>Write a clear GitHub issue.</li>
+<li>Assign the issue to Copilot or start an agent task from chat.</li>
+<li>Let the agent open the PR, then review the branch, commits, and PR text yourself.</li>
+</ul>
+<p>This works best when the issue is already specific. GitHub’s docs note that after Copilot is assigned, later issue comments are not automatically part of its understanding. If requirements move, put the update on the PR.</p>
+<h2 id="tool-examples">Tool examples</h2>
+<p>In <strong>VS Code Copilot</strong>, try:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="text"><code><span class="line"><span>Draft a GitHub issue for this work.</span></span>
+<span class="line"><span>Use sections for problem, scope, acceptance criteria, and out of scope.</span></span>
+<span class="line"><span>Be concrete and keep it under 200 words.</span></span></code></pre>
+<p>Then after staging changes:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="text"><code><span class="line"><span>Write a PR description for reviewers.</span></span>
+<span class="line"><span>Include what changed, why it changed, risks, and how to verify it.</span></span>
+<span class="line"><span>Do not invent tests I did not run.</span></span></code></pre>
+
+<p>In <strong>Cursor</strong>, stage files first, then use the sparkle icon in the Git panel to generate the commit message. If your team uses Conventional Commits, check that the suggested prefix matches what actually changed.</p>
+
+<h2 id="exercise">Exercise</h2>
+<ol>
+<li>Take one real change you made recently and draft all three artifacts with AI: issue, commit, and PR.</li>
+<li>For each artifact, ask the AI to use a fixed structure instead of “write me a good X.”</li>
+<li>Compare the draft against the actual diff and remove anything vague, inflated, or invented.</li>
+</ol> </div> </main>  <script>
+  (function() {
+    const canvas = document.getElementById('dotCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const spacing = 40, dotRadius = 1.2;
+    let offsetX = 0, offsetY = 0;
+    const color = '#D97757';
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    function hexToRgb(hex) {
+      return `${parseInt(hex.slice(1,3),16)},${parseInt(hex.slice(3,5),16)},${parseInt(hex.slice(5,7),16)}`;
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const rgb = hexToRgb(color);
+      const startX = (offsetX % spacing) - spacing;
+      const startY = (offsetY % spacing) - spacing;
+      for (let x = startX; x < canvas.width + spacing; x += spacing) {
+        for (let y = startY; y < canvas.height + spacing; y += spacing) {
+          ctx.beginPath();
+          ctx.arc(x, y, dotRadius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${rgb}, 0.35)`;
+          ctx.fill();
+        }
+      }
+      offsetX += 0.15;
+      offsetY += 0.08;
+      requestAnimationFrame(draw);
+    }
+    draw();
+  })();
+  </script>  </body></html>

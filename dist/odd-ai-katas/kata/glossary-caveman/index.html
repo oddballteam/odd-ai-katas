@@ -1,0 +1,45 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>AI Words Made Simple — AI Katas</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+JP:wght@700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/odd-ai-katas/_astro/Base.Bjv_6grX.css"></head> <body> <div class="dot-grid"><canvas id="dotCanvas"></canvas></div>   <main class="kata-detail" style="display: block; position: relative; z-index: 1;"> <a href="/odd-ai-katas" class="kata-back"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2L4 8l6 6"></path></svg> Back to all katas</a> <div class="feeling-title">"AI Words Made Simple"</div> <div class="kata-body"> <table><thead><tr><th>Word</th><th>What it mean</th></tr></thead><tbody><tr><td><strong>Token</strong></td><td>Tiny word-piece. Magic box eat these. One word is like one berry. Everything cost berries.</td></tr><tr><td><strong>Context window</strong></td><td>How much magic box can hold in head at once. When head full, it forget old things. Brain get smooshed.</td></tr><tr><td><strong>Model</strong></td><td>Which magic box brain you talking to. Some brain fast but dumb. Some brain slow but very smart. You pick.</td></tr><tr><td><strong>Prompt</strong></td><td>Everything you shove into magic box mouth. Not just your grunt, but cave rules and old conversation too.</td></tr><tr><td><strong>System prompt</strong></td><td>Secret instructions cave leader put in magic box BEFORE you talk. You no see, but it change everything.</td></tr><tr><td><strong>Skills</strong></td><td>Magic box not born knowing everything. Skill is like downloading kung fu into brain RIGHT WHEN NEEDED. You can tell it (<code>/review-pr</code>) or magic box hear key words in your grunt and grab right scroll on its own.</td></tr><tr><td><strong>Agent</strong></td><td>Magic box that DO things. Not just talk. It read your cave paintings, run your tests, change your code. Most tools now are agents.</td></tr><tr><td><strong>Subagent</strong></td><td>Scout you send out from cave. Does research in own head, not yours. Comes back with only the good stuff. Keeps your main cave brain clean and not full of junk.</td></tr><tr><td><strong>MCP</strong></td><td>Magic pipe that connect magic box to other caves. GitHub cave, Slack cave, database cave. Like secret tunnel between caves.</td></tr><tr><td><strong>Hooks</strong></td><td>Trip wire. When magic box walk through certain point, trip wire ALWAYS go off. No thinking. No choice. e.g. “ALWAYS check fire before leave cave.”</td></tr><tr><td><strong>Commands / Slash commands</strong></td><td>Special grunts that start with <code>/</code>. Quick way to tell magic box do specific thing without big explanation.</td></tr><tr><td><strong>Rules / Instructions</strong></td><td>Cave wall paintings that tell magic box how tribe does things. e.g. “We use yarn, NEVER npm.” Loaded every time.</td></tr><tr><td><strong>Plugins / Extensions / Customizations</strong></td><td>Gift basket you give magic box. Inside basket: skills, magic pipes, trip wires, special grunts. All bundled together. One basket might add Slack cave, deploy grunt, and safety trip wire.</td></tr><tr><td><strong>Human-in-the-loop</strong></td><td>Magic box stop and wait for you to grunt “yes” before doing thing. Sometimes good (check before big change). Sometimes annoying (asking permission for every little thing). Finding right balance is key.</td></tr><tr><td><strong>Dark code</strong></td><td>Code magic box write that NO HUMAN LOOK AT. You just say “yes yes yes” without reading. Bad. Invisible danger pile up.</td></tr><tr><td><strong>Agent orchestration</strong></td><td>Running MANY magic boxes at same time on different tasks. Like having whole tribe of magic boxes.</td></tr><tr><td><strong>Harness</strong></td><td>The body around magic box brain. Brain think, harness do. Claude Code, Cursor, VS Code are harnesses. Brain without harness just sit there.</td></tr><tr><td><strong>Temperature</strong></td><td>How wild magic box act. Low = same answer every time. High = creative, unpredictable. For code, keep low.</td></tr><tr><td><strong>Hallucination</strong></td><td>When magic box LIE with confidence. Say function exist that NOT EXIST. Make up cave that not real. Normal. Always check.</td></tr><tr><td><strong>RAG</strong></td><td>Magic box go READ REAL SCROLLS before answering, instead of just guessing from old memories. Much better.</td></tr><tr><td><strong>Context engineering</strong></td><td>Art of choosing WHAT to put in magic box head so it give good answer. The real skill.</td></tr><tr><td><strong>Memory</strong></td><td>What magic box remember between sleeps. Your preferences. Your cave layout. What made you angry last time.</td></tr></tbody></table>
+<h2 id="exercise">Exercise</h2>
+<ol>
+<li>Pick word that sound useful. Grunt at tool: “Why would I use [word]? Give simple example.”</li>
+<li>Try: “Explain [word] like me caveman. No big words.”</li>
+</ol> </div> </main>  <script>
+  (function() {
+    const canvas = document.getElementById('dotCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const spacing = 40, dotRadius = 1.2;
+    let offsetX = 0, offsetY = 0;
+    const color = '#D97757';
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    function hexToRgb(hex) {
+      return `${parseInt(hex.slice(1,3),16)},${parseInt(hex.slice(3,5),16)},${parseInt(hex.slice(5,7),16)}`;
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const rgb = hexToRgb(color);
+      const startX = (offsetX % spacing) - spacing;
+      const startY = (offsetY % spacing) - spacing;
+      for (let x = startX; x < canvas.width + spacing; x += spacing) {
+        for (let y = startY; y < canvas.height + spacing; y += spacing) {
+          ctx.beginPath();
+          ctx.arc(x, y, dotRadius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${rgb}, 0.35)`;
+          ctx.fill();
+        }
+      }
+      offsetX += 0.15;
+      offsetY += 0.08;
+      requestAnimationFrame(draw);
+    }
+    draw();
+  })();
+  </script>  </body></html>
