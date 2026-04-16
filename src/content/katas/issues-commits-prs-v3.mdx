@@ -1,0 +1,69 @@
+---
+feeling: "How do I create issues, commits, and PRs using AI?"
+lastUpdated: "2026-04-15"
+description: "If you want useful AI-generated Git artifacts, anchor each one to the evidence it can actually see."
+status: draft
+tags:
+    - "basics"
+    - "context"
+    - "verification"
+tools:
+    - "cursor"
+    - "vscode"
+related:
+    - "what-does-it-already-know"
+---
+
+## Match the prompt to the evidence
+
+Issues, commits, and PRs look similar because they are all text. But they need different evidence:
+
+- An **issue** should come from problem context.
+- A **commit** should come from the staged diff.
+- A **PR** should come from the whole branch diff plus reviewer intent.
+
+When people get weak results, they often ask one chat window to do all three without changing the context.
+
+## Three options
+
+### Option 1: Notes to issue
+
+Feed AI bug notes, a support ticket, or a design comment and ask it to turn that into a real issue. Good output has scope and acceptance criteria. Bad output sounds polished but says nothing testable.
+
+### Option 2: Staged diff to commit
+
+Generate the commit message only after staging. This is where **Cursor** is strong: its commit generation is based on staged changes, not a vague memory of the session.
+
+### Option 3: Branch diff to PR
+
+Generate the PR description from the actual branch diff. GitHub's PR summary tools can save time, but GitHub also warns that the output may be inaccurate and needs review. Treat the generated draft as scaffolding, not truth.
+
+## Tool examples
+
+In **VS Code Copilot**, try this sequence:
+
+```text
+Turn these notes into a GitHub issue.
+Keep only facts supported by the notes.
+Add acceptance criteria as a checklist.
+```
+
+Then later:
+
+```text
+Write a PR description from the current branch diff.
+Explain reviewer focus areas.
+Do not claim tests passed unless I explicitly told you they passed.
+```
+
+{/* TODO: screenshot of VS Code Copilot drafting from supplied notes and diff */}
+
+In **Cursor**, use AI commit generation after you stage one logical chunk. If the generated subject line tries to summarize unrelated changes, your staging is probably too broad.
+
+{/* TODO: screenshot of Cursor commit generation after staging a focused change */}
+
+## Exercise
+
+1. Choose one recent branch and separate your source material into notes, staged diff, and full diff.
+2. Use AI once for each artifact with only the matching source material.
+3. Ask yourself which artifact improved most when the context was tighter.

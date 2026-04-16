@@ -394,7 +394,7 @@ const toolLookup = toolGroups.flatMap(g =>
         '<button class="kata-back" onclick="window.__hideKata()"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2L4 8l6 6"/></svg> Back to all katas</button>' +
         '<div class="kata-number">KATA ' + num + '</div>' +
         '<div class="feeling-title">' + kata.feeling + (kata.status === 'draft' ? ' <span class="draft-badge">DRAFT</span>' : '') + '</div>' +
-        '<div class="kata-description">' + kata.description + '</div>' +
+        (kata.description ? '<div class="kata-description">' + kata.description + '</div>' : '') +
         (kata.lastUpdated ? '<div class="kata-last-updated">Last updated ' + kata.lastUpdated + '</div>' : '') +
         toolTagsHTML +
         '<div class="kata-body">' + bodyHTML + '</div>' +
@@ -561,6 +561,28 @@ const toolLookup = toolGroups.flatMap(g =>
 
       draw();
     })();
+  })();
+  </script>
+
+  <script>
+  (function() {
+    var overlay = document.createElement('div');
+    overlay.className = 'lightbox-overlay';
+    overlay.innerHTML = '<img />';
+    document.body.appendChild(overlay);
+    var lbImg = overlay.querySelector('img');
+
+    overlay.addEventListener('click', function() {
+      overlay.classList.remove('visible');
+    });
+
+    document.addEventListener('click', function(e) {
+      var img = e.target.closest('.kata-detail .kata-body img');
+      if (!img) return;
+      lbImg.src = img.src;
+      lbImg.alt = img.alt;
+      overlay.classList.add('visible');
+    });
   })();
   </script>
 </Base>

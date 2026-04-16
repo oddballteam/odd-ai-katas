@@ -19,7 +19,12 @@ Open http://localhost:4321
 
 ```bash
 npm run build
-npm run preview
+```
+
+To view the built site locally:
+
+```bash
+npx serve dist
 ```
 
 ## Deploy to GitHub Pages

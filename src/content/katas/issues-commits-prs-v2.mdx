@@ -1,0 +1,81 @@
+---
+feeling: "How do I create issues, commits, and PRs using AI?"
+lastUpdated: "2026-04-15"
+description: "Pick the right level of AI help for your Git workflow: assistive, structured, or agentic."
+status: draft
+tags:
+    - "basics"
+    - "verification"
+    - "automation"
+tools:
+    - "cursor"
+    - "vscode"
+related:
+    - "what-does-it-already-know"
+---
+
+## Pick your automation level
+
+There are three sane ways to use AI for issues, commits, and PRs. The trick is matching the tool to the amount of judgment the step needs.
+
+## Option 1: Assistive
+
+Use AI as a drafting layer only.
+
+- Issue: paste notes, ask for a crisp problem statement and acceptance criteria.
+- Commit: stage files, let the tool suggest a message, then trim it.
+- PR: ask for a reviewer-facing summary from the diff.
+
+Best when the work is small and you already know what you changed.
+
+## Option 2: Structured
+
+Use templates plus AI.
+
+- Issue: feed the model your team's issue template and ask it to fill only the fields it can justify.
+- Commit: ask for one line that follows your team's commit style.
+- PR: ask for exactly four sections, like summary, risk, test notes, rollout.
+
+This usually gives the best results because the model has less room to ramble.
+
+## Option 3: Agentic
+
+Use AI to carry the task across the line.
+
+- Start with a strong issue.
+- Let the agent implement and open the PR.
+- Review like you would review a junior engineer's branch: check scope, check tests, check commit quality, check the PR body.
+
+Best when the issue is specific and the branch can stand on its own.
+
+## Tool examples
+
+In **VS Code Copilot**, a good issue prompt is:
+
+```text
+Draft a GitHub issue from this context.
+Use: problem, impact, acceptance criteria.
+If something is uncertain, mark it as an open question instead of guessing.
+```
+
+For a PR:
+
+```text
+Write a pull request description from my current diff.
+Use these headings: Summary, Why, Risk, Validation.
+Keep it short and factual.
+```
+
+{/* TODO: screenshot of VS Code Copilot producing a structured issue or PR draft */}
+
+In **Cursor**, generate the commit message from staged changes. Cursor's docs say it adapts to your existing commit style, which is useful if your repo already has a pattern.
+
+A good manual check is: does the commit message describe the staged diff, not the entire branch?
+
+{/* TODO: screenshot of Cursor Git panel commit message generation */}
+
+## Exercise
+
+1. Pick one open task and draft the issue, commit message, and PR in assistive mode.
+2. Redo the same three artifacts in structured mode with headings or templates.
+3. Compare the outputs and decide where structure helped and where it just added ceremony.

@@ -6,7 +6,7 @@ const katas = defineCollection({
   schema: z.object({
     feeling: z.string(), // kata title: can be a feeling, question, or topic
     takeaway: z.string().optional(),
-    description: z.string(),
+    description: z.string().optional(),
     related: z.array(z.string()).nullable().optional(),
     tags: z.array(z.string()).optional(),
     stub: z.boolean().optional(),

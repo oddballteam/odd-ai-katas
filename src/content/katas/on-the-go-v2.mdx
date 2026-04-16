@@ -1,0 +1,57 @@
+---
+feeling: "I want to check on my agent from my phone"
+lastUpdated: "2026-04-15"
+description: "Coding agents don't need your screen. Here's the spectrum from quick check-ins to fully untethered workflows."
+status: draft
+tags:
+    - "basics"
+    - "automation"
+tools:
+    - "claude-code"
+related:
+    - "what-tool"
+---
+
+## The tether is optional
+
+Most people think of coding agents as something you sit in front of. Terminal open, watching tokens stream. But the agent doesn't need your screen. It needs your codebase, your tools, and occasional direction. Those can come from anywhere.
+
+## How connected do you need to be?
+
+It depends on the task.
+
+**Quick check-in** -- "Is it done? Did the tests pass?"
+
+Both Claude Code (`/rc`) and Copilot CLI (`/remote`) let you connect to a live session from your phone via QR code. You get a live view of the session in a browser. Approve an action, send a steering message, then put your phone away.
+
+{/* TODO: screenshot of Claude Code /rc QR code on phone */}
+
+**Async dispatch** -- "Do this while I'm gone."
+
+Assign a GitHub issue to Copilot from GitHub Mobile. Or send a task to Claude Dispatch from the Claude app on your phone. Or queue something in the Codex App's cloud sandbox. In all three cases, you close the app and come back to a result (a PR, a diff, a completed task).
+
+**Ongoing conversation** -- "I want to message my agent like a coworker."
+
+Claude Code Channels connects a running session to Telegram, Discord, or iMessage. You message it, it runs commands with full access to your repo, and replies in the same thread. OpenClaw does the same thing across 23+ messaging platforms, open source, running on your own hardware.
+
+**Full terminal access** -- "I want the real thing on my phone."
+
+SSH into your machine from Termius or Blink Shell, reattach to a tmux session, and you're in the exact same terminal. Use mosh instead of SSH if you're switching between WiFi and cellular. This is the most powerful option and the least polished.
+
+## The persistent session pattern
+
+All of these share one idea: the agent session outlives your connection to it.
+
+The key ingredients:
+- **tmux or screen** keeps the process alive when you disconnect
+- **Tailscale or Cloudflare Tunnel** gives you a secure path back to your machine from anywhere
+- **ntfy** (via MCP) pushes notifications to your phone when the agent finishes or needs input
+- **mosh** handles flaky mobile connections gracefully
+
+Whether you use vendor remote-control features or DIY with SSH, the pattern is the same: start the work, detach, reconnect when you need to.
+
+## Exercise
+
+1. Start Claude Code or Copilot CLI in a tmux session on your machine.
+2. From your phone, connect to it (try `/rc`, `/remote`, or plain SSH).
+3. Give the agent a task and disconnect. Reconnect 5 minutes later and check the result.

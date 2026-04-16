@@ -1,13 +1,10 @@
 ---
 feeling: "What tool should I use?"
 lastUpdated: "2026-04-14"
-description: "There are several ways to work with AI on code. Knowing what exists matters more than picking a winner."
 status: done
 tags:
     - "basics"
-tools:
-    - "claude-code"
-    - "vscode"
+tools: []
 ---
 
 ## The way we write code is changing
@@ -16,9 +13,9 @@ The model behind your tool matters less than the interface you use to work with 
 
 ## Terminal agents
 
-Easy to spin up multiple sessions. Focused on the conversation. You see exactly what the agent sees and does.
+Lightweight, portable, and easy to run multiple sessions at once. No IDE overhead in the context window.
 
-**Tools**: [Claude Code](https://claude.ai/download), [Codex CLI](https://github.com/openai/codex), [Gemini CLI](https://github.com/google-gemini/gemini-cli), [GitHub Copilot CLI](https://docs.github.com/en/copilot/github-copilot-in-the-cli)
+**Examples**: [Claude Code](https://claude.ai/download), [Codex CLI](https://github.com/openai/codex), [Gemini CLI](https://github.com/google-gemini/gemini-cli), [GitHub Copilot CLI](https://docs.github.com/en/copilot/github-copilot-in-the-cli)
 
 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; max-width: 100%;">
   <img src="/ai-katas/images/katas/what-tool/agent-start-cli-claude.png" alt="Claude Code start screen" style="width: 100%; height: 240px; object-fit: contain;" />
@@ -27,7 +24,7 @@ Easy to spin up multiple sessions. Focused on the conversation. You see exactly 
   <img src="/ai-katas/images/katas/what-tool/agent-start-cli-copilot.png" alt="GitHub Copilot CLI start screen" style="width: 100%; height: 240px; object-fit: contain;" />
 </div>
 
-- **[Claude Code](https://claude.ai/download)** has the deepest feature set (background agents, MCP integrations, hooks, memory). Not open source, but the source was [accidentally published](https://findskill.ai/blog/is-claude-code-open-source/) in March 2026. No data retention for training.
+- **[Claude Code](https://claude.ai/download)** popularized the terminal agent category. Has the most built-in features of any CLI agent. Not open source, but the source was [accidentally published](https://findskill.ai/blog/is-claude-code-open-source/) in March 2026. No data retention for training.
 - **[Codex CLI](https://github.com/openai/codex)** is open source (Rust). Telemetry is opt-in and disabled by default.
 - **[Gemini CLI](https://github.com/google-gemini/gemini-cli)** is open source. Telemetry configurable via `.gemini/settings.json`.
 - **[GitHub Copilot CLI](https://docs.github.com/en/copilot/github-copilot-in-the-cli)** is closed source. Telemetry opt-in. Supports `COPILOT_OFFLINE=true` to disable all telemetry.
@@ -36,7 +33,7 @@ Easy to spin up multiple sessions. Focused on the conversation. You see exactly 
 
 Completions, chat, agent modes. Your code stays front and center. This is mostly about preference.
 
-**Tools**: [VS Code + Copilot](https://code.visualstudio.com), [Cursor](https://cursor.com), [Antigravity](https://antigravity.dev), [Windsurf](https://windsurf.com)
+**Examples**: [VS Code + Copilot](https://code.visualstudio.com), [Cursor](https://cursor.com), [Antigravity](https://antigravity.dev), [Windsurf](https://windsurf.com)
 
 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; max-width: 100%;">
   <img src="/ai-katas/images/katas/what-tool/agent-start-ide-vscode.png" alt="VS Code start screen" style="width: 100%; height: auto;" />
@@ -50,16 +47,32 @@ Completions, chat, agent modes. Your code stays front and center. This is mostly
 - **[Antigravity](https://antigravity.dev)** is closed source (Google, Gemini-powered). Has both an Editor view and a Manager view for orchestrating multiple agents in parallel.
 - **[Windsurf](https://windsurf.com)** is a VS Code fork (open source base, closed extensions). Cascade streams agent changes in real time with automatic context retrieval.
 
+## Agent-first workflows
+
+Every major tool is building a dedicated surface for dispatching and managing multiple agents. Less editing, more steering.
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; max-width: 100%;">
+  <img src="/ai-katas/images/katas/what-tool/agent-start-app-claude.png" alt="Claude desktop app" style="width: 100%; height: auto;" />
+  <img src="/ai-katas/images/katas/what-tool/agent-start-app-codex.png" alt="Codex App" style="width: 100%; height: auto;" />
+  <img src="/ai-katas/images/katas/what-tool/agent-start-app-cursor.png" alt="Cursor Agents Window" style="width: 100%; height: auto;" />
+  <img src="/ai-katas/images/katas/what-tool/agent-start-app-vscode.png" alt="VS Code Agents app" style="width: 100%; height: auto;" />
+</div>
+
+- **[Claude desktop app](https://claude.ai)** visual diffs, drag-and-drop pane layout, parallel sessions with git isolation. Good entry point if you don't live in the terminal.
+- **[Codex App](https://openai.com/codex/)** is a standalone command center. Parallel agents in isolated worktrees. Free tier available.
+- **[Cursor Agents Window](https://cursor.com)** (Cursor 3, April 2026) is a full-screen tiled workspace for running agents across repos, locally or in the cloud.
+- **[VS Code Agents app](https://code.visualstudio.com/blogs/2026/02/05/multi-agent-development)** is a companion app for running agents across multiple repos in parallel. Expected May 2026.
+
 ## The same agent, everywhere
 
 The biggest shift in 2026: the tool you use matters less than the agent behind it. The same agent now shows up across terminal, IDE, desktop, web, and phone. Pick the one you trust, then use it from whatever surface fits the moment.
 
 | | Terminal | IDE (extension) | Desktop | Web | Phone |
 |---|---|---|---|---|---|
-| **Anthropic** | [Claude Code](https://claude.ai/download) | [VS Code, JetBrains](https://marketplace.visualstudio.com/items?itemName=anthropic.claude-code) | [Cowork](https://claude.ai) | [claude.ai/code](https://claude.ai/code) | Claude app |
-| **OpenAI** | [Codex CLI](https://github.com/openai/codex) | [VS Code](https://marketplace.visualstudio.com/items?itemName=openai.chatgpt) | [Codex App](https://openai.com/codex/) | [chatgpt.com/codex](https://chatgpt.com/codex/) | ChatGPT app |
-| **GitHub** | [Copilot CLI](https://docs.github.com/en/copilot/github-copilot-in-the-cli) | VS Code, JetBrains | -- | [github.com](https://github.com/copilot/agents) | GitHub Mobile |
-| **Google** | [Gemini CLI](https://github.com/google-gemini/gemini-cli) | [Antigravity](https://antigravity.dev) | [Gemini app](https://gemini.google/mac) | [gemini.google.com](https://gemini.google.com) | Gemini app |
+| **Anthropic** | [Claude Code](https://claude.ai/download) | [extension](https://marketplace.visualstudio.com/items?itemName=anthropic.claude-code) | [Cowork](https://claude.ai) | [claude.ai/code](https://claude.ai/code) | Claude app |
+| **OpenAI** | [Codex CLI](https://github.com/openai/codex) | [extension](https://marketplace.visualstudio.com/items?itemName=openai.chatgpt) | [Codex App](https://openai.com/codex/) | [chatgpt.com/codex](https://chatgpt.com/codex/) | ChatGPT app |
+| **GitHub** | [Copilot CLI](https://docs.github.com/en/copilot/github-copilot-in-the-cli) | built-in | -- | [github.com/copilot](https://github.com/copilot/agents) | GitHub Mobile |
+| **Google** | [Gemini CLI](https://github.com/google-gemini/gemini-cli) | [Antigravity](https://antigravity.dev) | -- | [gemini.google.com](https://gemini.google.com) | -- |
 
 GitHub's Copilot CLI also supports [remote control](https://github.blog/changelog/2026-04-13-remote-control-cli-sessions-on-web-and-mobile-in-public-preview/) -- start a session in your terminal and steer it from your phone.
 

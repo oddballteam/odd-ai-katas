@@ -1,0 +1,70 @@
+---
+feeling: "Can I use my coding agent when I'm not at my computer?"
+lastUpdated: "2026-04-15"
+description: "Your agent can keep working when you walk away. Here's how remote control, messaging channels, and dispatch actually work."
+status: draft
+tags:
+    - "basics"
+    - "automation"
+tools:
+    - "claude-code"
+related:
+    - "what-tool"
+---
+
+## You don't have to be there
+
+A coding agent is a process running on a machine. It doesn't care whether you're watching. The question is just: how do you talk to it when you're somewhere else?
+
+There are four approaches, and they're not mutually exclusive.
+
+## Remote control
+
+Connect to a live session from another device. You see what the agent sees.
+
+| Tool | Command | What happens |
+|---|---|---|
+| Claude Code | `/rc` | QR code opens a live session in your phone's browser |
+| Copilot CLI | `copilot --remote` or `/remote` | Link/QR opens session on GitHub web or mobile app |
+
+Both let you send messages, approve actions, and steer the agent. The session runs on your machine; your phone is just a window into it.
+
+{/* TODO: screenshot of /rc or /remote QR code */}
+
+## Messaging channels
+
+Talk to your agent from apps you already use. The agent runs on your machine (or a server); messages arrive through a chat platform.
+
+**Claude Code Channels** (March 2026) connects a session to Telegram, Discord, or iMessage. The agent has full filesystem and git access. You message it like a coworker, it replies in the same thread.
+
+**OpenClaw** is open source (247K stars) and connects to 23+ platforms: WhatsApp, Telegram, Discord, Slack, Signal, iMessage, Teams, IRC, and more. You run one instance and reach it from any app. It's not coding-specific, but developers use it to dispatch tasks, check build status, and get notifications.
+
+## Dispatch
+
+Fire and forget. Assign work, walk away, come back to a result.
+
+- **GitHub Mobile**: Assign an issue to Copilot. It spins up a GitHub Actions environment, writes code, runs tests, opens a PR.
+- **Claude Dispatch**: Send a task from the Claude phone app to Claude Desktop on your computer. It executes in the background.
+- **Codex App**: Cloud sandboxes. No local machine needed. Dispatch from desktop or web.
+
+## SSH + tmux (the universal method)
+
+Every approach above is a vendor feature that might change. The one that always works:
+
+1. Run your agent in **tmux** on your dev machine or a VPS
+2. SSH in from your phone with **Termius** (iOS/Android) or **Blink Shell** (iOS)
+3. Reattach to the session: `tmux attach`
+
+Upgrades that make it better:
+- **mosh** instead of SSH: survives WiFi/cellular switches and sleep
+- **Tailscale**: encrypted tunnel to your machine, no port forwarding
+- **ntfy MCP server**: agent sends push notifications to your phone when it needs you or finishes a task
+
+## Exercise
+
+1. Pick the method that fits your setup:
+    - If you use Claude Code: try `/rc` and scan from your phone
+    - If you use Copilot CLI: try `/remote`
+    - If you want the DIY route: install tmux, start a session, SSH from a phone app
+2. From your phone, ask the agent: "What are you working on?" or give it a small task.
+3. Disconnect. Come back in 5 minutes and see what happened.

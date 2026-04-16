@@ -74,8 +74,8 @@ a:hover {
   color: #fff;
   letter-spacing: 0.04em;
 }
-.oddball-banner svg {
-  width: 22px; height: 22px; flex-shrink: 0;
+.oddball-banner .oddball-logo {
+  height: 22px; width: auto; flex-shrink: 0;
 }
 .oddball-banner span {
   opacity: 0.85;
@@ -886,6 +886,34 @@ a:hover {
   font-size: 0.8rem; letter-spacing: 0.1em;
   text-transform: uppercase;
   border-top: 1px solid var(--border);
+}
+
+/* ===== Image lightbox ===== */
+.kata-detail .kata-body img {
+  cursor: zoom-in;
+  transition: opacity 0.15s;
+}
+.kata-detail .kata-body img:hover {
+  opacity: 0.85;
+}
+.lightbox-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.85);
+  cursor: zoom-out;
+  justify-content: center;
+  align-items: center;
+}
+.lightbox-overlay.visible {
+  display: flex;
+}
+.lightbox-overlay img {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 8px;
 }
 
 /* ===== Responsive ===== */

@@ -1,0 +1,86 @@
+---
+feeling: "How do I create issues, commits, and PRs using AI?"
+lastUpdated: "2026-04-15"
+description: "Three practical ways to use AI for issues, commits, and PRs without letting it write nonsense for you."
+status: draft
+tags:
+    - "basics"
+    - "verification"
+tools:
+    - "cursor"
+    - "vscode"
+related:
+    - "what-does-it-already-know"
+---
+
+## Use AI for compression, not delegation
+
+The best use of AI in your Git workflow is to compress work you already understand:
+
+- Turn scattered notes into a clean issue.
+- Turn staged changes into a readable commit message.
+- Turn a diff into a PR summary reviewers can scan fast.
+
+The risky use is asking AI to invent intent after the fact. If the model cannot see your real goal, it fills the gap with plausible filler. Keep it close to the source material and make one human pass before you publish.
+
+## Three good options
+
+### Option 1: GitHub-native
+
+This is the lowest-friction path if your team already lives in GitHub.
+
+- Draft the issue with AI from a bug report, Slack thread, or TODO list.
+- Use Copilot commit message generation when committing in GitHub's web UI.
+- Use Copilot PR summary generation from a blank PR description, then edit the result for reviewer context.
+
+Research note: GitHub's docs say PR summaries work best from a blank description, and they explicitly recommend manual review because summaries can be inaccurate.
+
+### Option 2: Editor-first
+
+This is usually the fastest if you do most of your work locally.
+
+- Ask your editor chat to draft an issue from repo context: "Turn this bug into a GitHub issue with problem, repro, expected behavior, and acceptance criteria."
+- Stage your files, then let **Cursor** generate the commit message from staged changes.
+- Ask chat for a PR body before you open GitHub: "Summarize these changes for reviewers. Include what changed, why, risks, and test notes."
+
+Research note: Cursor's docs say commit generation uses staged changes plus repo history, which makes it better than asking for a commit message in a blank chat.
+
+### Option 3: Agent handoff
+
+This is the highest automation option.
+
+- Write a clear GitHub issue.
+- Assign the issue to Copilot or start an agent task from chat.
+- Let the agent open the PR, then review the branch, commits, and PR text yourself.
+
+This works best when the issue is already specific. GitHub's docs note that after Copilot is assigned, later issue comments are not automatically part of its understanding. If requirements move, put the update on the PR.
+
+## Tool examples
+
+In **VS Code Copilot**, try:
+
+```text
+Draft a GitHub issue for this work.
+Use sections for problem, scope, acceptance criteria, and out of scope.
+Be concrete and keep it under 200 words.
+```
+
+Then after staging changes:
+
+```text
+Write a PR description for reviewers.
+Include what changed, why it changed, risks, and how to verify it.
+Do not invent tests I did not run.
+```
+
+{/* TODO: screenshot of VS Code Copilot drafting an issue and PR description */}
+
+In **Cursor**, stage files first, then use the sparkle icon in the Git panel to generate the commit message. If your team uses Conventional Commits, check that the suggested prefix matches what actually changed.
+
+{/* TODO: screenshot of Cursor generating a commit message from staged changes */}
+
+## Exercise
+
+1. Take one real change you made recently and draft all three artifacts with AI: issue, commit, and PR.
+2. For each artifact, ask the AI to use a fixed structure instead of "write me a good X."
+3. Compare the draft against the actual diff and remove anything vague, inflated, or invented.

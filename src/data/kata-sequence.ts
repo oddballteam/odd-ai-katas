@@ -20,4 +20,10 @@ export const kataSequence: string[] = [
   'what-tool-v4',
   'what-tool-v5',
   'what-tool-v6',
+  'on-the-go-v1',
+  'on-the-go-v2',
+  'on-the-go-v3',
+  'issues-commits-prs-v1',
+  'issues-commits-prs-v2',
+  'issues-commits-prs-v3',
 ];
