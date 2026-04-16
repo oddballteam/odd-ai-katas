@@ -1,0 +1,57 @@
+---
+feeling: "How do I create issues, commits, and PRs using AI?"
+lastUpdated: "2026-04-15"
+description: "Skill teaches the AI how. Hook makes sure it actually does."
+status: draft
+tags:
+    - "basics"
+    - "automation"
+related:
+    - "guardrails"
+    - "what-does-it-already-know"
+---
+
+## Pair each skill with a hook
+
+A skill alone is a suggestion. The AI might use it, might forget, might wing it. A hook is the enforcement layer: when the AI tries to commit or open a PR without going through the skill, the hook stops it.
+
+Think of it as: skill = the recipe, hook = the doorman.
+
+## Example prompts
+
+### Commits: skill + hook
+
+```text
+Interview me, then save a /commit skill that knows my message format.
+```
+
+```text
+Write a PreToolUse hook that catches git commit and tells the AI to use /commit first.
+```
+
+### PRs: skill + hook (draft-first)
+
+```text
+Interview me, then save a /pr skill that always opens PRs as drafts.
+```
+
+```text
+Write a hook that catches gh pr create and tells the AI to use /pr instead.
+```
+
+### Issues: skill only
+
+```text
+Interview me, then save an /issue skill that knows my board's required fields and labels. (No hook - issues are usually opt-in, not commands the AI runs unprompted.)
+```
+
+## What "interview me" should look like
+
+A good interview prompt walks one question at a time. If the AI dumps 10 questions in a single message, push back: "ask one at a time and wait for my answer."
+
+If the AI starts writing the skill before it has enough info, ask "what else do you need to know?" before letting it save.
+
+## Exercise
+
+1. Build the /commit skill first. It's the highest-frequency one.
+2. Once it works, add the matching hook so future sessions can't skip it.

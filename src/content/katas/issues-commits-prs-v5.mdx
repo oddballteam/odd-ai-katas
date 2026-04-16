@@ -1,0 +1,61 @@
+---
+feeling: "How do I create issues, commits, and PRs using AI?"
+lastUpdated: "2026-04-15"
+description: "Don't write the skill yourself. Have the AI interview you and write it."
+status: draft
+tags:
+    - "basics"
+    - "automation"
+related:
+    - "what-does-it-already-know"
+---
+
+## Let the AI interview you
+
+You probably can't recite your own commit format on the spot. But you'll recognize it when you see it. So instead of writing a skill from scratch, have the AI walk you through it.
+
+The same pattern works for all three artifacts: commits, PRs, issues. Two prompts each. First one builds the skill. Second one wires it in.
+
+## Example prompts
+
+### Commits
+
+```text
+I want a /commit skill that knows my format. Interview me with one question at a time. When done, save the skill.
+```
+
+```text
+Show me a hook that nudges the AI to use my /commit skill before any git commit.
+```
+
+### Pull requests
+
+```text
+I want a /pr skill that always opens PRs as drafts and uses my team's section structure. Interview me one question at a time, then save it.
+```
+
+```text
+Show me a hook so the AI uses /pr instead of running gh pr create on its own.
+```
+
+### Issues
+
+```text
+I want an /issue skill that creates tickets on my board with the right labels and required fields. Interview me one question at a time, then save the skill.
+```
+
+## What good interview questions look like
+
+A good interview prompt doesn't dump 12 questions on you. It asks:
+
+1. Where do these get stored? (~/.claude/skills/?)
+2. What's a recent example I could pattern off?
+3. One specific question, wait for answer, next question.
+
+If the AI starts writing the skill before asking enough questions, tell it to slow down.
+
+## Exercise
+
+1. Pick one of the three interview prompts above.
+2. Answer the questions one at a time.
+3. Check the resulting skill file. Is it short enough that you'd actually maintain it?

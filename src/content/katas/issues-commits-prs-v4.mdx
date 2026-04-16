@@ -1,0 +1,55 @@
+---
+feeling: "How do I create issues, commits, and PRs using AI?"
+lastUpdated: "2026-04-15"
+description: "Skip the per-prompt teaching. Build a skill once that knows your format forever."
+status: draft
+tags:
+    - "basics"
+    - "automation"
+related:
+    - "guardrails"
+    - "what-does-it-already-know"
+---
+
+## Codify your format once
+
+Every time you ask the AI to "write a good commit message," you're re-teaching it your team's style. Skills are the fix: write it once, and the AI loads it whenever the topic comes up.
+
+| Artifact | Skill knows | Hook can enforce |
+|---|---|---|
+| Commit | Your subject line style, conventional commits prefix, body format | Block direct git commit, force the skill |
+| PR | Required sections, draft-first, who to tag, label rules | Block git push without skill, draft default |
+| Issue | Required fields (problem, repro, acceptance), board labels, assignee defaults | (No hook - issues live outside git) |
+
+## Example prompts
+
+### Commit skill
+
+```text
+Interview me about how I want commit messages, then save it as a /commit skill.
+```
+
+```text
+Write a hook that runs my /commit skill before any git commit.
+```
+
+### PR skill
+
+```text
+Interview me about my PR format and save it as a /pr skill. Always draft-first.
+```
+
+```text
+Add a hook so the AI uses my /pr skill instead of running gh pr create directly.
+```
+
+### Issue skill
+
+```text
+Interview me about how I want issues created on my board, including required fields and labels. Save as a /issue skill.
+```
+
+## Exercise
+
+1. Pick the artifact you reformat the most by hand (probably commits).
+2. Run the matching interview prompt and let the AI write the skill for you.

@@ -1,0 +1,53 @@
+---
+feeling: "How do I create issues, commits, and PRs using AI?"
+lastUpdated: "2026-04-15"
+status: done
+tags:
+    - "basics"
+    - "automation"
+related:
+    - "guardrails"
+    - "what-does-it-already-know"
+---
+
+You have a commit style, PR sections, ticket labels, draft-first defaults. Re-teaching the AI every session is wasted effort.
+
+Skill teaches the AI how. Hook makes sure it actually does.
+
+- **Skill** = your format, saved once. The AI loads it on its own when the topic comes up. The recipe.
+- **Hook** = makes sure the AI actually uses it. The doorman.
+
+## Example prompts
+
+### Commits
+
+```text
+I want to make a /commit skill, both user and agent invokable, in my user settings. Interview me.
+```
+
+```text
+I want a hook in my user settings that makes sure you always use my /commit skill before any git commit.
+```
+
+### Pull requests
+
+```text
+I want to make a /pr skill, both user and agent invokable, in my user settings, that always opens PRs as drafts and follows whatever PR template the current repo uses. Interview me.
+```
+
+```text
+I want a hook in my user settings that makes sure you use my /pr skill instead of running gh pr create on your own.
+```
+
+### Issues
+
+```text
+I want to make an /issue skill, both user and agent invokable, in my user settings, that creates tickets on my team's board with the right labels, fields, project, and current sprint. Interview me.
+```
+
+No hook for issues - they're usually opt-in, not commands the AI runs unprompted.
+
+## Exercise
+
+1. Try to make a hook or skill for something you do often.
+2. Consider what else would be helpful as a skill or hook.
