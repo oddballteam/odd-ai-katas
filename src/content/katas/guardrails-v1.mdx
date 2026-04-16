@@ -1,0 +1,57 @@
+---
+feeling: "How much should I let the AI do without asking?"
+lastUpdated: "2026-04-15"
+description: "Pick the right permission tier for the work in front of you. Lock-down for prod, loose for greenfield."
+status: draft
+tags:
+    - "basics"
+    - "trust"
+    - "automation"
+tools:
+    - "claude-code"
+    - "cursor"
+related:
+    - "what-does-it-already-know"
+---
+
+## Permission tiers, not on-or-off
+
+Every agent has a knob between "ask before each action" and "do whatever you want." Most people set it once and forget it. The trick is to slide that knob based on the work, not your mood.
+
+A useful way to think about it:
+
+- **Tier 0 - Approve every action.** Slow. Use it on production code, infrastructure, secrets, anything you can't afford to undo.
+- **Tier 1 - Allowlist safe commands.** Tests, linters, builds, formatters. Anything destructive still asks.
+- **Tier 2 - Auto-mode with deny-rules.** Agent decides. Specific dangerous commands are blocked. You glance at the diff.
+- **Tier 3 - Full auto, inside a sandbox.** The agent runs unattended. Safety comes from the OS or container, not the agent itself.
+
+Tier 3 only works if the sandbox is real. Without one, "skip permissions" is just trust. With one, it's freedom.
+
+## Tool examples
+
+In **Claude Code**, permissions live in `.claude/settings.json`. Three rule types: `allow`, `ask`, `deny`. Deny always wins.
+
+```json
+{
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": ["Bash(npm test:*)", "Bash(npm run lint:*)", "Read"],
+    "ask": ["Edit", "Bash(git push:*)"],
+    "deny": ["Bash(rm -rf:*)", "Read(./.env*)", "WebFetch"]
+  }
+}
+```
+
+You can also flip modes mid-session with `/permissions` or hit Shift+Tab to cycle between plan, default, and accept-edits. For unattended work, `--dangerously-skip-permissions` exists, but only run it inside a devcontainer or VM.
+
+{/* TODO: screenshot of Claude Code /permissions output */}
+
+In **Cursor**, agent mode has an allowlist, a denylist, and a "prevent file deletion" toggle. YOLO/auto-run executes everything that isn't denied. Heads up: security researchers found four ways to bypass Cursor's denylist using shell tricks like `&&` chaining and base64 encoding. Treat the denylist as a speed bump, not a wall.
+
+{/* TODO: screenshot of Cursor agent permission settings */}
+
+## Exercise
+
+1. Open your tool's permission settings. Write down your current tier (0 to 3).
+2. Pick one task you're about to do. Decide which tier fits, and either tighten or loosen the settings before you start.
+3. Try Tier 1 if you've never used it: add 3 to 5 specific safe commands to the allowlist (your test runner, your linter, your formatter) and see how many fewer prompts you hit.

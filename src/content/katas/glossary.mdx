@@ -17,7 +17,7 @@ tools: []
 | **System prompt** | Hidden instructions your tool sends before you type anything. Your CLAUDE.md or copilot-instructions.md lives here. |
 | **Skills** | Specialized knowledge your agent loads on demand, not upfront. Like downloading kung fu in The Matrix. You can invoke them yourself (`/review-pr`) or the agent can auto-load them when it recognizes key phrases in what you're asking. |
 | **Agent** | AI that takes actions: reads files, runs tests, edits code, creates commits. Most AI coding tools are agents. |
-| **Subagent** | A child agent that works in its own context, separate from the main conversation. Keeps your main thread clean. Instead of loading 10k tokens of research into your session, a subagent goes off, does the work, and comes back with just the important bits. |
+| **Subagent** | A child agent that works in its own context, separate from the main conversation. Often scoped to a single task or skill (e.g. "research this", "review that file"). Keeps your main thread clean - the subagent does the work and comes back with just the important bits. |
 | **MCP** | Model Context Protocol. Plug-in system connecting your AI to external services. e.g. an MCP server that lets your AI read and create GitHub issues. |
 | **Hooks** | Automated actions that fire at specific points in the agent's workflow. Unlike skills, hooks run outside the AI's reasoning. They enforce rules the AI can't skip. e.g. "always run lint before committing." |
 | **Commands / Slash commands** | Shortcuts built into your tool (like `/context`, `/init`, `/memory`). Increasingly these are just skills you can invoke by name. |

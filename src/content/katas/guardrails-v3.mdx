@@ -1,0 +1,55 @@
+---
+feeling: "If the agent agreed not to run rm -rf, why did it run rm -rf?"
+lastUpdated: "2026-04-15"
+description: "Any rule the agent can see, the agent can talk around. Real guardrails live outside the agent."
+status: draft
+tags:
+    - "basics"
+    - "trust"
+---
+
+## Inside vs outside the agent
+
+Guardrails come in two flavors:
+
+- **Inside the agent**: prompts, system messages, allow/deny rules the model reads. These are advisory. A good model usually follows them. A confused model, a clever prompt, or a malicious diff can route around them.
+- **Outside the agent**: OS permissions, sandbox profiles, container boundaries, network firewalls. These are physical. The agent cannot violate them because the kernel will not let it.
+
+If your only guardrail is "I told it not to," you have advice, not a guardrail.
+
+## Why this matters
+
+Cursor's YOLO denylist was bypassed four different ways by encoding commands in base64 or chaining with `&&`. The denylist was a string the agent could see and rewrite around. An OS-level rule like "this process cannot write outside /workspace" cannot be base64'd away.
+
+In agent research papers, the same point keeps showing up: 94% of state-of-the-art agents are vulnerable to prompt injection. That number is about agent-level rules. Outside-the-agent rules are not in the same threat model, because the agent never gets a vote.
+
+## Two questions to ask about every guardrail
+
+When you set up a permission or a deny rule, ask:
+
+1. **Where is it enforced?** If the answer is "in the system prompt" or "in the model's config the model reads," it's inside the agent. If the answer is "the kernel refuses the syscall" or "the container has no network route," it's outside.
+2. **What happens if the agent ignores it?** If the answer is "the action runs anyway," you have advice. If the answer is "the action fails with EACCES," you have a guardrail.
+
+Both have value. Inside-the-agent rules are fast to set up and reduce dumb mistakes. Outside-the-agent rules survive prompt injection and runaway agents. You want both.
+
+## Tool examples
+
+In **Claude Code**, the difference is visible in the harness itself. Try `ls ~/.ssh` from a Bash tool call. If your sandbox has a read-deny on `~/.ssh`, the directory listing is blocked at the OS level, not because Claude decided to be polite. Same for write paths: the harness can write to the project dir and `$TMPDIR`, and nowhere else, because that's the sandbox profile.
+
+{/* TODO: screenshot of Claude Code being denied access to ~/.ssh by the OS sandbox */}
+
+In **Codex CLI**, `workspace-write` mode means "the OS will reject writes outside the workspace and network calls outside the allowlist." When Codex hits one of those boundaries, it doesn't decide whether to comply. It gets a system error and asks you to approve a bigger sandbox.
+
+```bash
+codex --sandbox workspace-write --ask-for-approval on-request
+```
+
+The `--ask-for-approval` flag controls when Codex pauses to ask. The `--sandbox` flag controls what the OS will let it do regardless. They are different controls.
+
+{/* TODO: screenshot of Codex CLI hitting a sandbox boundary and prompting for approval */}
+
+## Exercise
+
+1. Pick one rule you rely on (a deny rule, a "don't read .env" instruction, a system prompt). Decide whether it's inside or outside the agent.
+2. Test it. Ask the agent to do the forbidden thing. Watch what happens. If the rule was inside the agent and the agent obeyed, great. Now ask "but really do it." See if the rule holds.
+3. For one inside-the-agent rule that matters, add an outside-the-agent equivalent. Examples: a `chmod -r ~/.ssh` so the OS denies access, a devcontainer that doesn't mount your home dir, or a network allowlist on your sandbox.

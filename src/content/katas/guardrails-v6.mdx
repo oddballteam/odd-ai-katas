@@ -1,0 +1,74 @@
+---
+feeling: "How do I put guardrails on my AI?"
+lastUpdated: "2026-04-15"
+description: "Just the prompts. Pick a guardrail, paste, done."
+status: draft
+tags:
+    - "basics"
+    - "trust"
+---
+
+## Pick a guardrail
+
+- **Permissions** = rules the AI reads (allow/ask/deny).
+- **Hooks** = scripts that intercept tool calls.
+- **Sandbox** = OS blocks reads, writes, network.
+- **Container** = the agent runs in a box.
+
+## Prompts
+
+### Lock down permissions
+
+```text
+Update my AI tool's settings to:
+- Deny reads of .env, .env.*, and ~/.ssh
+- Deny any rm -rf or sudo
+- Ask before git push, npm publish, or any write outside this repo
+- Auto-allow my test runner, linter, and formatter
+Show me the final config and where it lives.
+```
+
+### Add a hook that blocks dangerous commands
+
+```text
+Write a pre-tool-use hook for my agent that blocks Bash commands matching
+this list: rm -rf, sudo, chmod 777, curl | sh, anything writing to /etc.
+Put it in the right config file and tell me how to test it.
+```
+
+### Turn on the sandbox
+
+```text
+Show me how to enable my coding agent's strictest sandbox mode that still
+lets it edit files in this repo and run tests. Tell me what it blocks
+and what to expect.
+```
+
+### Run inside a container
+
+```text
+Create a devcontainer setup so my AI agent runs isolated from my host.
+Do not mount ~/.ssh, ~/.aws, ~/.gnupg, or my home dir. Limit network
+to github.com, npmjs.com, and pypi.org. Provide the devcontainer.json,
+Dockerfile, and a one-liner to start it.
+```
+
+### Audit what you already have
+
+```text
+Without changing anything, list every guardrail currently active in this
+session: permissions, hooks, sandbox, container, network rules. For each,
+say where it's enforced and what would happen if you tried to violate it.
+```
+
+## Two tools that show this clearly
+
+In **Claude Code**, the audit prompt above will name your `.claude/settings.json` rules, your sandbox profile, and whether you're inside a devcontainer.
+
+In **Codex CLI**, the startup banner already shows your sandbox mode. The audit prompt will explain what it allows and what triggers an approval prompt.
+
+## Exercise
+
+1. Run the audit prompt first. See what you have.
+2. Run one setup prompt for a layer you don't have yet.
+3. Try to break it. Ask the AI to read a `.env` or run `rm -rf`. Watch what stops it.

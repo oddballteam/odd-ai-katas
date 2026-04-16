@@ -682,47 +682,72 @@ a:hover {
 .callout.warn .callout-label { color: #e8a838; }
 .callout.safe .callout-label { color: #34a853; }
 
-/* ===== Prompt blocks ===== */
+/* ===== Prompt blocks (terminal style) ===== */
 .kata-detail .kata-body pre.prompt-block {
-  background: var(--bg-card) !important;
+  background: #0d1117 !important;
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 1rem 1.2rem;
-  padding-right: 4rem;
+  padding: 2.6rem 1.2rem 1.1rem 1.2rem;
   margin: 1rem 0;
   position: relative;
+  overflow: hidden;
+}
+.kata-detail .kata-body pre.prompt-block::before {
+  content: "PROMPT";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  padding: 0 1.2rem;
+  background: #161b22;
+  border-bottom: 1px solid var(--border);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
 }
 .kata-detail .kata-body pre.prompt-block code {
-  font-family: 'Inter', system-ui, sans-serif !important;
-  font-size: 1rem;
-  color: var(--text-bright) !important;
+  font-family: 'SF Mono', 'Fira Code', 'Menlo', monospace !important;
+  font-size: 0.88rem;
+  color: #e6edf3 !important;
   white-space: pre-wrap;
   word-wrap: break-word;
-  line-height: 1.6;
+  line-height: 1.65;
   background: none !important;
   border: none;
   padding: 0;
+  display: block;
 }
 .kata-detail .kata-body pre.prompt-block span {
-  color: var(--text-bright) !important;
+  color: #e6edf3 !important;
 }
 .prompt-copy {
   position: absolute;
-  top: 0.6rem; right: 0.6rem;
+  top: 0.32rem;
+  right: 0.5rem;
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.7rem; font-weight: 600;
-  text-transform: uppercase; letter-spacing: 0.08em;
-  color: var(--text-muted);
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  background: transparent;
+  border: 1px solid var(--accent);
   border-radius: 4px;
-  padding: 0.3rem 0.6rem;
+  padding: 0.2rem 0.65rem;
   cursor: pointer;
-  transition: color 0.15s, border-color 0.15s;
+  transition: color 0.15s, background 0.15s, border-color 0.15s;
+  z-index: 1;
 }
 .prompt-copy:hover {
-  color: var(--text-bright);
-  border-color: var(--border-hover);
+  color: #0d1117;
+  background: var(--accent);
+  border-color: var(--accent);
 }
 .table-copy-wrapper {
   position: relative;
@@ -886,6 +911,18 @@ a:hover {
   font-size: 0.8rem; letter-spacing: 0.1em;
   text-transform: uppercase;
   border-top: 1px solid var(--border);
+}
+
+/* ===== Image grids in kata body ===== */
+.kata-detail .kata-body div[style*="grid"] {
+  margin-bottom: 1.5rem;
+}
+
+/* ===== Horizontal rules in kata body ===== */
+.kata-detail .kata-body hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 2rem 0;
 }
 
 /* ===== Image lightbox ===== */

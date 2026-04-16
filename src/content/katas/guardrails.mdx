@@ -1,0 +1,100 @@
+---
+feeling: "How do I setup guardrails?"
+lastUpdated: "2026-04-15"
+description: "The main guardrail types, plus copy-paste prompts to set them up."
+status: done
+tags:
+    - "basics"
+    - "trust"
+---
+
+## Pick a guardrail
+
+| Guardrail | What it is | Bypass difficulty |
+|---|---|---|
+| Permissions | Rules the AI reads (allow / ask / deny) | Easy (encoding, alt commands) |
+| Hooks | Triggers that fire on tool calls (pause, block, log, or run a script) | Medium (regex evasion, async bugs) |
+| Sandbox | OS blocks writes outside the project and limits network | Hard (kernel-enforced) |
+| Container | The agent runs inside Docker, isolated from your real machine and files | Very hard |
+
+<div class="callout warn">
+<div class="callout-label">Heads up</div>
+If you run the prompts below, the changes are permanent until you go back and undo them. Next session you'll still be locked down. Audit first so you know what you're changing.
+</div>
+
+## Example prompts
+
+### Example: audit what you already have (run this first)
+
+```text
+Summarize my current guardrails in plain language: permissions, hooks,
+sandbox, container. Just the highlights, not every rule. Call out
+anything that looks risky.
+```
+
+### Permissions
+
+```text
+In my user settings, deny reads of every common credential location for a typical dev machine. List what you added.
+```
+
+```text
+In my user settings, ask before any rm -rf (except node_modules) or sudo.
+```
+
+```text
+In this project's settings, auto-allow my test and lint commands.
+```
+
+### Hooks
+
+```text
+Write a user-level hook that blocks rm -rf (except node_modules) and sudo.
+```
+
+```text
+Write a hook that runs lint before any git commit, and blocks the commit if lint fails.
+```
+
+```text
+Suggest a useful PostToolUse hook for this project.
+```
+
+### Sandbox
+
+```text
+Is my agent's sandbox actually on right now? Some are opt-in.
+```
+
+```text
+Turn on the strictest OS sandbox my agent supports (Landlock, Seatbelt, or Bubblewrap).
+```
+
+```text
+What's the difference between my agent's sandbox modes?
+```
+
+### Container
+
+```text
+Set up a devcontainer so I can safely run my agent with --dangerously-skip-permissions.
+```
+
+```text
+Add a firewall allowlist to my devcontainer for only the hosts this project needs.
+```
+
+```text
+Why use a container if I already have a sandbox? Two sentences.
+```
+
+## Two tools that show this clearly
+
+In **Claude Code**, the audit prompt above will name your `.claude/settings.json` rules, your sandbox profile, and whether you're inside a devcontainer.
+
+In **Codex CLI**, the startup banner already shows your sandbox mode. The audit prompt will explain what it allows and what triggers an approval prompt.
+
+## Exercise
+
+1. Run the audit prompt to see what you already have.
+2. Pick any one of the example prompts above and try it.

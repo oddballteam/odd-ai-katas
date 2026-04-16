@@ -398,7 +398,9 @@ const toolLookup = toolGroups.flatMap(g =>
         (kata.lastUpdated ? '<div class="kata-last-updated">Last updated ' + kata.lastUpdated + '</div>' : '') +
         toolTagsHTML +
         '<div class="kata-body">' + bodyHTML + '</div>' +
-        (alreadyCompleted ? '' : '<button class="kata-complete-btn" id="kata-complete-btn" data-kata-id="' + id + '">' + completedText + '</button>') +
+        (alreadyCompleted
+          ? '<button class="kata-complete-btn done" id="kata-back-btn">Back to katas</button>'
+          : '<button class="kata-complete-btn" id="kata-complete-btn" data-kata-id="' + id + '">' + completedText + '</button>') +
         relatedHTML;
 
       // Wire up completion button
@@ -412,8 +414,14 @@ const toolLookup = toolGroups.flatMap(g =>
         });
       }
 
+      // Wire up back button (shown when already completed)
+      var backBtn = document.getElementById('kata-back-btn');
+      if (backBtn) {
+        backBtn.addEventListener('click', function() { hideKata(); });
+      }
+
       // Style prompt blocks and add copy buttons
-      detailEl.querySelectorAll('pre[data-language="plaintext"]').forEach(function(pre) {
+      detailEl.querySelectorAll('pre[data-language="plaintext"], pre[data-language="text"]').forEach(function(pre) {
         pre.classList.add('prompt-block');
         var btn = document.createElement('button');
         btn.className = 'prompt-copy';
@@ -429,27 +437,6 @@ const toolLookup = toolGroups.flatMap(g =>
       });
 
       // Add copy button to tables
-      detailEl.querySelectorAll('table').forEach(function(table) {
-        var wrapper = document.createElement('div');
-        wrapper.className = 'table-copy-wrapper';
-        table.parentNode.insertBefore(wrapper, table);
-        wrapper.appendChild(table);
-        var btn = document.createElement('button');
-        btn.className = 'table-copy';
-        btn.textContent = 'Copy';
-        btn.addEventListener('click', function() {
-          var rows = table.querySelectorAll('tbody tr');
-          var text = Array.from(rows).map(function(row) {
-            var cells = row.querySelectorAll('td');
-            return cells[0].textContent.trim() + ': ' + cells[1].textContent.trim();
-          }).join('\n');
-          navigator.clipboard.writeText(text).then(function() {
-            btn.textContent = 'Copied';
-            setTimeout(function() { btn.textContent = 'Copy'; }, 1500);
-          });
-        });
-        wrapper.appendChild(btn);
-      });
 
       mainEl.classList.add('hidden');
       detailEl.classList.add('visible');

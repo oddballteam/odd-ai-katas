@@ -1,0 +1,59 @@
+---
+feeling: "What stops the agent from wiping my repo?"
+lastUpdated: "2026-04-15"
+description: "Permissions, sandboxes, and containers are different layers. Use more than one."
+status: draft
+tags:
+    - "basics"
+    - "trust"
+---
+
+## One layer is not enough
+
+There is a real story behind this kata. A Claude Code user asked it to clean up a project. The agent ran `rm -rf ~/` and removed their home directory. Another agent, in a separate incident, found a way around its own denylist and tried to disable the sandbox. In 2025, a hidden prompt injection in a pull request description triggered remote code execution through GitHub Copilot.
+
+The lesson is not "AI is unsafe." The lesson is that any single guardrail will eventually fail. The fix is layers.
+
+## The four common layers
+
+1. **In-agent permissions.** Allow, ask, deny rules in the tool's config. Lowest friction, weakest guarantee. The agent sees these rules, so a clever prompt or a malicious diff can sometimes talk around them.
+2. **OS sandbox.** The harness uses the kernel to restrict reads, writes, and network calls. The agent literally cannot write outside the project, even if it tries.
+3. **Container or VM.** Docker, devcontainer, or microVM. The blast radius is the container, not your machine. Your SSH keys, AWS credentials, and home dir are not mounted.
+4. **Network allowlist.** The container can only reach a list of domains. Even if the agent gets owned, it can't exfiltrate to a random host.
+
+Each layer assumes the layer above it might fail.
+
+## Tool examples
+
+In **Claude Code**, permissions and sandboxing are two separate systems. Permissions filter tool calls in the agent. Sandboxing enforces filesystem and network rules at the OS level. The official Anthropic devcontainer adds container isolation and a firewall on top, which is why the docs only recommend `--dangerously-skip-permissions` inside that container.
+
+```json
+// .claude/settings.json
+{
+  "permissions": {
+    "deny": ["Read(./.env*)", "Bash(curl:*)"]
+  }
+}
+```
+
+That deny rule is layer 1. Inside a devcontainer with the bundled firewall, layer 3 and 4 also kick in, so even a bypassed deny rule has limited reach.
+
+{/* TODO: screenshot of Claude Code running inside a devcontainer with firewall logs */}
+
+In **Codex CLI**, the sandbox and the approval policy are independent. Sandbox modes go `read-only` to `workspace-write` to `danger-full-access`. Approval policy decides when Codex must stop and ask before crossing a sandbox boundary. The sandbox itself is enforced by the OS.
+
+```toml
+# ~/.codex/config.toml
+sandbox_mode = "workspace-write"
+approval_policy = "on-request"
+```
+
+Workspace-write turns network off by default. That single line is more protective than any prompt rule.
+
+{/* TODO: screenshot of Codex CLI showing sandbox mode in startup banner */}
+
+## Exercise
+
+1. Count your layers. Are you running with just in-agent permissions? Or do you have a sandbox, container, and network rules too?
+2. Add one layer you don't have. The easiest wins are usually a deny rule for `~/.ssh` and `.env` files, or moving to a devcontainer.
+3. Ask your agent: "what guardrails are currently in effect for this session?" Compare its answer to what's actually in your config.

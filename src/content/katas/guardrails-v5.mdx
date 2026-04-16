@@ -1,0 +1,72 @@
+---
+feeling: "How do I put guardrails on my AI?"
+lastUpdated: "2026-04-15"
+description: "Cheat sheet of guardrail types with one-line definitions and a setup prompt for each."
+status: draft
+tags:
+    - "basics"
+    - "trust"
+---
+
+## The cheat sheet
+
+| Guardrail | What it is | Where it lives |
+|---|---|---|
+| Permissions | Allow/ask/deny rules per tool or command | Tool config (`.claude/settings.json`, Cursor settings) |
+| Hooks | Scripts that fire before/after a tool call | Tool config, runs in the harness |
+| Sandbox | OS-level read/write/network limits | Kernel (seatbelt, landlock, namespaces) |
+| Container | The whole agent runs in an isolated box | Docker, devcontainer, microVM |
+| Worktree | Each agent gets its own checkout | `git worktree add` |
+| Network allowlist | Only specific domains reachable | Firewall in the container or sandbox |
+
+Stack as many as you need. None of them replace the others.
+
+## Prompts to set them up
+
+Paste these into your agent. Each one configures one layer.
+
+**Permissions:**
+```text
+Audit my current permission rules for this AI tool. Then suggest a tighter
+default: deny .env reads, deny ~/.ssh reads, deny rm -rf, allow my test
+and lint commands. Update the config file and show me the diff.
+```
+
+**Hooks:**
+```text
+Write a PreToolUse hook for Claude Code that blocks any Bash command
+matching a list of dangerous patterns I'll give you. Start with: rm -rf,
+curl piped to shell, sudo, chmod 777. Put it in the right place.
+```
+
+**Sandbox:**
+```text
+What OS-level sandbox does my coding agent use right now? Show me the
+read deny list, write allow list, and network allow list. Suggest
+tighter defaults for a typical web project.
+```
+
+**Container:**
+```text
+Generate a devcontainer.json that runs my coding agent isolated from
+my host. No mount of ~/.ssh, ~/.aws, or my home dir. Network limited
+to github.com, npmjs.com, and localhost.
+```
+
+**Worktree:**
+```text
+Set up a git worktree workflow so I can run multiple agents in parallel
+without them stepping on each other. Show me the commands to add and
+remove worktrees.
+```
+
+## Tool examples
+
+In **Claude Code**, the order of strength is: permissions (advisory) → hooks (blocking) → sandbox (kernel) → container (full isolation). The official Anthropic devcontainer combines the last three.
+
+In **Codex CLI**, sandbox is the headline feature: `--sandbox workspace-write` is the safe default, `--ask-for-approval on-request` controls when it pauses.
+
+## Exercise
+
+1. Run the "Permissions" prompt above and let your agent update your config.
+2. Run the "Sandbox" prompt and read what your sandbox actually permits. Most people are surprised by what's open.

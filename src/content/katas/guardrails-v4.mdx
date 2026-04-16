@@ -1,0 +1,62 @@
+---
+feeling: "How do I put guardrails on my AI?"
+lastUpdated: "2026-04-15"
+description: "The four guardrail types, what they do, and a prompt for each."
+status: draft
+tags:
+    - "basics"
+    - "trust"
+---
+
+## Four guardrails
+
+### 1. Permissions
+
+Rules the AI tool reads. Allow, ask, deny on tools and commands. Lives in `.claude/settings.json`, Cursor's settings, etc.
+
+```text
+Add deny rules to my Claude Code settings.json for: reading .env files,
+reading ~/.ssh, any rm -rf, and any curl piped to a shell.
+Add allow rules for my test runner and linter so I stop getting prompted.
+```
+
+### 2. Hooks
+
+Scripts the harness runs before or after a tool call. Block, log, or modify. Outside the model's reach.
+
+```text
+Add a PreToolUse hook to my Claude Code settings that blocks any Bash
+command containing "rm -rf" or writing outside my project directory.
+Show me the hook code and where to put it.
+```
+
+### 3. Sandbox
+
+OS-level limits on what the process can read, write, or reach over the network. Enforced by the kernel.
+
+```text
+Show me how to enable the OS sandbox in my coding agent. List which
+directories can be read/written and which network hosts are reachable.
+Then suggest tighter defaults.
+```
+
+### 4. Container
+
+The whole agent runs inside Docker or a devcontainer. Your home dir, SSH keys, and creds are not mounted. Blast radius is the container.
+
+```text
+Generate a devcontainer.json for this repo that runs Claude Code with
+no host network access except github.com and npm.org, and no mount of
+my host home directory.
+```
+
+## Tool examples
+
+In **Claude Code**, all four are available. Permissions in `.claude/settings.json`, hooks in the same file under `hooks`, sandbox via the harness, and the official Anthropic devcontainer for container isolation.
+
+In **Codex CLI**, sandbox modes are first class: `read-only`, `workspace-write`, `danger-full-access`. Approval policy is separate from sandbox, so you can be strict on one and lax on the other.
+
+## Exercise
+
+1. Pick which of the four you don't have yet. Paste the matching prompt into your AI tool and let it set it up.
+2. Test it. Ask the AI to do the forbidden thing on purpose. See what blocks first.
