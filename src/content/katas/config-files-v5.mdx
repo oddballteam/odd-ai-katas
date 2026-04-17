@@ -1,0 +1,113 @@
+---
+feeling: "Which AI config follows my repo and which follows me?"
+lastUpdated: "2026-04-16"
+description: "Two annotated file trees: what lives in your project vs what lives in your home directory or the tool's settings store."
+status: draft
+tags:
+    - "basics"
+    - "context"
+tools:
+    - "claude-code"
+    - "vscode"
+    - "cursor"
+---
+
+## Two scopes, two trees
+
+Every AI tool's config splits into two homes: **in your repo** (committed, follows the project, shared with your team) and **on your machine** (personal, follows you, hidden from teammates). Each tool draws the line slightly differently.
+
+### In your repo (committed, team-shared)
+
+```
+your-project/
+│
+├── AGENTS.md                              # cursor, codex, aider
+├── CLAUDE.md                              # claude code
+│
+├── .mcp.json                              # claude code (MCP servers)
+├── .claude/
+│   ├── settings.json                      # claude code (permissions, hooks)
+│   ├── agents/                            # claude code (subagents)
+│   ├── commands/                          # claude code (slash commands)
+│   ├── hooks/                             # claude code (shell event hooks)
+│   └── skills/                            # claude code (auto-invoked workflows)
+│
+├── .cursor/
+│   ├── rules/                             # cursor (.mdc rule files)
+│   ├── mcp.json                           # cursor (MCP servers)
+│   └── modes.json                         # cursor (custom modes)
+├── .cursorignore                          # cursor (AI never reads these files)
+├── .cursorindexignore                     # cursor (excluded from index)
+│
+└── .github/
+    ├── copilot-instructions.md            # copilot (project instructions)
+    ├── instructions/                      # copilot (path-scoped rules)
+    ├── prompts/                           # copilot (reusable prompts)
+    └── chatmodes/                         # copilot (custom modes)
+```
+
+### On your machine (personal, never committed)
+
+```
+~/                                          # your home directory
+│
+├── .claude/                               # claude code user-level (same shape as project)
+│   ├── CLAUDE.md                          # personal preferences for ALL projects
+│   ├── settings.json                      # global permissions / deny lists
+│   ├── settings.local.json                # personal local overrides
+│   ├── agents/                            # global subagents
+│   ├── commands/                          # global slash commands
+│   ├── skills/                            # global skills
+│   ├── plugins/                           # installed marketplace plugins
+│   └── projects/                          # auto-memory + session history per project
+│
+└── (any project)
+    └── .claude/
+        └── settings.local.json            # personal repo override (gitignored)
+
+# Cursor: user rules live in Cursor Settings → Rules (no on-disk file)
+# Copilot: personal preferences live in VS Code user settings.json
+#          (~/.config/Code/User/settings.json on Linux, similar on Mac/Win)
+```
+
+The line on what's "personal" is drawn differently in each tool:
+- **Claude Code** uses both: `~/.claude/` for global, `.claude/settings.local.json` for per-repo personal.
+- **Cursor** stores user rules in its own settings store, not in a file you can edit by hand or share.
+- **Copilot** keeps personal config in VS Code's user settings file outside your repo.
+
+## Small examples
+
+`~/.claude/CLAUDE.md` (personal, applies to every project):
+
+```markdown
+# How I like to work
+- Be terse. No "Certainly!" preambles.
+- Show diffs before applying. Ask before destructive commands.
+- Conventional commits. Never add Co-Authored-By lines.
+```
+
+`.claude/settings.local.json` (gitignored, this repo only):
+
+```json
+{
+  "permissions": {
+    "allow": ["Bash(yarn cypress:*)"]
+  }
+}
+```
+
+`.claude/settings.json` (committed, team-shared):
+
+```json
+{
+  "permissions": {
+    "deny": ["Bash(rm -rf *)", "Bash(git push --force *)"]
+  }
+}
+```
+
+## Exercise
+
+1. Run `ls -la ~/.claude` (or your tool's equivalent). Anything in there you forgot you had?
+2. Find a rule that's currently in a project file but really belongs in your personal config. Move it. Notice if other projects start behaving differently.
+3. Ask your AI: "what's loaded from my user settings versus my project settings right now?"

@@ -1,0 +1,72 @@
+---
+feeling: "How do I give my AI eyes? It writes UI code but never sees the page."
+lastUpdated: "2026-04-16"
+description: "Hand your agent a real browser so it can click, screenshot, read the console, and verify its own work. Here's what to install and what to watch out for."
+status: draft
+tags:
+    - "context"
+    - "verification"
+    - "trust"
+---
+
+## What "eyes" means
+
+By default your agent is blind to the running app. It edits a component, says "done," and you become the test runner. "Eyes" means giving it a real browser it can drive: open URLs, click, fill forms, take screenshots, read the console, inspect network requests. The same loop you run manually, automated.
+
+Once it's wired up, "I fixed the login form" becomes "I clicked submit, watched the 200 come back, and screenshotted the dashboard."
+
+## What you can install (April 2026)
+
+Four real options. Pick by job, not hype.
+
+| Tool | Who makes it | Best for | Browser | Notes |
+|---|---|---|---|---|
+| **Chrome DevTools MCP** | Google | Debugging, perf, console/network | Chrome only | Spins up its own profile. ~26 tools. |
+| **Playwright MCP** | Microsoft | Driving flows, cross-browser, tests | Chrome / FF / WebKit | ~21 tools. CLI variant uses 4x fewer tokens. |
+| **Claude in Chrome** | Anthropic | Authenticated dev on real sessions | Chrome extension | Uses your real login. Powerful and risky. |
+| **agent-browser / OpenBrowser** | Third-party | Token-tight workflows | Chrome | 3-6x cheaper on tokens, smaller community. |
+
+Most teams in 2026 install **two**: Playwright MCP for driving, Chrome DevTools MCP for debugging. Add Claude in Chrome only if you actually need authenticated pages.
+
+## Wire one up (Chrome DevTools MCP, Claude Code)
+
+```bash
+claude mcp add chrome-devtools npx chrome-devtools-mcp@0.6.0
+```
+
+Pin a version, not `@latest`. Then restart your session and ask: "List the tools you got from chrome-devtools and what each one does." Read the list before you use it.
+
+For Cursor / VS Code / Gemini CLI the JSON is the same shape, just dropped into their MCP config.
+
+## What to watch out for
+
+A browser MCP hands your agent the keys to a real Chrome. Three things to know:
+
+1. **Prompt injection is real.** A malicious page can embed instructions the agent will follow. CVE-2026-25253 (March 2026) was a zero-click against agent-controlled browsers. Don't tell the agent to "browse around" untrusted sites.
+2. **Don't share your real session.** Use the MCP server's own profile (the default), or a throwaway test account. Never `--autoConnect` to your default Chrome with your real Gmail/GitHub/AWS logins open.
+3. **Verify what you install.** `npx anything@latest` is a supply-chain risk. Confirm the GitHub org (`ChromeDevTools/`, `microsoft/`, `anthropic/`), pin a version, skim the npm page for publish date and downloads.
+
+## Platform notes
+
+- **Mac / Windows**: install Chrome, run the command.
+- **Linux**: may need `libnss3 libxss1 libasound2 libgbm1`.
+- **WSL2**: easiest is to run the MCP on the Windows side and point WSL at it.
+- **Chrome 136+**: blocks `--remote-debugging-port` on your default profile. The MCP server's own profile sidesteps this.
+
+## A note on freshness
+
+This space changes monthly. Tools recommended in January 2026 are already being replaced. Before you commit, check the repo's last commit, the npm publish date, and filter your own searches to "past month." This kata was written 2026-04-16; if you're reading it later, re-verify.
+
+## Exercise
+
+1. Pick one tool from the table based on what you need (driving / debugging / authenticated).
+2. Install pinned, in a fresh profile. Ask the agent to list the tools it got and what each does.
+3. Boot your dev server, then ask: "Open http://localhost:3000, screenshot it, list any console errors, and tell me what's broken." Watch how it sees your app for the first time.
+
+## Sources
+
+- [Chrome DevTools MCP (Google)](https://github.com/ChromeDevTools/chrome-devtools-mcp)
+- [Playwright MCP (Microsoft)](https://github.com/microsoft/playwright-mcp)
+- [Claude in Chrome (Anthropic)](https://code.claude.com/docs/en/chrome)
+- [Driving vs Debugging the Browser - Steve Kinney](https://stevekinney.com/writing/driving-vs-debugging-the-browser)
+- [MCP Security Vulnerabilities 2026 - Practical DevSecOps](https://www.practical-devsecops.com/mcp-security-vulnerabilities/)

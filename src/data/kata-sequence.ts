@@ -1,8 +1,13 @@
 /**
  * Controls the display order of katas on the index page.
  * Katas not listed here appear at the end in alphabetical order.
+ *
+ * Pedagogical order: pick a tool, learn the vocab, customize it,
+ * manage context, set guardrails, extend capabilities, integrate git workflow.
+ * Drafts are grouped immediately after their graduated primary.
  */
 export const kataSequence: string[] = [
+  // Pick a tool
   'what-tool',
   'what-tool-v1',
   'what-tool-v2',
@@ -10,10 +15,9 @@ export const kataSequence: string[] = [
   'what-tool-v4',
   'what-tool-v5',
   'what-tool-v6',
-  'what-does-it-already-know',
-  'what-does-it-already-know-caveman',
+
+  // Learn the vocabulary
   'glossary',
-  'glossary-caveman',
   'glossary-v1',
   'glossary-v2',
   'glossary-v3',
@@ -21,9 +25,50 @@ export const kataSequence: string[] = [
   'glossary-v5',
   'glossary-v6',
   'glossary-v7',
-  'on-the-go-v1',
-  'on-the-go-v2',
-  'on-the-go-v3',
+
+  // Customize it for your project
+  'config-files',
+  'config-files-v1',
+  'config-files-v2',
+  'config-files-v3',
+  'config-files-v4',
+  'config-files-v5',
+  'config-files-v6',
+  'config-files-v7',
+  'config-files-v8',
+  'config-files-v9',
+  'config-files-v10',
+
+  // Manage the context window
+  'context',
+  'context-v1',
+  'context-v2',
+  'context-v3',
+  'context-v4',
+  'context-v5',
+  'context-v6',
+  'context-v7',
+  'what-does-it-already-know',
+
+  // Set guardrails
+  'guardrails',
+  'guardrails-v1',
+  'guardrails-v2',
+  'guardrails-v3',
+  'guardrails-v4',
+  'guardrails-v5',
+  'guardrails-v6',
+
+  // Extend its capabilities (give it eyes)
+  'browser-devtools',
+  'browser-devtools-v1',
+  'browser-devtools-v2',
+  'browser-devtools-v3',
+  'browser-devtools-v4',
+  'browser-devtools-v5',
+  'browser-devtools-v6',
+
+  // Integrate with your git workflow
   'issues-commits-prs',
   'issues-commits-prs-v1',
   'issues-commits-prs-v2',
@@ -32,33 +77,9 @@ export const kataSequence: string[] = [
   'issues-commits-prs-v5',
   'issues-commits-prs-v6',
   'issues-commits-prs-v7',
-  'guardrails',
-  'guardrails-v1',
-  'guardrails-v2',
-  'guardrails-v3',
-  'guardrails-v4',
-  'guardrails-v5',
-  'guardrails-v6',
-  'config-files-v1',
-  'config-files-v2',
-  'config-files-v3',
-  'config-files-v4',
-  'config-files-v5',
-  'config-files-v6',
-  'config-files-v7',
-  'config-files-v9',
-  'config-files-v10',
-  'context-v1',
-  'context-v2',
-  'context-v3',
-  'context-v4',
-  'context-v5',
-  'context-v6',
-  'browser-devtools-v1',
-  'browser-devtools-v2',
-  'browser-devtools-v3',
-  'browser-devtools-v4',
-  'browser-devtools-v5',
-  'browser-devtools-v6',
-];
 
+  // Work from anywhere (drafts only, not yet graduated)
+  'on-the-go-v1',
+  'on-the-go-v2',
+  'on-the-go-v3',
+];

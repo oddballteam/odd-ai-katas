@@ -1,0 +1,60 @@
+---
+feeling: "How do I give my AI eyes?"
+lastUpdated: "2026-04-16"
+status: draft
+tags:
+    - "context"
+    - "verification"
+    - "trust"
+---
+
+## Two paths
+
+There's a built-in path and an MCP path. Built-in browsers are easiest. MCP servers are more powerful.
+
+## Built-in browsers (no install)
+
+Your editor probably already ships one:
+
+- [Cursor](https://cursor.com) has a built-in browser pane the agent can navigate, screenshot, and read selected elements from.
+- [VS Code](https://code.visualstudio.com/docs/debugtest/integrated-browser) ships an integrated browser. Copilot can navigate to URLs and select elements to add to chat as context. The polished version is Microsoft's [Live Preview extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.live-server).
+- Claude Code (desktop) got a [redesign on 2026-04-14](https://findskill.ai/blog/claude-code-desktop-redesign-review/) with multi pane sessions; the browser pane is part of that.
+
+If you mostly want "show me what the page looks like" and "click around to verify," start here. Zero setup.
+
+## MCP servers (for real automation)
+
+When you need scripted flows, network inspection, perf traces, or cross tool support, install an MCP server. Two dominate, ranked by GitHub stars and weekly npm downloads:
+
+- [Playwright MCP](https://github.com/microsoft/playwright-mcp) by Microsoft. ~30.9K stars, ranked #1 on [PulseMCP](https://www.pulsemcp.com/). Drives Chrome, Firefox, and WebKit. Best for "make the page do the thing" and CI/test workflows. [Install instructions](https://github.com/microsoft/playwright-mcp#installation).
+- [Chrome DevTools MCP](https://github.com/ChromeDevTools/chrome-devtools-mcp) by Google. ~30.8K stars, ~330K weekly npm downloads. Chrome only. Best for "tell me what's wrong with this page": console, network, perf, Lighthouse. [Install instructions](https://github.com/ChromeDevTools/chrome-devtools-mcp#getting-started).
+
+Two more worth knowing:
+
+- [Claude in Chrome](https://code.claude.com/docs/en/chrome) by Anthropic. Browser extension that uses your real Chrome session, so the agent can act on pages you're already logged into. Powerful and risky in equal measure.
+- [BrowserMCP](https://github.com/BrowserMCP/mcp), a community alternative with a smaller footprint.
+
+Most teams in 2026 pair Playwright MCP (driving) with Chrome DevTools MCP (debugging).
+
+## What to watch out for
+
+A browser MCP gives your agent the keys to a real Chrome:
+
+- **Prompt injection.** A malicious page can embed instructions the agent will follow. CVE-2026-25253 (March 2026) was a zero click that leaked auth tokens from one page visit. Don't tell the agent to "browse around" untrusted sites.
+- **Don't share your real session.** Let the MCP server use its own profile (the default). Never `--autoConnect` to your default Chrome with Gmail/GitHub/AWS open.
+- **Verify the package.** Confirm the GitHub org (`microsoft/`, `ChromeDevTools/`, `anthropic/`), pin a version, and skim the npm page for publish date and downloads before installing.
+
+## Platform notes
+
+- **Mac / Windows**: install Chrome, follow the MCP server's instructions.
+- **Linux**: may need `libnss3 libxss1 libasound2 libgbm1`.
+- **WSL2**: easiest is to run the MCP on the Windows host.
+- **Chrome 136+**: blocks `--remote-debugging-port` on your default profile. The MCP's own profile sidesteps this.
+
+This space changes monthly. Check the repo's last commit and npm publish date before you trust any recommendation, including this one (written 2026-04-16).
+
+## Exercise
+
+1. Try the built-in browser in your editor first. Ask the agent to open `http://localhost:3000` and describe what it sees.
+2. Pick one MCP from above based on what you actually need. Follow its install instructions, pinned, in a fresh profile.
+3. Ask: "List the tools you got from this MCP server and what each does." Read it before you use it.

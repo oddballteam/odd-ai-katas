@@ -1,0 +1,69 @@
+---
+feeling: "Before I pipe a random npm package into my agent, what am I actually choosing between and how risky is it?"
+lastUpdated: "2026-04-16"
+description: "The four real options for giving an agent a browser, who maintains them, what they cost in tokens, and how to not get owned."
+status: draft
+tags:
+    - "context"
+    - "verification"
+    - "trust"
+---
+
+## Why this needs context
+
+A browser MCP hands your agent the keys to a real Chrome. If you're already logged into Gmail, GitHub, AWS, or your company SSO in that profile, the agent can read those tabs too. A malicious page can embed instructions the agent will follow. This is not theoretical: CVE-2026-25253 (disclosed March 2026) was a zero-click against agent-controlled browsers that leaked auth tokens from a single page visit.
+
+So pick deliberately, not by copy-paste.
+
+## The four real options (April 2026)
+
+| Option | Maintainer | Best for | Token cost | Notes |
+|---|---|---|---|---|
+| **Chrome DevTools MCP** | Google (Chrome team) | Debugging, perf traces, network/console inspection | ~18k for 26 tools | Chrome only. Spins up its own profile by default. |
+| **Playwright MCP** | Microsoft (Playwright team) | Driving flows, cross-browser, CI tests | ~13.7k for 21 tools | Chrome + Firefox + WebKit. Has a CLI variant that's ~4x cheaper on tokens. |
+| **Claude in Chrome** | Anthropic | Day-to-day dev on authenticated pages | Browser extension, no MCP install | Shares your real session. Powerful and dangerous in equal measure. |
+| **agent-browser / OpenBrowser** | Third-party (built on Playwright) | Token-constrained workflows | Reported 3-6x fewer tokens | Newer, smaller community, less battle-tested. |
+
+Most experienced teams in 2026 install **two**: one for driving (Playwright MCP), one for debugging (Chrome DevTools MCP). Add Claude in Chrome only if you actually need authenticated dev and accept the risk.
+
+## How to verify what you're installing
+
+Before `npx anything@latest` touches your machine:
+
+1. **Check the org.** `github.com/ChromeDevTools/chrome-devtools-mcp` is the real Google org. `microsoft/playwright-mcp` is the real Playwright org. Lookalikes exist.
+2. **Pin a version.** `chrome-devtools-mcp@0.6.0`, not `@latest`. Re-pin when you've read the changelog.
+3. **Read the npm page.** Check publish date, weekly downloads, maintainer. A "hot new MCP" with 200 downloads and an unknown publisher is a supply-chain risk.
+4. **Audit the install.** `npm view chrome-devtools-mcp` shows maintainers, repo, dependencies. Skim them.
+
+## How to not get owned
+
+- **Never use `--autoConnect` against your default Chrome profile.** Chrome 136+ blocks this for a reason. Let the MCP server use its own clean profile.
+- **Don't tell the agent to "browse around" untrusted sites.** Treat the agent's browser like a junior dev who follows any instruction written in a `<div>`.
+- **Authenticated workflows: use throwaway test accounts** in a dedicated profile, not your real Google/GitHub login.
+- **Sandbox if you can.** Docker, devcontainer, or a VM. Worst case, the blast radius is contained.
+- **Watch the transcript.** If the agent suddenly navigates somewhere you didn't ask for, kill the session.
+
+## Source dates matter
+
+This space changes monthly. Recommendations from January 2026 already mention tools that have been deprecated or replaced. Before you commit:
+
+- Check the GitHub repo's last commit date.
+- Check the npm package's last publish date.
+- Filter your own searches to "past month" — not "past year."
+
+The kata you're reading was written 2026-04-16. If you're reading it more than a quarter later, re-verify.
+
+## Exercise
+
+1. Pick **one** option from the table above based on what you actually need (driving vs debugging vs authenticated).
+2. Before installing, find the GitHub repo. Confirm the org. Note the latest release date.
+3. Install pinned, in a fresh profile or sandbox. Ask the agent: "List every tool you got from this MCP server and what each one can do." Read the list before you use it.
+
+## Sources
+
+- [Chrome DevTools MCP repo (Google)](https://github.com/ChromeDevTools/chrome-devtools-mcp)
+- [Playwright MCP repo (Microsoft)](https://github.com/microsoft/playwright-mcp)
+- [Claude in Chrome docs (Anthropic)](https://code.claude.com/docs/en/chrome)
+- [Driving vs Debugging the Browser - Steve Kinney](https://stevekinney.com/writing/driving-vs-debugging-the-browser)
+- [Chrome 146 Exposes 3.4B Browsers to Prompt Injection - Guard402](https://guard402.com/blog/chrome-146-mcp-browser-attack-surface)
+- [MCP Security Vulnerabilities 2026 - Practical DevSecOps](https://www.practical-devsecops.com/mcp-security-vulnerabilities/)

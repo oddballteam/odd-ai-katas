@@ -1,0 +1,75 @@
+---
+feeling: "How do I give my AI eyes?"
+lastUpdated: "2026-04-16"
+status: done
+tags:
+    - "context"
+    - "verification"
+    - "trust"
+---
+
+## Two paths
+
+There's a built-in path and an MCP path. Built-in browsers are easiest. MCP servers are more powerful.
+
+## Built-in browsers (no install)
+
+Your editor probably already ships one:
+
+- [Cursor](https://cursor.com) has a built-in browser pane the agent can navigate, screenshot, and read selected elements from.
+- [VS Code](https://code.visualstudio.com/docs/debugtest/integrated-browser) ships an integrated browser. Copilot can navigate to URLs and select elements to add to chat as context. The polished version is Microsoft's [Live Preview extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.live-server).
+- [Claude Code (desktop)](https://claude.ai/download) got a [redesign on 2026-04-14](https://findskill.ai/blog/claude-code-desktop-redesign-review/) with multi pane sessions; the browser pane is part of that.
+
+If you mostly want "show me what the page looks like" and "click around to verify," start here. Zero setup.
+
+## MCP servers (for real automation)
+
+When you need scripted flows, network inspection, perf traces, or cross tool support, install an MCP server. Two dominate, ranked by GitHub stars and weekly npm downloads:
+
+- [Playwright MCP](https://github.com/microsoft/playwright-mcp) by Microsoft. ~30.9K stars, ranked #1 on [PulseMCP](https://www.pulsemcp.com/). Drives Chrome, Firefox, and WebKit. Best for "make the page do the thing" and CI/test workflows. [Install instructions](https://github.com/microsoft/playwright-mcp#installation).
+- [Chrome DevTools MCP](https://github.com/ChromeDevTools/chrome-devtools-mcp) by Google. ~30.8K stars, ~330K weekly npm downloads. Chrome only. Best for "tell me what's wrong with this page": console, network, perf, Lighthouse. [Install instructions](https://github.com/ChromeDevTools/chrome-devtools-mcp#getting-started).
+
+Two more worth knowing:
+
+- [Claude in Chrome](https://code.claude.com/docs/en/chrome) by Anthropic. Browser extension that uses your real Chrome session, so the agent can act on pages you're already logged into. Powerful and risky in equal measure.
+- [BrowserMCP](https://github.com/BrowserMCP/mcp), a community alternative with a smaller footprint.
+
+Most teams in 2026 pair Playwright MCP (driving) with Chrome DevTools MCP (debugging).
+
+## What to watch out for
+
+A browser MCP gives your agent the keys to a real Chrome:
+
+- **Prompt injection.** A malicious page can embed instructions the agent will follow. CVE-2026-25253 (March 2026) was a zero click that leaked auth tokens from one page visit. Don't tell the agent to "browse around" untrusted sites.
+- **Don't share your real session.** Let the MCP server use its own profile (the default). Never `--autoConnect` to your default Chrome with Gmail/GitHub/AWS open.
+- **Verify the package.** Confirm the GitHub org (`microsoft/`, `ChromeDevTools/`, `anthropic/`), pin a version, and skim the npm page for publish date and downloads before installing.
+
+One platform note worth flagging: if you're on WSL, expect more friction. Most browser MCPs assume Mac, Windows (PowerShell), or native Linux. WSL needs the browser to live on the Windows host, or you fight headless Chrome dependencies inside the WSL distro. PowerShell is the better supported path on Windows.
+
+This space changes monthly. Check the repo's last commit and npm publish date before you trust any recommendation, including this one (written 2026-04-16).
+
+## Exercise
+
+Try these prompts in order. Each one builds on the last.
+
+1. **See the page.**
+
+    ```text
+    Open https://news.ycombinator.com and tell me what's on the front page.
+    What are the top 3 stories and how many points each?
+    ```
+
+2. **Navigate.**
+
+    ```text
+    Open https://news.ycombinator.com, click into the top story's comments,
+    and summarize the top comment thread.
+    ```
+
+3. **Lock it in.**
+
+    ```text
+    Make a skill (or saved instruction) that remembers how to drive a browser
+    in this tool: which MCP/extension we use, the prompts that work well,
+    and any gotchas you ran into. Save it where future sessions will load it.
+    ```

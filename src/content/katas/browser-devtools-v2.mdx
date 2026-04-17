@@ -1,0 +1,81 @@
+---
+feeling: "How do I get my AI to actually use the browser?"
+lastUpdated: "2026-04-16"
+description: "Just the prompts and setup commands. Pick a tool, paste, go."
+status: draft
+tags:
+    - "context"
+    - "verification"
+tools:
+    - "claude-code"
+    - "cursor"
+    - "vscode"
+    - "gemini-cli"
+---
+
+## What you get
+
+Once a browser MCP is wired in, your agent can: navigate URLs, click and type, take screenshots, read console logs, inspect network requests, and run JS in the page.
+
+## Install it
+
+### Claude Code
+
+```bash
+claude mcp add chrome-devtools npx chrome-devtools-mcp@latest
+```
+
+### Cursor
+
+Settings → MCP → New MCP Server:
+
+```json
+{ "mcpServers": { "chrome-devtools": { "command": "npx", "args": ["chrome-devtools-mcp@latest"] } } }
+```
+
+### VS Code (Copilot)
+
+Add the same JSON to `.vscode/mcp.json` in your repo, or your user `mcp.json`.
+
+### Gemini CLI
+
+```bash
+gemini mcp add chrome-devtools npx chrome-devtools-mcp@latest
+```
+
+## Platform gotchas
+
+- **Mac / Windows**: install Chrome, you're done.
+- **Linux**: `sudo apt install libnss3 libxss1 libasound2 libgbm1` if Chrome won't start.
+- **WSL2**: run the MCP server on the Windows side and point WSL at it, or run headless inside WSL.
+- **Chrome 136+**: remote debugging on your default profile is blocked. The MCP server uses its own profile, so this only matters if you set up debugging by hand.
+
+## Prompts to try
+
+### Verify a UI change
+
+```text
+Open http://localhost:3000/[my-route], take a screenshot, and tell me if
+[the thing I just changed] renders correctly. Check the console for errors.
+```
+
+### Debug a failing request
+
+```text
+Open [URL], reproduce [action], then list every network request. Show me the
+status codes, response bodies for any 4xx or 5xx, and the request that
+triggered the error in the console.
+```
+
+### Profile a slow page
+
+```text
+Open [URL] and run a performance trace. Identify the top 3 things slowing
+first paint and propose fixes.
+```
+
+## Exercise
+
+1. Pick your tool, paste the install command, restart the session.
+2. Boot your dev server.
+3. Run the "verify a UI change" prompt against a route you know.

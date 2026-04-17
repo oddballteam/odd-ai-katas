@@ -240,28 +240,6 @@ a:hover {
   border-color: #e05050;
   color: #e05050;
 }
-.caveman-toggle {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  color: var(--text-muted);
-  background: none;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 0.35rem 0.7rem;
-  cursor: pointer;
-  transition: border-color 0.2s, color 0.2s, background 0.2s;
-}
-.caveman-toggle:hover {
-  border-color: var(--accent);
-  color: var(--text-bright);
-}
-.caveman-toggle.active {
-  background: #8B4513;
-  border-color: #8B4513;
-  color: #fff;
-}
 .draft-toggle {
   display: flex; align-items: center; gap: 0.5rem;
   font-family: 'Space Grotesk', sans-serif;

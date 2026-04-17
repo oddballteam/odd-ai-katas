@@ -35,13 +35,11 @@ function draftFeeling(kata: { id: string; data: { feeling: string; status?: stri
 }
 let displayOrder = 0;
 const kataManifest = katas.map((kata, i) => {
-  const isPrimary = !kata.data.variant && kata.data.status !== 'draft';
+  const isPrimary = kata.data.status !== 'draft';
   if (isPrimary) displayOrder++;
   return {
     id: kata.id,
     feeling: draftFeeling(kata),
-    variant: kata.data.variant || '',
-    variantOf: kata.data.variantOf || '',
     takeaway: kata.data.takeaway || '',
     description: kata.data.description,
     related: kata.data.related || [],
@@ -67,7 +65,7 @@ const toolLookup = toolGroups.flatMap(g =>
 <Base title="AI Katas">
   <header class="hero">
     <h1><a href="#" onclick="window.__hideKata && window.__hideKata(); return false;" style="color: inherit; text-decoration: none;"><span>AI</span> Katas</a></h1>
-    <div class="hero-progress" id="hero-progress">0/{katas.filter(k => !k.data.variant && k.data.status !== 'draft').length} completed</div>
+    <div class="hero-progress" id="hero-progress">0/{katas.filter(k => k.data.status !== 'draft').length} completed</div>
     <div class="hero-line"></div>
   </header>
 
@@ -78,7 +76,6 @@ const toolLookup = toolGroups.flatMap(g =>
       <div class="section-label">Level up</div>
       <div class="section-count" id="kata-count">{katas.length} katas</div>
       <div class="section-controls">
-        <button class="caveman-toggle" id="caveman-toggle">&#x1f9cc; Caveman mode</button>
         <label class="draft-toggle">
           <input type="checkbox" id="show-drafts" />
           <span>Show drafts</span>
@@ -88,7 +85,7 @@ const toolLookup = toolGroups.flatMap(g =>
     </div>
     <div class="kata-grid">
       {(() => { let displayNum = 0; return katas.map((kata, i) => {
-        const isPrimary = !kata.data.variant && kata.data.status !== 'draft';
+        const isPrimary = kata.data.status !== 'draft';
         if (isPrimary) displayNum++;
         const num = isPrimary ? displayNum : null;
         return (
@@ -100,8 +97,6 @@ const toolLookup = toolGroups.flatMap(g =>
           data-tools={(kata.data.tools || []).join(',')}
           data-tags={(kata.data.tags || []).join(',')}
           data-status={kata.data.status || 'done'}
-          data-variant={kata.data.variant || ''}
-          data-variant-of={kata.data.variantOf || ''}
         >
           <div class="card-content">
             <span class="kata-check" data-check-id={kata.id}></span>
@@ -181,45 +176,12 @@ const toolLookup = toolGroups.flatMap(g =>
     var activeFilter = 'all';
     var activeTagFilter = 'all';
     var showDrafts = false;
-    var cavemanMode = false;
     var activeTool = null;
 
     // ===== Draft toggle =====
     var draftToggle = document.getElementById('show-drafts');
     draftToggle.addEventListener('change', function() {
       showDrafts = draftToggle.checked;
-      filterCards();
-    });
-
-    // ===== Caveman toggle =====
-    // Build a map of normal kata id -> caveman kata data for text swapping
-    var cavemanMap = {};
-    var normalMap = {};
-    katas.forEach(function(k) {
-      if (k.variant === 'caveman' && k.variantOf) {
-        cavemanMap[k.variantOf] = k;
-      }
-      if (!k.variant) {
-        normalMap[k.id] = k;
-      }
-    });
-
-    var cavemanToggle = document.getElementById('caveman-toggle');
-    cavemanToggle.addEventListener('click', function() {
-      cavemanMode = !cavemanMode;
-      cavemanToggle.classList.toggle('active', cavemanMode);
-      document.body.classList.toggle('caveman', cavemanMode);
-      // Swap card text
-      document.querySelectorAll('.kata-card').forEach(function(card) {
-        var id = card.dataset.kataId;
-        var caveman = cavemanMap[id];
-        var normal = normalMap[id];
-        if (caveman && normal) {
-          var feelingEl = card.querySelector('.feeling');
-          var source = cavemanMode ? caveman : normal;
-          if (feelingEl) feelingEl.textContent = source.feeling;
-        }
-      });
       filterCards();
     });
 
@@ -245,10 +207,10 @@ const toolLookup = toolGroups.flatMap(g =>
       var completed = getCompleted();
       // Update progress counter
       var progressEl = document.getElementById('hero-progress');
-      var primaryCount = katas.filter(function(k) { return !k.variant && k.status !== 'draft'; }).length;
+      var primaryCount = katas.filter(function(k) { return k.status !== 'draft'; }).length;
       var primaryCompleted = completed.filter(function(id) {
         var k = kataMap[id];
-        return k && !k.variant && k.status !== 'draft';
+        return k && k.status !== 'draft';
       }).length;
       if (progressEl) progressEl.textContent = primaryCompleted + '/' + primaryCount + ' completed';
       // Update card checkmarks
@@ -309,14 +271,10 @@ const toolLookup = toolGroups.flatMap(g =>
         var cardTools = (card.dataset.tools || '').split(',');
         var cardTags = (card.dataset.tags || '').split(',');
         var isDraft = card.dataset.status === 'draft';
-        var isCaveman = card.dataset.variant === 'caveman';
-        var hasCavemanVariant = card.dataset.variantOf === '' && !isCaveman &&
-          document.querySelector('.kata-card[data-variant-of="' + card.dataset.kataId + '"]');
         var toolMatch = activeFilter === 'all' || cardTools.indexOf(activeFilter) !== -1;
         var tagMatch = activeTagFilter === 'all' || cardTags.indexOf(activeTagFilter) !== -1;
         var draftMatch = !isDraft || showDrafts;
-        var cavemanMatch = cavemanMode ? !hasCavemanVariant : !isCaveman;
-        var show = toolMatch && tagMatch && draftMatch && cavemanMatch;
+        var show = toolMatch && tagMatch && draftMatch;
         card.style.display = show ? '' : 'none';
         if (show) visible++;
       });
@@ -334,11 +292,7 @@ const toolLookup = toolGroups.flatMap(g =>
     });
 
     function showKata(id) {
-      // In caveman mode, redirect to caveman variant if one exists
       var displayId = id;
-      if (cavemanMode && cavemanMap[id]) {
-        displayId = cavemanMap[id].id;
-      }
       var kata = kataMap[displayId] || kataMap[id];
       if (!kata) return;
       var orderSource = kataMap[id] || kata;

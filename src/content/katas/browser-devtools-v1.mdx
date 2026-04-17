@@ -1,0 +1,49 @@
+---
+feeling: "My agent writes UI code but never actually looks at the page."
+lastUpdated: "2026-04-16"
+description: "Hand your agent a real browser. It can click, read the console, and watch network requests just like you do."
+status: draft
+tags:
+    - "context"
+    - "verification"
+tools:
+    - "claude-code"
+    - "cursor"
+---
+
+## Give the agent eyes
+
+By default, your agent writes UI code blind. It edits a component, declares victory, and never sees what the page actually rendered. Half your bugs live in the gap between "the code looks right" and "the page works."
+
+A browser MCP closes that gap. The agent can:
+
+- Open a URL in a real Chrome tab
+- Take a screenshot or DOM snapshot
+- Read console errors with source-mapped stack traces
+- List network requests and inspect responses
+- Click, type, and submit forms
+
+Same things you'd do in DevTools. Now the agent does them.
+
+## Two ways in
+
+**Chrome DevTools MCP** is Google's official server. Works with Claude Code, Cursor, Copilot, Gemini CLI. One install, every tool sees it.
+
+```bash
+claude mcp add chrome-devtools npx chrome-devtools-mcp@latest
+```
+
+**Claude in Chrome** is Anthropic's browser extension. Claude Code drives the Chrome you're already logged into, so it can hit authenticated pages without a fresh session.
+
+## Platform notes
+
+- **Mac / Windows**: install Chrome, run the command, done.
+- **Linux**: you may need `libnss3 libxss1 libasound2` for headed Chrome.
+- **WSL2**: easiest path is to run the MCP server on the Windows side and point your agent at it. Headless on Linux works too.
+- Chrome 136+ blocks `--remote-debugging-port` on your default profile. The MCP server spins up its own profile, so this only bites you if you wire things up by hand.
+
+## Exercise
+
+1. Install one browser MCP in your agent. Restart the session.
+2. Boot your dev server, then ask: "Open http://localhost:3000, take a screenshot, list any console errors, and show me the first 5 network requests."
+3. Make a small UI change and ask the agent to verify it visually before reporting done.

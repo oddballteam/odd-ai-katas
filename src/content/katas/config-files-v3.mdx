@@ -1,0 +1,105 @@
+---
+feeling: "I just installed an AI tool. Which config files do I drop in first?"
+lastUpdated: "2026-04-16"
+description: "A copy-paste minimum starter for .claude, .github/copilot, and .cursor on a fresh project."
+status: draft
+tags:
+    - "basics"
+    - "context"
+tools:
+    - "claude-code"
+    - "vscode"
+    - "cursor"
+---
+
+## The minimum that actually pays off
+
+You don't need 50 rule files on day one. For each tool, three things cover 90% of the value: a project instructions file, a permissions or ignore file, and (if you have one) an MCP config. Everything else can wait until you feel real pain.
+
+## Claude Code starter
+
+```
+your-project/
+├── CLAUDE.md                       # 30-50 lines: stack, commands, conventions
+├── .claude/
+│   ├── settings.json               # Permissions allowlist
+│   └── settings.local.json         # gitignored personal overrides
+└── .gitignore                      # add: .claude/settings.local.json
+```
+
+`CLAUDE.md` should answer: what is this project, what commands run it, what conventions matter? Skip backstory. Keep it under 100 lines.
+
+A useful `.claude/settings.json`:
+
+```json
+{
+  "permissions": {
+    "allow": ["Bash(npm run *)", "Bash(git status)", "Read", "Edit", "Write"],
+    "deny": ["Bash(rm -rf *)"]
+  }
+}
+```
+
+## Cursor starter
+
+```
+your-project/
+├── .cursor/
+│   └── rules/
+│       └── project.mdc             # Same content as CLAUDE.md, MDC format
+├── .cursorignore                   # node_modules, dist, .env, secrets
+└── AGENTS.md                       # Optional: tool-neutral version of rules
+```
+
+A minimal `.cursor/rules/project.mdc`:
+
+```mdc
+---
+description: Project conventions
+globs: ["**/*"]
+alwaysApply: true
+---
+
+# Stack
+React, TypeScript, Vite, Tailwind.
+
+# Commands
+- `npm run dev` - dev server on port 3000
+- `npm test` - vitest
+
+# Conventions
+- Functional components only
+- Prefer named exports
+```
+
+## GitHub Copilot starter
+
+```
+your-project/
+└── .github/
+    ├── copilot-instructions.md     # Same content as CLAUDE.md
+    └── instructions/
+        └── tests.instructions.md   # Path-scoped (only loads for test files)
+```
+
+A path-scoped `tests.instructions.md`:
+
+```markdown
+---
+applyTo: "**/*.test.{ts,tsx}"
+---
+
+Use vitest. Prefer `describe` + `it`. No snapshot tests.
+```
+
+## What to skip on day one
+
+- **Custom subagents, slash commands, chat modes.** Add only when you do the same task three times.
+- **Hooks.** Useful for guardrails but require thought. Revisit in week two.
+- **Skills.** Powerful but a wormhole. One small one is enough to start.
+
+## Exercise
+
+1. Open the AI tool you actually use. Check whether your current project has its config directory. If not, create the three starter files above.
+2. Open your project instructions file and rewrite it to be under 50 lines. Cut anything already in `package.json`, the README, or obvious from the file tree.
+3. Ask your AI: "based on my project instructions file, what would you assume about this project on a cold start?" See if the answer matches reality.

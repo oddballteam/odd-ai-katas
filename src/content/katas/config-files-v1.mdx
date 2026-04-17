@@ -1,0 +1,82 @@
+---
+feeling: "Where do I put config for Claude Code, Copilot, and Cursor?"
+lastUpdated: "2026-04-16"
+description: "A side-by-side tour of .claude, .github, and .cursor: what each file does, what's project vs personal, what gets committed."
+status: draft
+tags:
+    - "basics"
+    - "context"
+tools:
+    - "claude-code"
+    - "vscode"
+    - "cursor"
+---
+
+## Three tools, three directories, same job
+
+Each major AI coding tool has its own config tree in your repo. They all answer the same questions: what is this project, what tools can the AI use, what shortcuts have you built? The folders just have different names.
+
+### Claude Code: `.claude/` and `CLAUDE.md`
+
+```
+your-project/
+├── CLAUDE.md                    # Always-loaded project instructions (committed)
+├── .mcp.json                    # MCP servers for the project (committed)
+└── .claude/
+    ├── settings.json            # Permissions, hooks, env (committed)
+    ├── settings.local.json      # Personal overrides (gitignored)
+    ├── agents/                  # Custom subagents
+    ├── commands/                # Slash commands (/foo)
+    ├── hooks/                   # Shell hooks on tool events
+    └── skills/
+        └── kata/
+            └── SKILL.md         # Auto-invoked workflows
+```
+
+Personal versions live at `~/.claude/` with the same shape. Project files override user files for permissions; skills, agents, and commands merge.
+
+### GitHub Copilot: `.github/`
+
+```
+your-project/
+└── .github/
+    ├── copilot-instructions.md         # Always-loaded project instructions
+    ├── instructions/
+    │   └── react.instructions.md       # Path-scoped instructions
+    ├── prompts/
+    │   └── refactor.prompt.md          # Reusable prompts (/refactor)
+    └── chatmodes/
+        └── reviewer.chatmode.md        # Custom chat modes
+```
+
+Personal Copilot config lives in VS Code user `settings.json`. Org-level instructions get set in GitHub.com org settings, not in any file.
+
+### Cursor: `.cursor/`
+
+```
+your-project/
+├── .cursor/
+│   ├── rules/
+│   │   └── react.mdc                   # Project rules in MDC format
+│   └── mcp.json                        # MCP servers for the project
+├── .cursorignore                       # Files Cursor never reads
+└── AGENTS.md                           # Tool-neutral instructions (also Cursor)
+```
+
+User rules are global and set in Cursor Settings → Rules. They never touch your repo. The legacy `.cursorrules` file still works but is deprecated as of Cursor 2.2.
+
+## Project vs personal vs global
+
+| | Project (committed) | Personal (gitignored) | User / Global |
+|---|---|---|---|
+| **Claude Code** | `CLAUDE.md`, `.claude/settings.json` | `.claude/settings.local.json` | `~/.claude/` |
+| **Copilot** | `.github/copilot-instructions.md` | n/a in repo | VS Code user `settings.json` |
+| **Cursor** | `.cursor/rules/`, `AGENTS.md` | n/a in repo | Cursor Settings → Rules |
+
+The pattern is the same across all three: **project files belong in git** so the team shares behavior, **personal and global files stay on your machine** and follow you across projects.
+
+## Exercise
+
+1. Pick a project you use daily. Run `ls -la .claude .cursor .github 2>/dev/null` and see which of the three exist.
+2. Open the project instructions file for whichever tool you use most. How long is it? When was it last touched?
+3. Ask your AI: "show me the project instructions you loaded for this session" and verify the list matches what you'd expect.

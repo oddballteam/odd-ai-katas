@@ -1,0 +1,57 @@
+---
+feeling: "Cursor and Claude both have rules. Are they the same thing?"
+lastUpdated: "2026-04-16"
+description: "Every AI coding tool has the same five config primitives in different folders. Map them once, switch tools without relearning."
+status: draft
+tags:
+    - "basics"
+    - "context"
+tools:
+    - "claude-code"
+    - "vscode"
+    - "cursor"
+---
+
+## Different folders, same five primitives
+
+Once you've configured one AI coding tool, you've basically configured them all. They share five concepts. Only the file paths change.
+
+1. **Project instructions** - always-loaded prose about the codebase
+2. **Personal preferences** - global instructions that follow you
+3. **Reusable prompts or commands** - shortcuts you invoke by name
+4. **MCP servers** - external tools the AI can call
+5. **Ignore / deny rules** - what the AI must not read or run
+
+Here's where each tool puts each one:
+
+| Primitive | Claude Code | Copilot | Cursor |
+|---|---|---|---|
+| Project instructions | `CLAUDE.md` | `.github/copilot-instructions.md` | `.cursor/rules/*.mdc` or `AGENTS.md` |
+| Personal preferences | `~/.claude/CLAUDE.md` | VS Code user `settings.json` | Cursor Settings → Rules |
+| Reusable prompts | `.claude/commands/*.md` | `.github/prompts/*.prompt.md` | (no native equivalent) |
+| MCP servers | `.mcp.json` | VS Code `settings.json` | `.cursor/mcp.json` |
+| Ignore / deny | `.claude/settings.json` permissions | (uses `.gitignore`) | `.cursorignore` |
+
+Knowing the map means switching tools costs 10 minutes, not a week.
+
+## Project vs personal: the universal split
+
+The other axis that matters: **what do you check in?**
+
+In **Claude Code**, `.claude/settings.json` is committed (team-shared). `.claude/settings.local.json` is gitignored (your overrides).
+
+In **Cursor**, `.cursor/rules/*.mdc` is meant to be committed. User rules never touch your repo. They live in Cursor's own settings store.
+
+In **Copilot**, `.github/copilot-instructions.md` is committed. Personal preferences go into VS Code's user `settings.json` outside your repo.
+
+Same pattern in all three: **project = committed, personal = local-only**. If you want a rule the team shares, put it in the project file. If it's just how *you* like to work, put it at the user level so it follows you everywhere.
+
+## The almost-standard: AGENTS.md
+
+A new convention emerged in 2026: `AGENTS.md`. A plain markdown file at the repo root, read by Cursor, Aider, OpenAI Codex, and others as a tool-neutral instructions file. Not universal yet (Claude still prefers `CLAUDE.md`, Copilot still wants `.github/copilot-instructions.md`), but it's the closest thing to a shared standard. Some teams symlink the three files together so all tools see the same content.
+
+## Exercise
+
+1. Pick one primitive from the table above (say, "personal preferences"). Find where it lives in every tool you've installed.
+2. Move one rule from your most-used tool's project config to its personal config. Notice whether other projects start behaving differently.
+3. Ask your AI: "if I switched from Claude Code to Cursor tomorrow (or whichever pair you use), which of my project's config files would I need to recreate?"

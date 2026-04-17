@@ -1,0 +1,41 @@
+---
+feeling: "The agent says 'done' but I had to open the browser to find out it wasn't."
+lastUpdated: "2026-04-16"
+description: "Closing the loop between writing code and seeing it work, without you in the middle."
+status: draft
+tags:
+    - "verification"
+    - "trust"
+---
+
+## The verification gap
+
+Most AI coding loops stop at "the file compiles." For backend code, tests close the loop. For UI code, there usually isn't one. The agent edits a component, says it's done, and you become the test runner: alt-tab, refresh, click around, find the bug, paste it back.
+
+Browser dev tools for agents close that loop. The agent runs the same checks you would, then either reports success or iterates.
+
+What changes when the loop is closed:
+
+- "The button is wired up" becomes "I clicked it and watched the request fire."
+- "I fixed the styling" becomes "Here's a before/after screenshot."
+- "Should work now" becomes "Console is clean, network is 200, screenshot attached."
+
+## What it looks like
+
+In **Claude Code** with Chrome DevTools MCP installed, asking "fix the login form and verify it works" triggers a sequence: edit file, navigate to `/login`, fill the form, click submit, read the network response, screenshot the result.
+
+You see each step in the transcript. If a step fails, the agent debugs from real evidence (a 401 in the network panel, an error in the console) instead of guessing from the code.
+
+In **Cowork** (Anthropic's remote agent), the cloud sandbox already has a browser. You can ask it to verify your PR by booting the preview build and walking through the user flow before merge.
+
+## Where it breaks
+
+- The agent loves screenshots. They eat tokens fast. Tell it to take one only when something looks wrong.
+- Authenticated pages need either a logged-in profile (Claude in Chrome extension) or test credentials in a `.env` you tell the agent about.
+- On WSL2 / remote dev boxes, the browser usually has to live elsewhere. Plan where it runs before you install.
+
+## Exercise
+
+1. Find a UI bug or unfinished feature in your repo.
+2. Ask the agent to fix it AND verify it in a browser before reporting done. Be explicit: "do not say complete until you have screenshotted the working result and confirmed no console errors."
+3. Compare the result to your usual loop. Where did the agent catch something you would have missed?

@@ -1,0 +1,115 @@
+---
+feeling: "What's the minimum AI config to be productive vs the maximum I could have?"
+lastUpdated: "2026-04-16"
+description: "Two annotated file trees: the smallest config that works vs the full surface area. Same project, two scales."
+status: draft
+tags:
+    - "basics"
+    - "context"
+tools:
+    - "claude-code"
+    - "vscode"
+    - "cursor"
+---
+
+## Start small, grow as you feel pain
+
+Every AI tool's config can be one file or twenty. Both work. The right size depends on how much shared behavior your team needs and how often you repeat the same task.
+
+### Minimum viable config
+
+```
+your-project/
+│
+├── AGENTS.md                          # one file, multiple tools (cursor, codex, aider)
+├── CLAUDE.md                          # claude code (or symlink to AGENTS.md)
+├── .github/
+│   └── copilot-instructions.md        # copilot (or symlink to AGENTS.md)
+└── .gitignore                         # add: .claude/settings.local.json
+```
+
+That's it. Three files (or one file with two symlinks). Same content in each. Every tool gets the same project context.
+
+### Full surface (when you actually need it)
+
+```
+your-project/
+│
+├── AGENTS.md
+├── CLAUDE.md
+├── .mcp.json                              # project MCP servers (claude code)
+├── .cursorignore                          # files cursor never reads
+├── .cursorindexignore                     # files excluded from index
+│
+├── .claude/
+│   ├── settings.json                      # permissions, hooks, env (committed)
+│   ├── settings.local.json                # personal overrides (gitignored)
+│   ├── agents/
+│   │   └── security-reviewer.md           # subagent the Task tool can spawn
+│   ├── commands/
+│   │   └── ship.md                        # /ship slash command
+│   ├── hooks/
+│   │   └── pre-tool-use.sh                # blocks risky commands
+│   └── skills/
+│       └── deploy/
+│           └── SKILL.md                   # auto-invoked when "deploy" matches
+│
+├── .cursor/
+│   ├── rules/
+│   │   ├── stack.mdc                      # always-on
+│   │   ├── react-components.mdc           # auto-attached by description
+│   │   └── refactor-helper.mdc            # invoked with @refactor-helper
+│   ├── mcp.json                           # cursor MCP servers
+│   └── modes.json                         # custom chat modes
+│
+└── .github/
+    ├── copilot-instructions.md
+    ├── instructions/
+    │   └── tests.instructions.md          # path-scoped via applyTo
+    ├── prompts/
+    │   └── refactor.prompt.md             # /refactor reusable prompt
+    └── chatmodes/
+        └── reviewer.chatmode.md           # custom chat mode
+```
+
+### What's worth adding, when
+
+- **Permissions allowlist** (`.claude/settings.json`) the first time you're tired of hitting "yes" on the same command. Probably day one.
+- **Slash command or prompt file** when you do the same multi-step thing three times.
+- **Subagent** when you want isolation: a subtask with its own context window.
+- **Hook** when you want a guarantee, not a suggestion. Hooks always run; instructions sometimes get ignored.
+- **Skill** when you want the AI to invoke a workflow on its own without you typing `/foo`.
+- **Path-scoped instructions** (Copilot only) when one part of the codebase has different conventions than the rest.
+
+## Small examples
+
+A symlink trick to keep all three project instructions in sync:
+
+```bash
+ln -s AGENTS.md CLAUDE.md
+mkdir -p .github && ln -s ../AGENTS.md .github/copilot-instructions.md
+```
+
+A minimal `AGENTS.md`:
+
+```markdown
+# my-app
+
+React + TypeScript + Vite, tests with vitest, deploys to Cloudflare Pages.
+
+## Run it
+- `npm run dev` (port 3000)
+- `npm test`
+- `npm run deploy`
+
+## Conventions
+- Functional components only.
+- Tailwind, no CSS modules.
+- Conventional commits.
+```
+
+## Exercise
+
+1. Look at your most-used project. Is your config closer to "minimum" or "full surface"? When did you last edit any of it?
+2. Pick one item from "what's worth adding, when" and add it. Smallest version that works.
+3. Delete one config file or rule you haven't touched in six months. See if anything changes.

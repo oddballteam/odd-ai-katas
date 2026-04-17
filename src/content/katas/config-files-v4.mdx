@@ -1,0 +1,114 @@
+---
+feeling: "What does a fully-configured AI project actually look like on disk?"
+lastUpdated: "2026-04-16"
+description: "One annotated file tree showing every config file Claude Code, Copilot, and Cursor read from your project. Plus minimal example files."
+status: draft
+tags:
+    - "basics"
+    - "context"
+tools:
+    - "claude-code"
+    - "vscode"
+    - "cursor"
+---
+
+## Every config file the three tools can read
+
+If you support all three tools in one repo, this is the surface area. Each line is annotated with which tool reads it.
+
+```
+your-project/
+│
+├── AGENTS.md                              # cursor, codex, aider (cross-tool instructions)
+├── CLAUDE.md                              # claude code (always-loaded project instructions)
+├── .cursorignore                          # cursor (files the AI never reads)
+├── .cursorindexignore                     # cursor (files excluded from codebase index)
+├── .mcp.json                              # claude code (project MCP servers, committed)
+│
+├── .claude/
+│   ├── settings.json                      # claude code (permissions, hooks, env - team-shared)
+│   ├── settings.local.json                # claude code (personal overrides - gitignored)
+│   ├── agents/
+│   │   └── reviewer.md                    # claude code (custom subagent)
+│   ├── commands/
+│   │   └── ship.md                        # claude code (/ship slash command)
+│   ├── hooks/
+│   │   └── post-tool-use.sh               # claude code (shell script on tool events)
+│   └── skills/
+│       └── kata/
+│           └── SKILL.md                   # claude code (auto-invoked workflow)
+│
+├── .cursor/
+│   ├── rules/
+│   │   ├── always.mdc                     # cursor (alwaysApply: true)
+│   │   ├── auto.mdc                       # cursor (auto-attached by description)
+│   │   └── manual.mdc                     # cursor (invoked with @ruleName)
+│   ├── mcp.json                           # cursor (project MCP servers)
+│   └── modes.json                         # cursor (custom chat modes)
+│
+└── .github/
+    ├── copilot-instructions.md            # copilot (always-loaded project instructions)
+    ├── instructions/
+    │   └── tests.instructions.md          # copilot (path-scoped via applyTo)
+    ├── prompts/
+    │   └── refactor.prompt.md             # copilot (/refactor reusable prompt)
+    └── chatmodes/
+        └── reviewer.chatmode.md           # copilot (custom chat mode)
+```
+
+Most teams only use one or two tools and skip the rest. `AGENTS.md` is the most cross-tool friendly. Path-scoped instructions are unique to Copilot. Skills, agents, hooks, and the plugin system are unique to Claude Code.
+
+## Small examples
+
+A starter `CLAUDE.md` (same shape works as `copilot-instructions.md` or `AGENTS.md`):
+
+```markdown
+# my-app
+
+React + TypeScript + Vite. Tests with vitest.
+
+## Commands
+- `npm run dev` (port 3000)
+- `npm test`
+
+## Conventions
+- Functional components, named exports.
+- Tailwind, no CSS modules.
+```
+
+A `.claude/settings.json`:
+
+```json
+{
+  "permissions": {
+    "allow": ["Bash(npm run *)", "Read", "Edit", "Write"],
+    "deny": ["Bash(rm -rf *)"]
+  }
+}
+```
+
+A `.cursor/rules/always.mdc`:
+
+```mdc
+---
+description: Project-wide conventions
+globs: ["**/*"]
+alwaysApply: true
+---
+Stack: React + TypeScript. No class components.
+```
+
+A Copilot path-scoped `tests.instructions.md`:
+
+```markdown
+---
+applyTo: "**/*.test.{ts,tsx}"
+---
+Use vitest. Prefer `describe` + `it`. No snapshot tests.
+```
+
+## Exercise
+
+1. Open a project you use. Check which files from the tree above actually exist. Anything ancient and stale?
+2. Pick one tool you use. Add the simplest missing file (an instructions file, or an ignore file). See if the tool starts behaving differently.
+3. Ask your AI: "which of my project's config files did you load at session start?" and verify the answer matches the tree above.

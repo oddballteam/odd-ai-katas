@@ -52,7 +52,13 @@ Worth checking when the AI starts acting off. If the window is getting full, con
 <details>
 <summary>Your token usage is high and the AI is starting to miss things: forgetting earlier decisions, repeating itself, getting sloppier. What do you do?</summary>
 
-**Clear and restart.** Model attention gets worse as context fills up, even well before the window limit. Summarize where you are in one line, clear, and paste the summary into a fresh session. (`/clear` in Claude Code and Gemini CLI, `/clear` or `/new` in Copilot CLI, "New Chat" in Cursor and VS Code Copilot.)
+**Reset the context. Three ways, depending on what you need:**
+
+- **Clear / new.** Fastest. Wipes the conversation; files on disk stay. `/clear` in Claude Code and Gemini CLI, `/clear` or `/new` in Copilot CLI, "New Chat" in Cursor and VS Code Copilot.
+- **Compact.** Keeps continuity by summarizing older history into a shorter form. Use when you can't afford to lose the thread. `/compact [focus]` in Claude Code, `/compact` in Copilot CLI, `/compress` in Gemini CLI.
+- **Document, then clear.** Write a handoff file first ("Write HANDOFF.md: what we tried, what worked, what's left"), then clear. Next session opens with "Read HANDOFF.md and continue." Best for long tasks you'll return to.
+
+Model attention gets worse as context fills up, so doing nothing is the worst option.
 </details>
 
 <details>
@@ -104,7 +110,13 @@ Repeating "still broken" without new inputs just burns tokens. New information u
 <details>
 <summary>You're about to start a hard, multi-step task. What do you do?</summary>
 
-**Plan, then reset.** Use plan mode (`/plan` or Shift+Tab in Claude Code, Plan tab in Cursor) to produce a concrete plan without writing code. Save it as `PLAN.md`. `/clear`. Start a fresh session that loads only the plan. A clean session with a precise plan beats a long session with accumulated corrections almost every time.
+**Three levels, escalate as needed:**
+
+- **Start with "interview me."** "Before you write anything, interview me to understand the task. Ask me questions one at a time until you're confident." Low effort, high leverage. Usually enough on its own, and way better than diving straight to code.
+- **Add plan mode if you want a clean implementation session.** Plan mode (`/plan` or Shift+Tab in Claude Code, Plan tab in Cursor) produces a concrete plan without touching code. Save it as `PLAN.md`, clear, and start a fresh session that loads only the plan. Worth it when you expect implementation to get long.
+- **For a huge process, use a spec-driven skill.** Spec-driven workflows (write a full spec, break into steps, implement step by step with checkpoints) are well-suited for a reusable skill. Set it up once and invoke it by name for every big task.
+
+A session with even a short interview beats a session that dove straight in. A session with a clean plan beats one carrying the full back-and-forth.
 </details>
 
 <details>
@@ -116,6 +128,12 @@ Repeating "still broken" without new inputs just burns tokens. New information u
 <details>
 <summary>You open a fresh session and want to get caught up quickly. What do you do?</summary>
 
-**Read recent commits.** "Read the last 5 commits and tell me where we left off." Cheaper than attaching a bunch of files, and the commit messages give shape to what's been happening. Works best when you commit small and often.
+**Feed it a high-signal source instead of re-explaining.** A few options, in order of effort:
+
+- **Recent commits.** "Read the last 5 commits and tell me where we left off." Cheap and works best when you commit small and often.
+- **A handoff file you wrote yesterday.** `HANDOFF.md`, `NOTES.md`, or a `decisions/` folder of ADRs. The in-repo pattern that's become standard alongside [AGENTS.md](https://agents.md/).
+- **Your own notes system.** If you keep a second brain in [Obsidian](https://obsidian.md) or [Notion](https://developers.notion.com/docs/mcp), connect it via MCP and let the agent query your design docs, running notes, or meeting minutes directly.
+
+The pattern: build one reliable source your future self (or future agent) can read instead of paging you.
 </details>
 
