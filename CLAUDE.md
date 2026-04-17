@@ -9,7 +9,9 @@ Astro 6, MDX, Node 22+.
 
 - When starting the dev server, run it in the background and always provide the clickable link: http://localhost:4321/odd-ai-katas
 - **New files require a server restart**: Astro's glob loader only scans at startup. Edits to existing MDX files hot-reload fine, but adding new `.mdx` files requires stopping and restarting the dev server.
-- **Graduate a draft**: To graduate a draft (e.g. `glossary-v7`), duplicate it to the final slug (`glossary.mdx`), set `status: done`, and remove it from `kata-sequence.ts`. Keep all draft versions in place with `status: draft`. Future edits go on the final version, no more version numbers.
+- **Graduate a draft**: To graduate a draft (e.g. `glossary-v7`), duplicate it to the final slug (`glossary.mdx`), set `status: done`, drop the `description` field, and remove it from `kata-sequence.ts`. Keep all draft versions in place with `status: draft`. Future edits go on the final version, no more version numbers.
+- **Reusable content patterns**: `<Tabs labels={[...]}>` + `<div class="kata-tab-panel">` from `src/components/Tabs.astro` (tabs script is baked into the component, don't inline your own). `<details><summary>...` gets site-themed styling via `.kata-body details`. `<div class="callout">` with optional `warn` / `safe` variants.
+- **Kata ordering**: `src/data/kata-sequence.ts` is pedagogically ordered with section-header comments (pick tool -> vocab -> customize -> context -> guardrails -> eyes -> git workflow). Preserve the groupings when adding new primaries.
 
 ## Key Commands
 
