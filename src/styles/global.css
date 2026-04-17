@@ -307,6 +307,10 @@ a:hover {
 /* ===== Draft badge ===== */
 .kata-card.draft {
   border-style: dashed;
+  display: none;
+}
+.show-drafts .kata-card.draft {
+  display: flex;
 }
 .kata-card.draft .card-content::after {
   content: 'DRAFT';

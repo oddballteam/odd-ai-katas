@@ -182,6 +182,7 @@ const toolLookup = toolGroups.flatMap(g =>
     var draftToggle = document.getElementById('show-drafts');
     draftToggle.addEventListener('change', function() {
       showDrafts = draftToggle.checked;
+      document.body.classList.toggle('show-drafts', showDrafts);
       filterCards();
     });
 

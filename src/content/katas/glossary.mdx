@@ -14,7 +14,7 @@ tools: []
 | **Context window** | The AI's memory limit for one session. Everything has to fit: your messages, its responses, files, instructions. When full, older content gets compacted or summarized. |
 | **Model** | The specific AI brain (Opus, Sonnet, GPT-4). Different speed, cost, and smarts. You can usually switch. |
 | **Prompt** | Everything sent to the model. Not just your message, but system instructions, files, and history bundled together. |
-| **System prompt** | Hidden instructions your tool sends before you type anything. Your CLAUDE.md or copilot-instructions.md lives here. |
+| **System prompt** | The built-in instructions the tool sends to the model before your first message. Anthropic [publishes Claude's](https://platform.claude.com/docs/en/release-notes/system-prompts); most vendors don't. Community copies: [x1xhlol/system-prompts-and-models-of-ai-tools](https://github.com/x1xhlol/system-prompts-and-models-of-ai-tools). |
 | **Skills** | Specialized knowledge your agent loads on demand, not upfront. Like downloading kung fu in The Matrix. You can invoke them yourself (`/review-pr`) or the agent can auto-load them when it recognizes key phrases in what you're asking. |
 | **Agent** | AI that takes actions: reads files, runs tests, edits code, creates commits. Most AI coding tools are agents. |
 | **Subagent** | A child agent that works in its own context, separate from the main conversation. Often scoped to a single task or skill (e.g. "research this", "review that file"). Keeps your main thread clean - the subagent does the work and comes back with just the important bits. |
