@@ -1,5 +1,7 @@
 # AI Katas
 
+Licensed under [CC BY 4.0](LICENSE). Share or adapt freely with attribution to Oddball.
+
 Short, digestible topics about working with AI coding tools. Each kata is a quick read on one specific thing, paired with a small exercise you can try in your own setup.
 
 Pick whatever looks interesting. Read it, try the exercise, move on.
