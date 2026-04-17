@@ -1,5 +1,7 @@
-<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>What tool should I use? — AI Katas</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+JP:wght@700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/odd-ai-katas/_astro/Base.Bjv_6grX.css"></head> <body> <div class="dot-grid"><canvas id="dotCanvas"></canvas></div>   <main class="kata-detail" style="display: block; position: relative; z-index: 1;"> <a href="/odd-ai-katas" class="kata-back"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2L4 8l6 6"></path></svg> Back to all katas</a> <div class="feeling-title">"What tool should I use?"</div> <div class="kata-body"> <h2 id="the-way-we-write-code-is-changing">The way we write code is changing</h2>
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>What tool should I use? — AI Katas</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+JP:wght@700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/odd-ai-katas/_astro/Base.DWjfnBPN.css"></head> <body> <div class="dot-grid"><canvas id="dotCanvas"></canvas></div>   <main class="kata-detail" style="display: block; position: relative; z-index: 1;"> <a href="/odd-ai-katas" class="kata-back"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2L4 8l6 6"></path></svg> Back to all katas</a> <div class="feeling-title">"What tool should I use?"</div> <div class="kata-body"> <h2 id="the-way-we-write-code-is-changing">The way we write code is changing</h2>
 <p>Here’s what the landscape looks like right now.</p>
+<div class="callout"><p><div class="callout-label">Expect to pay</div>
+Most of these have a free tier to try. For daily use, budget $20-100/month depending on how hard you lean on it. It pays back fast once you’re shipping with it.</p></div>
 <h2 id="terminal-agents">Terminal agents</h2>
 <p>Lightweight, portable, and easy to run multiple sessions at once. No IDE overhead in the context window.</p>
 <p><strong>Examples</strong>: <a href="https://claude.ai/download">Claude Code</a>, <a href="https://github.com/openai/codex">Codex CLI</a>, <a href="https://github.com/google-gemini/gemini-cli">Gemini CLI</a>, <a href="https://docs.github.com/en/copilot/github-copilot-in-the-cli">GitHub Copilot CLI</a></p>
@@ -77,8 +79,6 @@
 
 
 <table><thead><tr><th></th><th>Terminal</th><th>IDE (extension)</th><th>Desktop</th><th>Web</th><th>Phone</th></tr></thead><tbody><tr><td><strong>Anthropic</strong></td><td><a href="https://claude.ai/download">Claude Code</a></td><td><a href="https://marketplace.visualstudio.com/items?itemName=anthropic.claude-code">extension</a></td><td><a href="https://claude.ai">Cowork</a></td><td><a href="https://claude.ai/code">claude.ai/code</a></td><td>Claude app</td></tr><tr><td><strong>OpenAI</strong></td><td><a href="https://github.com/openai/codex">Codex CLI</a></td><td><a href="https://marketplace.visualstudio.com/items?itemName=openai.chatgpt">extension</a></td><td><a href="https://openai.com/codex/">Codex App</a></td><td><a href="https://chatgpt.com/codex/">chatgpt.com/codex</a></td><td>ChatGPT app</td></tr><tr><td><strong>GitHub</strong></td><td><a href="https://docs.github.com/en/copilot/github-copilot-in-the-cli">Copilot CLI</a></td><td>built-in</td><td>—</td><td><a href="https://github.com/copilot/agents">github.com/copilot</a></td><td>GitHub Mobile</td></tr><tr><td><strong>Google</strong></td><td><a href="https://github.com/google-gemini/gemini-cli">Gemini CLI</a></td><td><a href="https://antigravity.dev">Antigravity</a></td><td>—</td><td><a href="https://gemini.google.com">gemini.google.com</a></td><td>—</td></tr></tbody></table>
-<div class="callout"><p><div class="callout-label">Voice typing</div>
-You’re typing more natural language than ever. Speaking is 3x faster. Built-in dictation is free (macOS F5 🎤, Windows Win+H). For more, see <a href="https://superwhisper.com">SuperWhisper</a> (on-device), <a href="https://wisprflow.ai">Wispr Flow</a> (cloud), or <a href="https://talonvoice.com">Talon</a> (full hands-free control).</p></div>
 <hr/>
 <p>The lines are blurring. Most tools now span multiple categories. This page only covers a few - there are many more worth exploring.</p>
 <h2 id="exercise">Exercise</h2>
@@ -123,5 +123,29 @@ You’re typing more natural language than ever. Speaking is 3x faster. Built-in
       requestAnimationFrame(draw);
     }
     draw();
+  })();
+  </script>  <script>
+  (function () {
+    function init(root) {
+      var btns = root.querySelectorAll('.kata-tab-btn');
+      var panels = root.querySelectorAll('.kata-tab-panel');
+      if (!panels.length) return;
+      panels.forEach(function (p, i) {
+        p.classList.toggle('active', i === 0);
+      });
+      btns.forEach(function (b) {
+        b.addEventListener('click', function () {
+          var idx = Number(b.dataset.idx);
+          btns.forEach(function (bb, i) {
+            bb.classList.toggle('active', i === idx);
+            bb.setAttribute('aria-selected', i === idx ? 'true' : 'false');
+          });
+          panels.forEach(function (p, i) {
+            p.classList.toggle('active', i === idx);
+          });
+        });
+      });
+    }
+    document.querySelectorAll('.kata-tabs').forEach(init);
   })();
   </script>  </body></html>

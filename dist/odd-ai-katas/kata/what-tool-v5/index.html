@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>What tool should I use? — AI Katas</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+JP:wght@700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/odd-ai-katas/_astro/Base.Bjv_6grX.css"></head> <body> <div class="dot-grid"><canvas id="dotCanvas"></canvas></div>   <main class="kata-detail" style="display: block; position: relative; z-index: 1;"> <a href="/odd-ai-katas" class="kata-back"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2L4 8l6 6"></path></svg> Back to all katas</a> <div class="feeling-title">"What tool should I use?"</div> <div class="kata-body"> <h2 id="how-we-work-is-changing">How we work is changing</h2>
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>What tool should I use? — AI Katas</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+JP:wght@700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/odd-ai-katas/_astro/Base.DWjfnBPN.css"></head> <body> <div class="dot-grid"><canvas id="dotCanvas"></canvas></div>   <main class="kata-detail" style="display: block; position: relative; z-index: 1;"> <a href="/odd-ai-katas" class="kata-back"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2L4 8l6 6"></path></svg> Back to all katas</a> <div class="feeling-title">"What tool should I use?"</div> <div class="kata-body"> <h2 id="how-we-work-is-changing">How we work is changing</h2>
 <p>There used to be one way to write code: you, an editor, a terminal. Now there are at least five different interfaces for working with AI on code. Each one changes how you think, what you delegate, and what you keep control of.</p>
 <p>This kata isn’t a recommendation. It’s a map.</p>
 <h2 id="the-terminal">The terminal</h2>
@@ -70,5 +70,29 @@
       requestAnimationFrame(draw);
     }
     draw();
+  })();
+  </script>  <script>
+  (function () {
+    function init(root) {
+      var btns = root.querySelectorAll('.kata-tab-btn');
+      var panels = root.querySelectorAll('.kata-tab-panel');
+      if (!panels.length) return;
+      panels.forEach(function (p, i) {
+        p.classList.toggle('active', i === 0);
+      });
+      btns.forEach(function (b) {
+        b.addEventListener('click', function () {
+          var idx = Number(b.dataset.idx);
+          btns.forEach(function (bb, i) {
+            bb.classList.toggle('active', i === idx);
+            bb.setAttribute('aria-selected', i === idx ? 'true' : 'false');
+          });
+          panels.forEach(function (p, i) {
+            p.classList.toggle('active', i === idx);
+          });
+        });
+      });
+    }
+    document.querySelectorAll('.kata-tabs').forEach(init);
   })();
   </script>  </body></html>

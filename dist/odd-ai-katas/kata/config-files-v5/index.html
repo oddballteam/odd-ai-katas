@@ -1,0 +1,141 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Which AI config follows my repo and which follows me? — AI Katas</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+JP:wght@700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/odd-ai-katas/_astro/Base.DWjfnBPN.css"></head> <body> <div class="dot-grid"><canvas id="dotCanvas"></canvas></div>   <main class="kata-detail" style="display: block; position: relative; z-index: 1;"> <a href="/odd-ai-katas" class="kata-back"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2L4 8l6 6"></path></svg> Back to all katas</a> <div class="feeling-title">"Which AI config follows my repo and which follows me?"</div> <div class="kata-body"> <h2 id="two-scopes-two-trees">Two scopes, two trees</h2>
+<p>Every AI tool’s config splits into two homes: <strong>in your repo</strong> (committed, follows the project, shared with your team) and <strong>on your machine</strong> (personal, follows you, hidden from teammates). Each tool draws the line slightly differently.</p>
+<h3 id="in-your-repo-committed-team-shared">In your repo (committed, team-shared)</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="plaintext"><code><span class="line"><span>your-project/</span></span>
+<span class="line"><span>│</span></span>
+<span class="line"><span>├── AGENTS.md                              # cursor, codex, aider</span></span>
+<span class="line"><span>├── CLAUDE.md                              # claude code</span></span>
+<span class="line"><span>│</span></span>
+<span class="line"><span>├── .mcp.json                              # claude code (MCP servers)</span></span>
+<span class="line"><span>├── .claude/</span></span>
+<span class="line"><span>│   ├── settings.json                      # claude code (permissions, hooks)</span></span>
+<span class="line"><span>│   ├── agents/                            # claude code (subagents)</span></span>
+<span class="line"><span>│   ├── commands/                          # claude code (slash commands)</span></span>
+<span class="line"><span>│   ├── hooks/                             # claude code (shell event hooks)</span></span>
+<span class="line"><span>│   └── skills/                            # claude code (auto-invoked workflows)</span></span>
+<span class="line"><span>│</span></span>
+<span class="line"><span>├── .cursor/</span></span>
+<span class="line"><span>│   ├── rules/                             # cursor (.mdc rule files)</span></span>
+<span class="line"><span>│   ├── mcp.json                           # cursor (MCP servers)</span></span>
+<span class="line"><span>│   └── modes.json                         # cursor (custom modes)</span></span>
+<span class="line"><span>├── .cursorignore                          # cursor (AI never reads these files)</span></span>
+<span class="line"><span>├── .cursorindexignore                     # cursor (excluded from index)</span></span>
+<span class="line"><span>│</span></span>
+<span class="line"><span>└── .github/</span></span>
+<span class="line"><span>    ├── copilot-instructions.md            # copilot (project instructions)</span></span>
+<span class="line"><span>    ├── instructions/                      # copilot (path-scoped rules)</span></span>
+<span class="line"><span>    ├── prompts/                           # copilot (reusable prompts)</span></span>
+<span class="line"><span>    └── chatmodes/                         # copilot (custom modes)</span></span></code></pre>
+<h3 id="on-your-machine-personal-never-committed">On your machine (personal, never committed)</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="plaintext"><code><span class="line"><span>~/                                          # your home directory</span></span>
+<span class="line"><span>│</span></span>
+<span class="line"><span>├── .claude/                               # claude code user-level (same shape as project)</span></span>
+<span class="line"><span>│   ├── CLAUDE.md                          # personal preferences for ALL projects</span></span>
+<span class="line"><span>│   ├── settings.json                      # global permissions / deny lists</span></span>
+<span class="line"><span>│   ├── settings.local.json                # personal local overrides</span></span>
+<span class="line"><span>│   ├── agents/                            # global subagents</span></span>
+<span class="line"><span>│   ├── commands/                          # global slash commands</span></span>
+<span class="line"><span>│   ├── skills/                            # global skills</span></span>
+<span class="line"><span>│   ├── plugins/                           # installed marketplace plugins</span></span>
+<span class="line"><span>│   └── projects/                          # auto-memory + session history per project</span></span>
+<span class="line"><span>│</span></span>
+<span class="line"><span>└── (any project)</span></span>
+<span class="line"><span>    └── .claude/</span></span>
+<span class="line"><span>        └── settings.local.json            # personal repo override (gitignored)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># Cursor: user rules live in Cursor Settings → Rules (no on-disk file)</span></span>
+<span class="line"><span># Copilot: personal preferences live in VS Code user settings.json</span></span>
+<span class="line"><span>#          (~/.config/Code/User/settings.json on Linux, similar on Mac/Win)</span></span></code></pre>
+<p>The line on what’s “personal” is drawn differently in each tool:</p>
+<ul>
+<li><strong>Claude Code</strong> uses both: <code>~/.claude/</code> for global, <code>.claude/settings.local.json</code> for per-repo personal.</li>
+<li><strong>Cursor</strong> stores user rules in its own settings store, not in a file you can edit by hand or share.</li>
+<li><strong>Copilot</strong> keeps personal config in VS Code’s user settings file outside your repo.</li>
+</ul>
+<h2 id="small-examples">Small examples</h2>
+<p><code>~/.claude/CLAUDE.md</code> (personal, applies to every project):</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="markdown"><code><span class="line"><span style="color:#79B8FF;font-weight:bold"># How I like to work</span></span>
+<span class="line"><span style="color:#FFAB70">-</span><span style="color:#E1E4E8"> Be terse. No &quot;Certainly!&quot; preambles.</span></span>
+<span class="line"><span style="color:#FFAB70">-</span><span style="color:#E1E4E8"> Show diffs before applying. Ask before destructive commands.</span></span>
+<span class="line"><span style="color:#FFAB70">-</span><span style="color:#E1E4E8"> Conventional commits. Never add Co-Authored-By lines.</span></span></code></pre>
+<p><code>.claude/settings.local.json</code> (gitignored, this repo only):</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  &quot;permissions&quot;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    &quot;allow&quot;</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">&quot;Bash(yarn cypress:*)&quot;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p><code>.claude/settings.json</code> (committed, team-shared):</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  &quot;permissions&quot;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    &quot;deny&quot;</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">&quot;Bash(rm -rf *)&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;Bash(git push --force *)&quot;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="exercise">Exercise</h2>
+<ol>
+<li>Run <code>ls -la ~/.claude</code> (or your tool’s equivalent). Anything in there you forgot you had?</li>
+<li>Find a rule that’s currently in a project file but really belongs in your personal config. Move it. Notice if other projects start behaving differently.</li>
+<li>Ask your AI: “what’s loaded from my user settings versus my project settings right now?”</li>
+</ol> </div> </main>  <script>
+  (function() {
+    const canvas = document.getElementById('dotCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const spacing = 40, dotRadius = 1.2;
+    let offsetX = 0, offsetY = 0;
+    const color = '#D97757';
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    function hexToRgb(hex) {
+      return `${parseInt(hex.slice(1,3),16)},${parseInt(hex.slice(3,5),16)},${parseInt(hex.slice(5,7),16)}`;
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const rgb = hexToRgb(color);
+      const startX = (offsetX % spacing) - spacing;
+      const startY = (offsetY % spacing) - spacing;
+      for (let x = startX; x < canvas.width + spacing; x += spacing) {
+        for (let y = startY; y < canvas.height + spacing; y += spacing) {
+          ctx.beginPath();
+          ctx.arc(x, y, dotRadius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${rgb}, 0.35)`;
+          ctx.fill();
+        }
+      }
+      offsetX += 0.15;
+      offsetY += 0.08;
+      requestAnimationFrame(draw);
+    }
+    draw();
+  })();
+  </script>  <script>
+  (function () {
+    function init(root) {
+      var btns = root.querySelectorAll('.kata-tab-btn');
+      var panels = root.querySelectorAll('.kata-tab-panel');
+      if (!panels.length) return;
+      panels.forEach(function (p, i) {
+        p.classList.toggle('active', i === 0);
+      });
+      btns.forEach(function (b) {
+        b.addEventListener('click', function () {
+          var idx = Number(b.dataset.idx);
+          btns.forEach(function (bb, i) {
+            bb.classList.toggle('active', i === idx);
+            bb.setAttribute('aria-selected', i === idx ? 'true' : 'false');
+          });
+          panels.forEach(function (p, i) {
+            p.classList.toggle('active', i === idx);
+          });
+        });
+      });
+    }
+    document.querySelectorAll('.kata-tabs').forEach(init);
+  })();
+  </script>  </body></html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>How do I give my AI eyes? It writes UI code but never sees the page. — AI Katas</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+JP:wght@700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/odd-ai-katas/_astro/Base.DWjfnBPN.css"></head> <body> <div class="dot-grid"><canvas id="dotCanvas"></canvas></div>   <main class="kata-detail" style="display: block; position: relative; z-index: 1;"> <a href="/odd-ai-katas" class="kata-back"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2L4 8l6 6"></path></svg> Back to all katas</a> <div class="feeling-title">"How do I give my AI eyes? It writes UI code but never sees the page."</div> <div class="kata-body"> <h2 id="what-eyes-means">What “eyes” means</h2>
+<p>By default your agent is blind to the running app. It edits a component, says “done,” and you become the test runner. “Eyes” means giving it a real browser it can drive: open URLs, click, fill forms, take screenshots, read the console, inspect network requests. The same loop you run manually, automated.</p>
+<p>Once it’s wired up, “I fixed the login form” becomes “I clicked submit, watched the 200 come back, and screenshotted the dashboard.”</p>
+<h2 id="what-you-can-install-april-2026">What you can install (April 2026)</h2>
+<p>Four real options. Pick by job, not hype.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Tool</th><th>Who makes it</th><th>Best for</th><th>Browser</th><th>Notes</th></tr></thead><tbody><tr><td><strong>Chrome DevTools MCP</strong></td><td>Google</td><td>Debugging, perf, console/network</td><td>Chrome only</td><td>Spins up its own profile. ~26 tools.</td></tr><tr><td><strong>Playwright MCP</strong></td><td>Microsoft</td><td>Driving flows, cross-browser, tests</td><td>Chrome / FF / WebKit</td><td>~21 tools. CLI variant uses 4x fewer tokens.</td></tr><tr><td><strong>Claude in Chrome</strong></td><td>Anthropic</td><td>Authenticated dev on real sessions</td><td>Chrome extension</td><td>Uses your real login. Powerful and risky.</td></tr><tr><td><strong>agent-browser / OpenBrowser</strong></td><td>Third-party</td><td>Token-tight workflows</td><td>Chrome</td><td>3-6x cheaper on tokens, smaller community.</td></tr></tbody></table>
+<p>Most teams in 2026 install <strong>two</strong>: Playwright MCP for driving, Chrome DevTools MCP for debugging. Add Claude in Chrome only if you actually need authenticated pages.</p>
+<h2 id="wire-one-up-chrome-devtools-mcp-claude-code">Wire one up (Chrome DevTools MCP, Claude Code)</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> add</span><span style="color:#9ECBFF"> chrome-devtools</span><span style="color:#9ECBFF"> npx</span><span style="color:#9ECBFF"> chrome-devtools-mcp@0.6.0</span></span></code></pre>
+<p>Pin a version, not <code>@latest</code>. Then restart your session and ask: “List the tools you got from chrome-devtools and what each one does.” Read the list before you use it.</p>
+<p>For Cursor / VS Code / Gemini CLI the JSON is the same shape, just dropped into their MCP config.</p>
+<h2 id="what-to-watch-out-for">What to watch out for</h2>
+<p>A browser MCP hands your agent the keys to a real Chrome. Three things to know:</p>
+<ol>
+<li><strong>Prompt injection is real.</strong> A malicious page can embed instructions the agent will follow. CVE-2026-25253 (March 2026) was a zero-click against agent-controlled browsers. Don’t tell the agent to “browse around” untrusted sites.</li>
+<li><strong>Don’t share your real session.</strong> Use the MCP server’s own profile (the default), or a throwaway test account. Never <code>--autoConnect</code> to your default Chrome with your real Gmail/GitHub/AWS logins open.</li>
+<li><strong>Verify what you install.</strong> <code>npx anything@latest</code> is a supply-chain risk. Confirm the GitHub org (<code>ChromeDevTools/</code>, <code>microsoft/</code>, <code>anthropic/</code>), pin a version, skim the npm page for publish date and downloads.</li>
+</ol>
+<h2 id="platform-notes">Platform notes</h2>
+<ul>
+<li><strong>Mac / Windows</strong>: install Chrome, run the command.</li>
+<li><strong>Linux</strong>: may need <code>libnss3 libxss1 libasound2 libgbm1</code>.</li>
+<li><strong>WSL2</strong>: easiest is to run the MCP on the Windows side and point WSL at it.</li>
+<li><strong>Chrome 136+</strong>: blocks <code>--remote-debugging-port</code> on your default profile. The MCP server’s own profile sidesteps this.</li>
+</ul>
+<h2 id="a-note-on-freshness">A note on freshness</h2>
+<p>This space changes monthly. Tools recommended in January 2026 are already being replaced. Before you commit, check the repo’s last commit, the npm publish date, and filter your own searches to “past month.” This kata was written 2026-04-16; if you’re reading it later, re-verify.</p>
+<h2 id="exercise">Exercise</h2>
+<ol>
+<li>Pick one tool from the table based on what you need (driving / debugging / authenticated).</li>
+<li>Install pinned, in a fresh profile. Ask the agent to list the tools it got and what each does.</li>
+<li>Boot your dev server, then ask: “Open <a href="http://localhost:3000">http://localhost:3000</a>, screenshot it, list any console errors, and tell me what’s broken.” Watch how it sees your app for the first time.</li>
+</ol>
+<h2 id="sources">Sources</h2>
+<ul>
+<li><a href="https://github.com/ChromeDevTools/chrome-devtools-mcp">Chrome DevTools MCP (Google)</a></li>
+<li><a href="https://github.com/microsoft/playwright-mcp">Playwright MCP (Microsoft)</a></li>
+<li><a href="https://code.claude.com/docs/en/chrome">Claude in Chrome (Anthropic)</a></li>
+<li><a href="https://stevekinney.com/writing/driving-vs-debugging-the-browser">Driving vs Debugging the Browser - Steve Kinney</a></li>
+<li><a href="https://www.practical-devsecops.com/mcp-security-vulnerabilities/">MCP Security Vulnerabilities 2026 - Practical DevSecOps</a></li>
+</ul> </div> </main>  <script>
+  (function() {
+    const canvas = document.getElementById('dotCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const spacing = 40, dotRadius = 1.2;
+    let offsetX = 0, offsetY = 0;
+    const color = '#D97757';
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    function hexToRgb(hex) {
+      return `${parseInt(hex.slice(1,3),16)},${parseInt(hex.slice(3,5),16)},${parseInt(hex.slice(5,7),16)}`;
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const rgb = hexToRgb(color);
+      const startX = (offsetX % spacing) - spacing;
+      const startY = (offsetY % spacing) - spacing;
+      for (let x = startX; x < canvas.width + spacing; x += spacing) {
+        for (let y = startY; y < canvas.height + spacing; y += spacing) {
+          ctx.beginPath();
+          ctx.arc(x, y, dotRadius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${rgb}, 0.35)`;
+          ctx.fill();
+        }
+      }
+      offsetX += 0.15;
+      offsetY += 0.08;
+      requestAnimationFrame(draw);
+    }
+    draw();
+  })();
+  </script>  <script>
+  (function () {
+    function init(root) {
+      var btns = root.querySelectorAll('.kata-tab-btn');
+      var panels = root.querySelectorAll('.kata-tab-panel');
+      if (!panels.length) return;
+      panels.forEach(function (p, i) {
+        p.classList.toggle('active', i === 0);
+      });
+      btns.forEach(function (b) {
+        b.addEventListener('click', function () {
+          var idx = Number(b.dataset.idx);
+          btns.forEach(function (bb, i) {
+            bb.classList.toggle('active', i === idx);
+            bb.setAttribute('aria-selected', i === idx ? 'true' : 'false');
+          });
+          panels.forEach(function (p, i) {
+            p.classList.toggle('active', i === idx);
+          });
+        });
+      });
+    }
+    document.querySelectorAll('.kata-tabs').forEach(init);
+  })();
+  </script>  </body></html>

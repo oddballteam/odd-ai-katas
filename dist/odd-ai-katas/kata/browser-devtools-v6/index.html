@@ -1,0 +1,109 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>How do I give my AI eyes? — AI Katas</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+JP:wght@700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/odd-ai-katas/_astro/Base.DWjfnBPN.css"></head> <body> <div class="dot-grid"><canvas id="dotCanvas"></canvas></div>   <main class="kata-detail" style="display: block; position: relative; z-index: 1;"> <a href="/odd-ai-katas" class="kata-back"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2L4 8l6 6"></path></svg> Back to all katas</a> <div class="feeling-title">"How do I give my AI eyes?"</div> <div class="kata-body"> <h2 id="two-paths">Two paths</h2>
+<p>There’s a built-in path and an MCP path. The built-in browsers are easiest. The MCP servers are more powerful.</p>
+<h2 id="built-in-browsers-no-install">Built-in browsers (no install)</h2>
+<p>Your editor probably already ships one:</p>
+<ul>
+<li><strong><a href="https://cursor.com">Cursor</a></strong> has a built-in browser pane. The agent can navigate it, screenshot it, and read selected elements.</li>
+<li><strong><a href="https://code.visualstudio.com/docs/debugtest/integrated-browser">VS Code</a></strong> ships an integrated browser. Copilot can navigate to URLs and select elements to add to chat as context. Microsoft’s <a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode.live-server">Live Preview</a> extension is the polished version.</li>
+<li><strong>Claude Code (desktop)</strong> got a redesign on 2026-04-14 with multi-pane sessions; the browser pane is part of that.</li>
+</ul>
+<p>If you mostly want “show me what the page looks like” and “click around to verify,” start here. Zero setup.</p>
+<h2 id="mcp-servers-for-real-automation">MCP servers (for real automation)</h2>
+<p>When you need scripted flows, network inspection, perf traces, or cross-tool support, install an MCP server. Two dominate, ranked by GitHub stars and weekly npm downloads:</p>
+<ul>
+<li><strong><a href="https://github.com/microsoft/playwright-mcp">Playwright MCP</a></strong> — Microsoft, ~30.9K stars, ranked #1 on <a href="https://www.pulsemcp.com/">PulseMCP</a>. Drives Chrome, Firefox, and WebKit. Best for “make the page do the thing” and CI/test workflows.</li>
+<li><strong><a href="https://github.com/ChromeDevTools/chrome-devtools-mcp">Chrome DevTools MCP</a></strong> — Google, ~30.8K stars, ~330K weekly npm downloads. Chrome only. Best for “tell me what’s wrong with this page”: console logs, network, perf traces, Lighthouse.</li>
+</ul>
+<p>Two more worth knowing:</p>
+<ul>
+<li><strong><a href="https://code.claude.com/docs/en/chrome">Claude in Chrome</a></strong> — Anthropic browser extension. Uses your real Chrome session, so the agent can act on pages you’re already logged into. Powerful and risky in equal measure.</li>
+<li><strong><a href="https://github.com/BrowserMCP/mcp">BrowserMCP</a></strong> — community alternative, smaller footprint, growing.</li>
+</ul>
+<p>Most teams in 2026 pair Playwright MCP (driving) with Chrome DevTools MCP (debugging).</p>
+<h2 id="install-claude-code-example">Install (Claude Code example)</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> add</span><span style="color:#9ECBFF"> chrome-devtools</span><span style="color:#9ECBFF"> npx</span><span style="color:#9ECBFF"> chrome-devtools-mcp@0.6.0</span></span></code></pre>
+<p>Pin a version, not <code>@latest</code>. Same JSON shape works for Cursor, VS Code, and Gemini CLI in their MCP configs.</p>
+<h2 id="what-to-watch-out-for">What to watch out for</h2>
+<p>A browser MCP gives your agent the keys to a real Chrome:</p>
+<ul>
+<li><strong>Prompt injection.</strong> A malicious page can embed instructions the agent will follow. CVE-2026-25253 (March 2026) was a zero-click that leaked auth tokens from one page visit. Don’t tell the agent to “browse around” untrusted sites.</li>
+<li><strong>Don’t share your real session.</strong> Let the MCP server use its own profile (the default). Never <code>--autoConnect</code> to your default Chrome with Gmail/GitHub/AWS open.</li>
+<li><strong>Verify the package.</strong> Confirm the GitHub org (<code>microsoft/</code>, <code>ChromeDevTools/</code>, <code>anthropic/</code>), pin a version, skim the npm page for publish date and downloads before installing.</li>
+</ul>
+<h2 id="platform-notes">Platform notes</h2>
+<ul>
+<li><strong>Mac / Windows</strong>: install Chrome, run the command.</li>
+<li><strong>Linux</strong>: may need <code>libnss3 libxss1 libasound2 libgbm1</code>.</li>
+<li><strong>WSL2</strong>: easiest is to run the MCP on the Windows host.</li>
+<li><strong>Chrome 136+</strong>: blocks <code>--remote-debugging-port</code> on your default profile. The MCP’s own profile sidesteps this.</li>
+</ul>
+<p>This space changes monthly. Check the repo’s last commit and npm publish date before you trust any recommendation, including this one (written 2026-04-16).</p>
+<h2 id="exercise">Exercise</h2>
+<ol>
+<li>Try the built-in browser in your editor first. Ask the agent to open <code>http://localhost:3000</code> and describe what it sees.</li>
+<li>Pick one MCP from above based on what you actually need. Install pinned, in a fresh profile.</li>
+<li>Ask: “List the tools you got from this MCP server and what each does.” Read it before you use it.</li>
+</ol> </div> </main>  <script>
+  (function() {
+    const canvas = document.getElementById('dotCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const spacing = 40, dotRadius = 1.2;
+    let offsetX = 0, offsetY = 0;
+    const color = '#D97757';
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    function hexToRgb(hex) {
+      return `${parseInt(hex.slice(1,3),16)},${parseInt(hex.slice(3,5),16)},${parseInt(hex.slice(5,7),16)}`;
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const rgb = hexToRgb(color);
+      const startX = (offsetX % spacing) - spacing;
+      const startY = (offsetY % spacing) - spacing;
+      for (let x = startX; x < canvas.width + spacing; x += spacing) {
+        for (let y = startY; y < canvas.height + spacing; y += spacing) {
+          ctx.beginPath();
+          ctx.arc(x, y, dotRadius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${rgb}, 0.35)`;
+          ctx.fill();
+        }
+      }
+      offsetX += 0.15;
+      offsetY += 0.08;
+      requestAnimationFrame(draw);
+    }
+    draw();
+  })();
+  </script>  <script>
+  (function () {
+    function init(root) {
+      var btns = root.querySelectorAll('.kata-tab-btn');
+      var panels = root.querySelectorAll('.kata-tab-panel');
+      if (!panels.length) return;
+      panels.forEach(function (p, i) {
+        p.classList.toggle('active', i === 0);
+      });
+      btns.forEach(function (b) {
+        b.addEventListener('click', function () {
+          var idx = Number(b.dataset.idx);
+          btns.forEach(function (bb, i) {
+            bb.classList.toggle('active', i === idx);
+            bb.setAttribute('aria-selected', i === idx ? 'true' : 'false');
+          });
+          panels.forEach(function (p, i) {
+            p.classList.toggle('active', i === idx);
+          });
+        });
+      });
+    }
+    document.querySelectorAll('.kata-tabs').forEach(init);
+  })();
+  </script>  </body></html>

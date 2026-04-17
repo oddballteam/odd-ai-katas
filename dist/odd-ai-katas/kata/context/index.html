@@ -1,0 +1,111 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Context: what do I do when...? — AI Katas</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+JP:wght@700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/odd-ai-katas/_astro/Base.DWjfnBPN.css"></head> <body> <div class="dot-grid"><canvas id="dotCanvas"></canvas></div>   <main class="kata-detail" style="display: block; position: relative; z-index: 1;"> <a href="/odd-ai-katas" class="kata-back"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2L4 8l6 6"></path></svg> Back to all katas</a> <div class="feeling-title">"Context: what do I do when...?"</div> <div class="kata-body"> <p>Think about what you’d do in each scenario. Then click to reveal.</p>
+<details><summary>Why is my session already using tokens before I’ve typed anything?</summary><p><strong>Every tool preloads stuff for you.</strong> A bare session (no MCP, minimal config) runs roughly 5-25k tokens depending on the tool:</p><ul>
+<li>Gemini CLI: ~6k</li>
+<li>Antigravity: ~10k+</li>
+<li>Claude Code: ~20k</li>
+<li>Codex CLI: ~21-22k</li>
+<li>Cursor, Windsurf, Copilot: not publicly measured, but leaked prompts suggest a similar band</li>
+</ul><p>Add MCP and big instruction files and it climbs fast:</p><ul>
+<li><strong>Config files</strong>: <code>CLAUDE.md</code>, <code>AGENTS.md</code>, <code>.cursor/rules/*</code>, <code>GEMINI.md</code>. Most people have 0 or 1 small file, which adds maybe 1-3k. A sprawling CLAUDE.md can add 10k+.</li>
+<li><strong>Memory files</strong>: user-level notes (<code>~/.claude/CLAUDE.md</code>, <code>~/.gemini/GEMINI.md</code>). Usually small.</li>
+<li><strong>MCP servers</strong>: 5-10k per server typical, 15-20k for heavy ones.</li>
+</ul><p>Every MCP server you leave enabled is rent you pay on every session. Turn off what you don’t need.</p></details>
+<details><summary>How do I see what’s in my context right now, and how much I’ve used?</summary><p><strong>Every tool has a way, usually one command or a hover.</strong></p><ul>
+<li><strong>Claude Code</strong>: <code>/context</code> breaks it down by category (system prompt, memory, tools, MCP, messages). <code>/status</code> shows the token count and model.</li>
+<li><strong>Cursor / VS Code Copilot</strong>: a circle indicator shows up near the chat input once a conversation starts. Hover it for the token breakdown.</li>
+<li><strong>Codex CLI</strong>: <code>/status</code> shows session usage.</li>
+<li><strong>Gemini CLI</strong>: <code>/stats</code> for usage, <code>/memory show</code> to see the concatenated memory.</li>
+</ul><p><img src="/odd-ai-katas/images/katas/what-does-it-already-know/claude-code-see-context.png" alt="Claude Code /context output"/></p><p><img src="/odd-ai-katas/images/katas/what-does-it-already-know/vscode-see-context.png" alt="VS Code Copilot context window showing token usage"/></p><p>Worth checking when the AI starts acting off. If the window is getting full, context bloat is probably the reason, and clearing will help more than any correction you type.</p></details>
+<details><summary>Your token usage is high and the AI is starting to miss things: forgetting earlier decisions, repeating itself, getting sloppier. What do you do?</summary><p><strong>Reset the context. Three ways, depending on what you need:</strong></p><ul>
+<li><strong>Clear / new.</strong> Fastest. Wipes the conversation; files on disk stay. <code>/clear</code> in Claude Code and Gemini CLI, <code>/clear</code> or <code>/new</code> in Copilot CLI, “New Chat” in Cursor and VS Code Copilot.</li>
+<li><strong>Compact.</strong> Keeps continuity by summarizing older history into a shorter form. Use when you can’t afford to lose the thread. <code>/compact [focus]</code> in Claude Code, <code>/compact</code> in Copilot CLI, <code>/compress</code> in Gemini CLI.</li>
+<li><strong>Document, then clear.</strong> Write a handoff file first (“Write HANDOFF.md: what we tried, what worked, what’s left”), then clear. Next session opens with “Read HANDOFF.md and continue.” Best for long tasks you’ll return to.</li>
+</ul><p>Model attention gets worse as context fills up, so doing nothing is the worst option.</p></details>
+<details><summary>The AI keeps suggesting fixes that don’t work, and you’ve corrected it twice. What do you do?</summary><p><strong>Give it better inputs.</strong> It’s probably working from stale training data, vague symptoms, or a mental model of your system that’s wrong. A few things that actually move the needle:</p><ul>
+<li>Have it <strong>add logs</strong> and run again, then read the output.</li>
+<li>Point it at a <strong>REPL</strong> or let it run the failing command itself.</li>
+<li><strong>Paste a screenshot</strong> of the error, UI glitch, or failing test output.</li>
+<li>Connect a relevant <strong>MCP</strong> (Sentry, Linear, your DB, Chrome DevTools).</li>
+<li>Tell it to <strong>search the web</strong> for the error + “2026”; library behavior changes fast.</li>
+<li>Give it the <strong>official docs URL</strong> or an up-to-date reference and tell it to read that specifically.</li>
+<li>Be more concrete: “what exactly are you trying and why do you think it will work this time?”</li>
+</ul><p>Repeating “still broken” without new inputs just burns tokens. New information unsticks it.</p></details>
+<details><summary>You’re mid-task, the window is getting heavy, but you need continuity. What do you do?</summary><p><strong>Compact with a focus.</strong> <code>/compact focus on the auth refactor, drop the test debugging</code> in Claude Code. <code>/compact</code> in Copilot CLI. <code>/compress</code> in Gemini CLI. This summarizes older turns into a short form so you can keep going. Do it on purpose at ~50-60% full, not when auto-compact kicks in at 80% with no steering.</p></details>
+<details><summary>You realize the AI took a wrong turn ten messages ago. What do you do?</summary><p><strong>Rewind to that point.</strong> <code>/rewind</code> or Esc+Esc in Claude Code opens a checkpoint picker (conversation only, or conversation + files). In Cursor, VS Code Copilot, and Windsurf, each message has a restore button right next to it; click it to undo chat and file changes back to that point.</p></details>
+<details><summary>You want to try a risky approach without losing where you are. What do you do?</summary><p><strong>Fork the session.</strong> <code>/branch</code> in Claude Code, or <code>claude --resume &lt;id&gt; --fork-session</code>. The original thread stays untouched. Few tools have this natively. Files are shared across branches, so file writes still leak. Use it for “let me try this totally different thing and come back if it doesn’t work.”</p></details>
+<details><summary>You’re wrapping up for the day and want to resume tomorrow. What do you do?</summary><p><strong>Write a handoff file.</strong> “Write HANDOFF.md: what you tried, what worked, what didn’t, next steps.” Tomorrow: start a fresh session with “Read HANDOFF.md and continue.” Beats <code>claude --continue</code> into a long stale thread. Commits help too: a new session can read the last few commits to catch up cheaply.</p></details>
+<details><summary>The AI keeps making the same mistake across multiple sessions. What do you do?</summary><p><strong>Get it out of chat and into the instructions file.</strong> In Claude Code, start a message with <code>#</code> and it prompts where to save (project <code>CLAUDE.md</code>, user <code>~/.claude/CLAUDE.md</code>, or auto-memory). In Cursor, say “Turn this into a rule.” In Copilot, “Add this to AGENTS.md” (or <code>.github/copilot-instructions.md</code>). If you correct the same thing twice, the fix belongs in the file, not the conversation.</p></details>
+<details><summary>You’re about to start a hard, multi-step task. What do you do?</summary><p><strong>Three levels, escalate as needed:</strong></p><ul>
+<li><strong>Start with “interview me.”</strong> “Before you write anything, interview me to understand the task. Ask me questions one at a time until you’re confident.” Low effort, high leverage. Usually enough on its own, and way better than diving straight to code.</li>
+<li><strong>Add plan mode if you want a clean implementation session.</strong> Plan mode (<code>/plan</code> or Shift+Tab in Claude Code, Plan tab in Cursor) produces a concrete plan without touching code. Save it as <code>PLAN.md</code>, clear, and start a fresh session that loads only the plan. Worth it when you expect implementation to get long.</li>
+<li><strong>For a huge process, use a spec-driven skill.</strong> Spec-driven workflows (write a full spec, break into steps, implement step by step with checkpoints) are well-suited for a reusable skill. Set it up once and invoke it by name for every big task.</li>
+</ul><p>A session with even a short interview beats a session that dove straight in. A session with a clean plan beats one carrying the full back-and-forth.</p></details>
+<details><summary>The AI needs context that isn’t in your codebase (design docs, tickets, team discussion). What do you do?</summary><p><strong>Paste it, link it, or pull it in through MCP.</strong> For a one-off, paste the relevant Slack thread, a screenshot, or a URL and ask the agent to fetch it. For repeat access, connect an MCP server if you can: Linear, GitHub, Notion, Confluence, Obsidian, and Slack all ship them in 2026. Heads up: locked-down company systems (Slack, Jira, internal wikis) often won’t let you connect a third-party MCP server, so copy-paste is frequently the only option there. Turn off MCP servers you’re not using this session; each one typically spends 5-10k tokens on its tool schemas.</p></details>
+<details><summary>You open a fresh session and want to get caught up quickly. What do you do?</summary><p><strong>Feed it a high-signal source instead of re-explaining.</strong> A few options, in order of effort:</p><ul>
+<li><strong>Recent commits.</strong> “Read the last 5 commits and tell me where we left off.” Cheap and works best when you commit small and often.</li>
+<li><strong>A handoff file you wrote yesterday.</strong> <code>HANDOFF.md</code>, <code>NOTES.md</code>, or a <code>decisions/</code> folder of ADRs. The in-repo pattern that’s become standard alongside <a href="https://agents.md/">AGENTS.md</a>.</li>
+<li><strong>Your own notes system.</strong> If you keep a second brain in <a href="https://obsidian.md">Obsidian</a> or <a href="https://developers.notion.com/docs/mcp">Notion</a>, connect it via MCP and let the agent query your design docs, running notes, or meeting minutes directly.</li>
+</ul><p>The pattern: build one reliable source your future self (or future agent) can read instead of paging you.</p></details> </div> </main>  <script>
+  (function() {
+    const canvas = document.getElementById('dotCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const spacing = 40, dotRadius = 1.2;
+    let offsetX = 0, offsetY = 0;
+    const color = '#D97757';
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    function hexToRgb(hex) {
+      return `${parseInt(hex.slice(1,3),16)},${parseInt(hex.slice(3,5),16)},${parseInt(hex.slice(5,7),16)}`;
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const rgb = hexToRgb(color);
+      const startX = (offsetX % spacing) - spacing;
+      const startY = (offsetY % spacing) - spacing;
+      for (let x = startX; x < canvas.width + spacing; x += spacing) {
+        for (let y = startY; y < canvas.height + spacing; y += spacing) {
+          ctx.beginPath();
+          ctx.arc(x, y, dotRadius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${rgb}, 0.35)`;
+          ctx.fill();
+        }
+      }
+      offsetX += 0.15;
+      offsetY += 0.08;
+      requestAnimationFrame(draw);
+    }
+    draw();
+  })();
+  </script>  <script>
+  (function () {
+    function init(root) {
+      var btns = root.querySelectorAll('.kata-tab-btn');
+      var panels = root.querySelectorAll('.kata-tab-panel');
+      if (!panels.length) return;
+      panels.forEach(function (p, i) {
+        p.classList.toggle('active', i === 0);
+      });
+      btns.forEach(function (b) {
+        b.addEventListener('click', function () {
+          var idx = Number(b.dataset.idx);
+          btns.forEach(function (bb, i) {
+            bb.classList.toggle('active', i === idx);
+            bb.setAttribute('aria-selected', i === idx ? 'true' : 'false');
+          });
+          panels.forEach(function (p, i) {
+            p.classList.toggle('active', i === idx);
+          });
+        });
+      });
+    }
+    document.querySelectorAll('.kata-tabs').forEach(init);
+  })();
+  </script>  </body></html>
