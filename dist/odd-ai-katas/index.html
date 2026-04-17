@@ -3506,7 +3506,23 @@ const basePath = "/odd-ai-katas";
         pre.appendChild(btn);
       });
 
-      // Add copy button to tables
+      // Wire tabs (inline scripts inside injected HTML don't execute)
+      detailEl.querySelectorAll('.kata-tabs').forEach(function(root) {
+        var btns = root.querySelectorAll('.kata-tab-btn');
+        var panels = root.querySelectorAll('.kata-tab-panel');
+        if (!panels.length) return;
+        panels.forEach(function(p, i) { p.classList.toggle('active', i === 0); });
+        btns.forEach(function(b) {
+          b.addEventListener('click', function() {
+            var idx = Number(b.dataset.idx);
+            btns.forEach(function(bb, i) {
+              bb.classList.toggle('active', i === idx);
+              bb.setAttribute('aria-selected', i === idx ? 'true' : 'false');
+            });
+            panels.forEach(function(p, i) { p.classList.toggle('active', i === idx); });
+          });
+        });
+      });
 
       mainEl.classList.add('hidden');
       detailEl.classList.add('visible');
