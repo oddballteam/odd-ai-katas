@@ -38,7 +38,7 @@ a:hover {
 *, *::before, *::after {
   transition: border-color 0.4s ease, box-shadow 0.4s ease;
 }
-.hero h1 span, .hero-line, .filter-pill.active {
+.hero h1 span, .hero-line {
   transition: all 0.4s ease;
 }
 
@@ -149,39 +149,6 @@ a:hover {
   color: var(--text-muted);
   flex-shrink: 0;
 }
-.filter-pills {
-  display: flex;
-  gap: 0.3rem;
-  flex-wrap: wrap;
-}
-.filter-pill {
-  display: flex; align-items: center; gap: 5px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 5px 12px;
-  cursor: pointer;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.8rem; font-weight: 500;
-  color: var(--text-muted);
-  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s, color 0.15s;
-}
-.filter-pill:hover {
-  border-color: var(--border-hover);
-  background: var(--bg-card-hover);
-  color: var(--text-bright);
-}
-.filter-pill.active {
-  border-color: var(--accent);
-  background: var(--bg-card-hover);
-  box-shadow: 0 0 12px var(--accent-glow);
-  color: var(--text-bright);
-}
-.filter-pill svg {
-  width: 16px; height: 16px;
-  display: block; flex-shrink: 0;
-}
-
 /* ===== Tag filter pills ===== */
 .tag-filter-bar { padding-top: 0.5rem; }
 .tag-pill {
@@ -396,45 +363,6 @@ a:hover {
   color: var(--accent);
   opacity: 0.7;
   letter-spacing: 0.02em;
-}
-
-/* Tool tags on cards */
-.card-tags {
-  display: flex; gap: 0.3rem;
-  flex-wrap: wrap;
-}
-.tool-tag {
-  display: inline-flex; align-items: center;
-  width: 20px; height: 20px;
-  opacity: 0.45;
-  transition: opacity 0.15s;
-}
-.tool-tag svg {
-  width: 14px; height: 14px;
-  display: block;
-}
-.kata-card:hover .tool-tag { opacity: 0.7; }
-
-/* Tool tags in detail view */
-.detail-tool-tags {
-  display: flex; gap: 0.4rem;
-  flex-wrap: wrap;
-  margin-bottom: 0.5rem;
-}
-.detail-tool-tag {
-  display: inline-flex; align-items: center; gap: 4px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 3px 10px 3px 6px;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.7rem; font-weight: 500;
-  color: var(--tag-color, var(--text-muted));
-  letter-spacing: 0.02em;
-}
-.detail-tool-tag svg {
-  width: 14px; height: 14px;
-  display: block; flex-shrink: 0;
 }
 
 /* ===== Kata detail view ===== */
@@ -938,11 +866,6 @@ a:hover {
 /* ===== Responsive ===== */
 @media (max-width: 640px) {
   .kata-grid { grid-template-columns: 1fr; gap: 6px; }
-  .filter-pill span { display: none; }
-  .filter-pill svg { width: 20px; height: 20px; }
-  .filter-pill { padding: 6px 8px; }
-  .filter-pill[data-filter="all"] { padding: 6px 12px; }
-  .filter-bar { gap: 0.4rem; }
 }
 
 /* ===== Tabs (used in some katas) ===== */

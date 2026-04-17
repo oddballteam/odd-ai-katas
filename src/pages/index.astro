@@ -1,18 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import Base from '../layouts/Base.astro';
-import { tools, toolGroups, toolThemes } from '../data/tool-content';
 import { kataSequence } from '../data/kata-sequence';
-
-// Priority order for displaying tool tags (lower index = shown first)
-const toolPriority = ['claude-code', 'cowork', 'vscode', 'cursor', 'gemini-cli', 'antigravity', 'codex'];
-function sortTools(toolIds: string[]) {
-  return [...toolIds].sort((a, b) => {
-    const ai = toolPriority.indexOf(a);
-    const bi = toolPriority.indexOf(b);
-    return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
-  });
-}
 
 // Fetch all katas and render their MDX content at build time
 const allKatas = await getCollection('katas');
@@ -45,7 +34,6 @@ const kataManifest = katas.map((kata, i) => {
     related: kata.data.related || [],
     stub: kata.data.stub || false,
     status: kata.data.status || '',
-    tools: sortTools(kata.data.tools || []),
     tags: kata.data.tags || [],
     lastUpdated: kata.data.lastUpdated || '',
     order: isPrimary ? displayOrder - 1 : -1,
@@ -54,11 +42,6 @@ const kataManifest = katas.map((kata, i) => {
 
 // Collect all unique tags across katas
 const allTags = [...new Set(katas.flatMap(k => k.data.tags || []))].sort();
-
-// Build a flat tool lookup: id -> { name, company, accent }
-const toolLookup = toolGroups.flatMap(g =>
-  g.tools.map(t => ({ id: t.id, name: t.name, company: g.company, accent: g.accent, svg: t.svg }))
-);
 
 ---
 
@@ -94,7 +77,6 @@ const toolLookup = toolGroups.flatMap(g =>
           href="#"
           data-kata-id={kata.id}
           data-has-content={!kata.data.stub ? 'true' : 'false'}
-          data-tools={(kata.data.tools || []).join(',')}
           data-tags={(kata.data.tags || []).join(',')}
           data-status={kata.data.status || 'done'}
         >
@@ -105,16 +87,6 @@ const toolLookup = toolGroups.flatMap(g =>
             {kata.data.takeaway && <span class="takeaway">{kata.data.takeaway}</span>}
           </div>
           {kata.data.status === 'draft' && <span class="draft-slug">{kata.id}</span>}
-          <div class="card-tags">
-            {sortTools(kata.data.tools || []).map(toolId => {
-              const t = toolLookup.find(tl => tl.id === toolId);
-              return t ? (
-                <span class="tool-tag" data-tool-tag={toolId} style={`--tag-color: ${toolThemes[toolId]?.accent || '#888'}`}>
-                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" set:html={t.svg} />
-                </span>
-              ) : null;
-            })}
-          </div>
         </a>
       ); }); })()}
     </div>
@@ -145,13 +117,10 @@ const toolLookup = toolGroups.flatMap(g =>
     All data here is author-controlled (from tool-content.ts and MDX files),
     serialized at build time. No user input flows into these values.
   -->
-  <script is:inline define:vars={{ kataManifest, toolThemes, toolLookup, toolPriority, basePath: import.meta.env.BASE_URL }}>
+  <script is:inline define:vars={{ kataManifest, basePath: import.meta.env.BASE_URL }}>
     window.__KATA_DATA__ = {
       katas: kataManifest,
-      toolThemes: toolThemes,
       basePath: basePath,
-      toolLookup: toolLookup,
-      toolPriority: toolPriority,
     };
   </script>
 
@@ -172,11 +141,8 @@ const toolLookup = toolGroups.flatMap(g =>
     var bodiesEl = document.getElementById('kata-bodies');
     var countEl = document.getElementById('kata-count');
 
-    // Track active filter and active tool (for detail view tool steps)
-    var activeFilter = 'all';
     var activeTagFilter = 'all';
     var showDrafts = false;
-    var activeTool = null;
 
     // ===== Draft toggle =====
     var draftToggle = document.getElementById('show-drafts');
@@ -233,27 +199,6 @@ const toolLookup = toolGroups.flatMap(g =>
     updateCompletionUI();
     filterCards();
 
-    // ===== Filter pills =====
-    var pills = document.querySelectorAll('.filter-pill');
-    pills.forEach(function(pill) {
-      pill.addEventListener('click', function() {
-        pills.forEach(function(p) { p.classList.remove('active'); });
-        pill.classList.add('active');
-        activeFilter = pill.dataset.filter;
-
-        // Apply theme when a specific tool is selected
-        if (activeFilter !== 'all') {
-          activeTool = activeFilter;
-          applyToolTheme(activeFilter);
-        } else {
-          activeTool = null;
-          applyToolTheme('cowork'); // default
-        }
-
-        filterCards();
-      });
-    });
-
     // ===== Tag filter pills =====
     var tagPills = document.querySelectorAll('.tag-pill');
     tagPills.forEach(function(pill) {
@@ -269,13 +214,11 @@ const toolLookup = toolGroups.flatMap(g =>
       var cards = document.querySelectorAll('.kata-card');
       var visible = 0;
       cards.forEach(function(card) {
-        var cardTools = (card.dataset.tools || '').split(',');
         var cardTags = (card.dataset.tags || '').split(',');
         var isDraft = card.dataset.status === 'draft';
-        var toolMatch = activeFilter === 'all' || cardTools.indexOf(activeFilter) !== -1;
         var tagMatch = activeTagFilter === 'all' || cardTags.indexOf(activeTagFilter) !== -1;
         var draftMatch = !isDraft || showDrafts;
-        var show = toolMatch && tagMatch && draftMatch;
+        var show = tagMatch && draftMatch;
         card.style.display = show ? '' : 'none';
         if (show) visible++;
       });
@@ -302,21 +245,6 @@ const toolLookup = toolGroups.flatMap(g =>
       // Get pre-rendered body (build-time MDX content)
       var bodyEl = bodiesEl.querySelector('[data-kata-body="' + displayId + '"]');
       var bodyHTML = bodyEl ? bodyEl.innerHTML : '';
-
-      // Tool tags for this kata
-      var toolTagsHTML = '';
-      if (kata.tools && kata.tools.length) {
-        var tags = kata.tools.map(function(toolId) {
-          var toolInfo = data.toolLookup.find(function(t) { return t.id === toolId; });
-          if (!toolInfo) return '';
-          var theme = data.toolThemes[toolId];
-          var color = theme ? theme.accent : '#888';
-          return '<span class="detail-tool-tag" style="--tag-color: ' + color + '">' +
-            '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">' + toolInfo.svg + '</svg>' +
-            toolInfo.name + '</span>';
-        }).join('');
-        toolTagsHTML = '<div class="detail-tool-tags">' + tags + '</div>';
-      }
 
       // Related katas
       var relatedHTML = '';
@@ -351,7 +279,6 @@ const toolLookup = toolGroups.flatMap(g =>
         '<div class="feeling-title">' + kata.feeling + (kata.status === 'draft' ? ' <span class="draft-badge">DRAFT</span>' : '') + '</div>' +
         (kata.description ? '<div class="kata-description">' + kata.description + '</div>' : '') +
         (kata.lastUpdated ? '<div class="kata-last-updated">Last updated ' + kata.lastUpdated + '</div>' : '') +
-        toolTagsHTML +
         '<div class="kata-body">' + bodyHTML + '</div>' +
         (alreadyCompleted
           ? '<button class="kata-complete-btn done" id="kata-back-btn">Back to katas</button>'
@@ -448,22 +375,6 @@ const toolLookup = toolGroups.flatMap(g =>
         showKata(hashId);
       }
     }
-
-    // ===== Tool theme =====
-    var toolThemes = data.toolThemes;
-
-    function applyToolTheme(toolId) {
-      var theme = toolThemes[toolId];
-      if (!theme) return;
-      var r = document.documentElement;
-      r.style.setProperty('--accent', theme.accent);
-      r.style.setProperty('--cyan', theme.cyan);
-      r.style.setProperty('--accent-glow', theme.glow);
-      if (window._setDotColor) window._setDotColor(theme.accent);
-    }
-
-    // Apply initial theme
-    applyToolTheme('cowork');
 
     // ===== Collapsible sections =====
     document.addEventListener('click', function(e) {

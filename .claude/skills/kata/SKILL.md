@@ -82,9 +82,6 @@ status: draft
 tags:
     - "tag1"
     - "tag2"
-tools:
-    - "claude-code"
-    - "vscode"
 ---
 ```
 
@@ -92,10 +89,9 @@ tools:
 
 - `feeling` - The question or trigger. Phrased from the engineer's perspective.
 - `lastUpdated` - Today's date.
-- `description` - One sentence. Shows up on the card and in search.
+- `description` - One sentence. Shows up on the card and in search. Drop this field when graduating to `status: done`.
 - `status` - Set to `draft` for new katas. Changed to `done` when finalized.
 - `tags` - Categories like "basics", "context", "trust", "verification", "automation".
-- `tools` - Only list tools that have specific examples or screenshots in the content. Valid IDs: `claude-code`, `vscode`, `cursor`, `gemini-cli`, `codex`, `cowork`, `antigravity`.
 - `related` (optional) - Array of other kata slugs.
 - `stub` (optional) - Set to `true` if the kata is a placeholder with no content yet.
 

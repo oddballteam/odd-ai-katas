@@ -12,7 +12,6 @@ const katas = defineCollection({
     stub: z.boolean().optional(),
     lastUpdated: z.string().optional(),
     status: z.enum(['draft', 'review', 'done']).optional(),
-    tools: z.array(z.string()).optional(),
   }),
 });
 
