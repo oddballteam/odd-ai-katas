@@ -1,0 +1,375 @@
+---
+feeling: "Slash commands and features"
+lastUpdated: "2026-04-17"
+status: done
+tags:
+    - "basics"
+    - "tools"
+---
+
+import Tabs from '../../components/Tabs.astro';
+
+Claude Code ships with the most built-in commands. Cursor, Copilot, and Antigravity each have their own shorter catalogs. Anything missing you can download or build as a skill (or workflow in Antigravity) to match.
+
+## Shipped in the last two months
+
+<Tabs labels={["Claude Code", "Cursor", "Copilot (VS Code)", "Antigravity"]}>
+
+<div class="kata-tab-panel">
+
+- **2026-04-16** `/ultrareview` - multi-agent cloud PR review with parallel analysis and critique.
+- **2026-04-16** `/less-permission-prompts` - scan transcripts for routine read-only Bash/MCP calls and propose an allowlist.
+- **2026-04-16** `/effort xhigh` - new effort level between `high` and `max` for Opus 4.7.
+- **2026-04-16** Auto (match terminal) theme - UI syncs with your terminal's dark/light mode.
+- **2026-04-15** `/tui` - flicker-free fullscreen alt-screen renderer.
+- **2026-04-14** Routines (research preview) - cloud-scheduled or webhook-triggered Claude runs; manage in web + `/schedule` in CLI.
+- **2026-04-10** `/team-onboarding` - generate teammate ramp-up guides from your usage.
+- **April 2026** Monitor - tails logs, test runners, and deploys into the conversation without polling.
+- **April 2026** Dispatch - kick off Claude Code tasks from your phone into your Desktop app.
+- **2026-04-01** `/powerup` - interactive feature lessons.
+- **2026-03-18** `/remote-control` (alias `/rc`) - pair claude.ai with any terminal session for remote drive (e.g. use on your phone).
+
+Sources: [code.claude.com/docs/en/whats-new](https://code.claude.com/docs/en/whats-new), [claude.com/blog/introducing-routines-in-claude-code](https://claude.com/blog/introducing-routines-in-claude-code), [claude.com/blog/dispatch-and-computer-use](https://claude.com/blog/dispatch-and-computer-use)
+
+</div>
+
+<div class="kata-tab-panel">
+
+- **2026-04-15** Cursor 3.1 Canvases - responses can create interactive canvases (dashboards, diagrams, charts, tables) as durable artifacts in the Agents Window.
+- **2026-04-13** Cursor 3 Tiled Layout + upgraded voice - split the Agents Window into panes to run agents in parallel; press-and-hold `Ctrl+M` for batch voice dictation.
+- **2026-04-08** Bugbot learned rules + MCP support - Bugbot turns PR reactions into learned rules and can call MCP servers for review context.
+- **2026-04-02** Cursor 3.0 - new Agents Window (`Cmd+Shift+P` -> "Agents Window") runs many agents across local, worktrees, cloud, and SSH; Design Mode annotates UI elements in the browser. Adds `/worktree` (isolated-worktree runs) and `/best-of-n` (parallel runs across models, compared).
+
+Source: [cursor.com/changelog](https://cursor.com/changelog)
+
+</div>
+
+<div class="kata-tab-panel">
+
+- **2026-04-15** (v1.116) Copilot Chat ships as a built-in VS Code extension - no separate install.
+- **2026-04-15** Agent Debug Log panel to inspect logs from prior agent sessions.
+- **2026-04-15** Chat Customizations welcome page - draft agents, skills, and instructions in natural language.
+- **2026-04-15** Foreground terminal support for agent tools, plus a Focus Terminal button in question carousels.
+- **2026-04-15** Code diffs render inline in conversation threads during streaming.
+- **2026-04-15** JS/TS Chat Features extension (Preview) adds TypeScript/JavaScript project-setup skills.
+- **2026-04-15** Group policy controls for agent network access (allow/deny domain filtering).
+- **2026-04-01** (v1.114) Chat: Open Agents Application - launches the standalone VS Code Agents companion app.
+
+Sources: [v1.114](https://code.visualstudio.com/updates/v1_114), [v1.116](https://code.visualstudio.com/updates/v1_116)
+
+</div>
+
+<div class="kata-tab-panel">
+
+Antigravity's official changelog renders JS-only and its GitHub-Pages docs are thin. One entry is firmly sourced; the rest are community-reported and unverified against the primary site.
+
+- **2026-04-07** v1.22.2 Agent Permissions - unified permission system to control what an agent can do. [releasebot.io](https://releasebot.io/updates/google/antigravity)
+- **2026-04-01** v1.21.9 - point release, no feature details published.
+- **April 2026** (unverified) Linux sandboxing for agent execution; MCP auth improvements; "Restart to Update" in-app update.
+
+Source: [antigravity.google/changelog](https://antigravity.google/changelog), [releasebot.io](https://releasebot.io/updates/google/antigravity)
+
+</div>
+
+</Tabs>
+
+## Attach files and keyboard shortcuts
+
+<Tabs labels={["Claude Code", "Cursor", "Copilot (VS Code)", "Antigravity"]}>
+
+<div class="kata-tab-panel">
+
+**Attach files**
+- `@<path>` in the prompt fuzzy-matches files and inserts them as context.
+- Drag-drop files or images into the terminal (supported terminals); paste images directly (iTerm2, Ghostty, Alacritty).
+- `/add-dir <path>` extends working roots for the session.
+- `/memory` edits CLAUDE.md, the always-loaded instructions file.
+
+**Keyboard shortcuts**
+- `Shift+Tab` cycle plan / accept / auto-accept modes.
+- `Esc` interrupt current turn; double-`Esc` opens rewind picker.
+- `Ctrl+R` toggle verbose output; `Ctrl+L` clear screen (context intact).
+- `Shift+Enter` newline (after `/terminal-setup`); `Enter` submits.
+- `Tab` completes `/command`, `@path`, `#memory`.
+- `Up` cycles prior prompts.
+
+</div>
+
+<div class="kata-tab-panel">
+
+**Attach files**
+- `@Files`, `@Folders`, `@Code` (symbols), `@Docs`, `@Past Chats`.
+- Drag-drop files and images into the chat input.
+- Paste images from the clipboard.
+- `.cursorignore` controls what gets indexed.
+
+**Keyboard shortcuts**
+- `Cmd/Ctrl+K` inline edit on selection; no selection = generate at cursor.
+- `Cmd/Ctrl+Shift+Enter` inside Cmd-K applies file-wide.
+- `Alt+Enter` inside Cmd-K asks a question; reply "do it" to convert.
+- `Cmd/Ctrl+L` send selection to Chat / toggle Chat pane.
+- `Cmd/Ctrl+I` open Composer / Agent panel.
+- `Cmd/Ctrl+Shift+L` new chat.
+- `Cmd/Ctrl+M` (press-and-hold) batch voice dictation.
+- `Cmd/Ctrl+Shift+P` -> "Agents Window" opens the tiled multi-agent pane.
+- Terminal `Cmd/Ctrl+K` natural language to shell command.
+- `Tab` accept inline completion; `Cmd/Ctrl+Right` accept next word only.
+
+</div>
+
+<div class="kata-tab-panel">
+
+**Attach files**
+- `#file:<name>` attaches a file. Other typed refs: `#folder:`, `#selection`, `#problems`, `#codebase`, `#testFailure`, `#terminalLastCommand`, `#terminalSelection`.
+- Drag from Explorer into Chat.
+- Paste images from clipboard; paperclip icon for uploads.
+- `.github/copilot-instructions.md` and `AGENTS.md` auto-load.
+
+**Keyboard shortcuts**
+- `Cmd/Ctrl+I` Inline Chat on selection.
+- `Cmd/Ctrl+Alt+I` toggle Chat view.
+- `Cmd/Ctrl+Shift+I` open Quick Chat.
+- `Cmd/Ctrl+L` clear / new chat.
+- `Cmd/Ctrl+Enter` accept Inline; `Esc` dismiss.
+- `Cmd/Ctrl+Right` accept next word of a completion.
+- `Cmd/Ctrl+Shift+A` open next edit suggestion.
+
+</div>
+
+<div class="kata-tab-panel">
+
+**Attach files**
+- `@file`, `@folder`, `@codebase`, `@workspace`, `@selection`, `@terminal`, `@problems`.
+- `@url` / `@web` fetch URLs; `@docs` references indexed docs.
+- Drag-drop files and images into the Agent panel.
+- `.agent/workflows/<name>.md` are your slash commands; `AGENTS.md` auto-loads.
+
+**Keyboard shortcuts**
+- `Cmd/Ctrl+I` inline edit / natural-language terminal command.
+- `Cmd/Ctrl+L` toggle Agent panel.
+- `Cmd/Ctrl+Shift+I` open Agent panel.
+- `Cmd/Ctrl+Shift+L` new conversation.
+- `Tab` accept inline completion; `Cmd/Ctrl+Right` accept next word only.
+
+</div>
+
+</Tabs>
+
+## Full command index
+
+<Tabs labels={["Claude Code", "Cursor", "Copilot (VS Code)", "Antigravity"]}>
+
+<div class="kata-tab-panel">
+
+| I want to... | Command |
+|---|---|
+| See everything available | `/help` |
+| Start a new session | `/clear` (aliases `/new`, `/reset`) |
+| Shrink the conversation without losing key points | `/compact [focus]` |
+| See how full my context is | `/context` |
+| Undo the last few turns including code | `/rewind` (`/checkpoint`, `/undo`) |
+| Sidethread a what-if | `/branch` (`/fork`); merge back with `/resume` |
+| Ask without polluting main thread | `/btw <question>` |
+| Resume a prior session | `/resume [session]` |
+| Summarize for the log | `/recap`, `/insights` |
+| Plan before coding | `/plan [description]` or `/ultraplan <prompt>` |
+| Crank up model effort | `/effort high\|xhigh\|max` |
+| Switch model | `/model` |
+| Turn on fast mode | `/fast on` |
+| Review a PR locally | `/review [PR]` |
+| Deep multi-agent PR review | `/ultrareview [PR]` |
+| Scan diff for vulnerabilities | `/security-review` |
+| Inspect changes interactively | `/diff` |
+| Review changed files for reuse/quality | `/simplify` |
+| Parallelize work across many worktrees | `/batch <instruction>` |
+| Run a prompt on a timer | `/loop [interval] [prompt]` (alias `/proactive`) |
+| Cron-schedule a routine | `/schedule` (`/routines`) |
+| Auto-fix PR CI comments | `/autofix-pr` |
+| Open settings | `/config` (`/settings`) |
+| Edit CLAUDE.md and auto-memory | `/memory` |
+| Grant or revoke tool permissions | `/permissions` (`/allowed-tools`) |
+| Add a dir to the session | `/add-dir <path>` |
+| Manage hooks | `/hooks` |
+| Manage subagents | `/agents` |
+| Manage skills | `/skills` |
+| Manage plugins | `/plugin`, `/reload-plugins` |
+| Talk to an MCP server | `/mcp` or `/mcp__<server>__<prompt>` |
+| Sandbox this session | `/sandbox` |
+| Pull a web session into the terminal | `/teleport` (`/tp`) |
+| Make this session remote-controllable | `/remote-control` (`/rc`) |
+| Continue on desktop or phone | `/desktop`, `/mobile` |
+| Connect GitHub Actions / Slack / web | `/install-github-app`, `/install-slack-app`, `/web-setup` |
+| Point at Bedrock / Vertex | `/setup-bedrock`, `/setup-vertex` |
+| Dictate with voice | `/voice` |
+| See my usage and cost | `/cost`, `/usage`, `/stats`, `/extra-usage` |
+| Diagnose installation issues | `/doctor` |
+| Submit feedback / report a bug | `/feedback` (`/bug`) |
+| Dump heap for memory issues | `/heapdump` |
+| See release notes | `/release-notes` |
+| Pick theme / color / statusline / UI | `/theme`, `/color`, `/statusline`, `/tui`, `/keybindings`, `/terminal-setup` |
+| Rename session | `/rename [name]` |
+| Export conversation | `/export [filename]` |
+| Copy last response | `/copy [N]` |
+| Enter focus view | `/focus` |
+| Onboard a teammate | `/team-onboarding` |
+| Discover features | `/powerup` |
+| Sign in / out | `/login`, `/logout` |
+| Manage privacy | `/privacy-settings` |
+| Upgrade plan / order stickers / share passes | `/upgrade`, `/stickers`, `/passes` |
+| List running tasks | `/tasks` (`/bashes`) |
+| Quit | `/exit` (`/quit`) |
+
+### Where each surface lives
+
+Claude Code spans four surfaces. Some features only exist on some of them.
+
+**Terminal CLI only**
+- `Monitor` tool - tails logs, test runners, deploys, PR checks into the conversation.
+- Fullscreen TUI (`/tui`), color themes, statusline, keybindings.
+
+**Desktop app only** (launch with `/desktop` or `/app`)
+- **Drag-and-drop pane layout** - chat, diff, preview, terminal, file, tasks panes.
+- **Integrated file editor** - spot edits with save/discard, not just patches through the agent.
+- **Visual diff review with inline comments** - line-by-line feedback that Claude revises against.
+- **Live app preview pane** - embedded browser for dev servers, HTML, PDFs with auto-verification.
+- **Computer use** - Claude drives your screen: clicks, types, automates GUI tasks (macOS/Windows).
+- **Dispatch** - kick off tasks from your phone into the Desktop app.
+- **Native connectors UI** - visual setup for Slack, GitHub, Linear, Google Calendar.
+- **View modes (Verbose / Normal / Summary)** - collapse transcripts or see every tool call.
+- **GitHub PR status bar** - monitor PRs, auto-fix CI failures, auto-merge when green.
+
+**Web (claude.ai/code)**
+- **Routines** - cloud-scheduled or webhook-triggered Claude runs. Laptop stays off. Managed in the web UI; `/schedule` in the CLI talks to the same backend. Pro 5/day, Max 15/day, Team/Enterprise 25/day.
+- **Cloud sessions** - long-running jobs that persist when you close any client. Teleport into the terminal with `/teleport`.
+
+**Cross-surface**
+- Parallel sessions with worktree isolation (Desktop + web).
+- Remote control (`/remote-control`) - pair claude.ai with any terminal session.
+- Mobile app - read notifications, kick off Dispatch tasks, continue on desktop.
+
+Sources: [code.claude.com/docs/en/commands](https://code.claude.com/docs/en/commands), [code.claude.com/docs/en/desktop](https://code.claude.com/docs/en/desktop)
+
+</div>
+
+<div class="kata-tab-panel">
+
+Cursor splits cleanly: the **CLI** (`cursor-agent`) has a long slash-command list, while the **IDE Agent panel** uses mostly the mode picker (`Shift+Tab`), `@` mentions, and user-defined skills - a very small built-in slash surface.
+
+**IDE Agent panel slashes**
+
+| I want to... | Command |
+|---|---|
+| Run a user-defined skill | `/<skill-name>` |
+| Author a new skill | `/create-skill` |
+| Convert rules/commands to skills (2.4+) | `/migrate-to-skills` |
+| Run a task in an isolated git worktree (3.0) | `/worktree` |
+| Run the same task across models in parallel worktrees (3.0) | `/best-of-n` |
+
+Mode switch (Plan / Ask / Agent / Auto) is the **mode picker** or `Shift+Tab`, not a slash.
+
+**CLI slashes** (`cursor-agent` terminal)
+
+| I want to... | Command |
+|---|---|
+| Help | `/help [command]` |
+| Switch to Plan / Ask mode | `/plan`, `/ask` |
+| Toggle auto-run | `/auto-run [on\|off\|status]` |
+| Toggle long-context | `/max-mode [on\|off]` |
+| Scope sandbox / network | `/sandbox` |
+| Pick model | `/model <model>` |
+| New / resume chat | `/new-chat`, `/resume <chat>` |
+| Shrink conversation | `/compress` |
+| Manage rules, commands, MCP | `/rules`, `/commands`, `/mcp list\|enable\|disable <name>` |
+| Vim keys / terminal setup | `/vim`, `/setup-terminal` |
+| Usage / about / feedback | `/usage`, `/about`, `/feedback <msg>` |
+| Copy IDs | `/copy-request-id`, `/copy-conversation-id` |
+| Sign out / exit | `/logout`, `/quit` |
+
+**Attach context (IDE)**
+- `@Files`, `@Folders`, `@Code` (symbols), `@Docs`, `@Past Chats`. Drag-drop files and images. Paste images.
+- Removed in 2.0 (now automatic): `@Web`, `@Git`, `@Definitions`, `@Linter Errors`, `@Codebase`, `@Terminal`. Old action slashes (`/edit`, `/fix`, `/explain`, `/test`, `/docs`, `/commit`) were removed - the agent decides.
+
+**IDE hotkeys**
+- `Cmd/Ctrl+K` inline edit / generate. `Cmd/Ctrl+Shift+Enter` apply file-wide. `Alt+Enter` ask-inside Cmd-K.
+- `Cmd/Ctrl+L` send selection to Chat. `Cmd/Ctrl+I` Composer. `Cmd/Ctrl+Shift+L` new chat.
+- `Cmd/Ctrl+Shift+P` -> "Agents Window" opens tiled multi-agent pane (3.0).
+- `Cmd/Ctrl+M` press-and-hold voice dictation. Terminal `Cmd/Ctrl+K` NL-to-shell.
+- `Tab` accept completion; `Cmd/Ctrl+Right` accept next word only.
+
+Source: [cursor.com/docs/cli/reference/slash-commands](https://cursor.com/docs/cli/reference/slash-commands), [cursor.com/docs/agent](https://cursor.com/docs/agent), [cursor.com/changelog](https://cursor.com/changelog)
+
+</div>
+
+<div class="kata-tab-panel">
+
+| I want to... | Command (mode) |
+|---|---|
+| See everything | `/help` (all) |
+| Clear chat | `/clear` (Ask) |
+| Summarize and compact | `/compact` (Ask) |
+| Branch conversation | `/fork` (Ask) |
+| Open Chat Debug view | `/debug` (Ask) |
+| Analyze agent debug logs | `/troubleshoot` (Agent) |
+| Explain selection | `/explain` (Ask + Inline) |
+| Fix selection or error | `/fix` (Ask + Inline + Edit) |
+| Generate tests | `/tests` (Ask + Inline) |
+| Generate doc comments | `/doc` (Inline) |
+| Set up a test framework | `/setupTests` (Ask) |
+| Diagnose a failing test | `/fixTestFailure` (Ask + Inline) |
+| Scaffold a workspace or file | `/new` (Ask) |
+| Scaffold a Jupyter notebook | `/newNotebook` (Ask) |
+| Generate a Search-view query | `/search` (Ask) |
+| Generate launch.json and debug | `/startDebugging` (Ask) |
+| Plan an implementation | `/plan` (Agent) |
+| Generate AGENTS.md / copilot-instructions | `/init` (Agent) |
+| Auto-approve tool calls | `/yolo` (alias `/autoApprove`) |
+| Turn auto-approval off | `/disableYolo` |
+| Configure agents / hooks / instructions / prompts / skills | `/agents`, `/hooks`, `/instructions`, `/prompts`, `/skills` |
+| Have AI write a custom agent / skill / prompt / instruction / hook | `/create-agent`, `/create-skill`, `/create-prompt`, `/create-instruction`, `/create-hook` (Agent) |
+| Ask about VS Code features | `@vscode` |
+| Ask about the terminal | `@terminal` |
+| Use GitHub-aware skills | `@github` |
+
+`@workspace` retired in 2026 - workspace context is implicit.
+
+Source: [code.visualstudio.com/docs/copilot/reference/copilot-vscode-features](https://code.visualstudio.com/docs/copilot/reference/copilot-vscode-features), [docs.github.com/copilot](https://docs.github.com/en/copilot/using-github-copilot/copilot-chat/github-copilot-chat-cheat-sheet)
+
+</div>
+
+<div class="kata-tab-panel">
+
+<div class="callout warn">
+<div class="callout-label">Different model</div>
+Antigravity does not ship named built-in slashes. Typing `/` lists workflow files under `.agent/workflows/` - and nothing else. If `/` is blank, it is because you have no workflow files, or the YAML frontmatter is malformed (must include `description:`), or you have hit the known parser crash that shows "0 results". The `…` (more) dropdown in the Agent panel is the same list and often works when `/` does not.
+
+The table below shows what is actually native: @ mentions, keyboard actions, and Manager features.
+</div>
+
+| I want to... | How |
+|---|---|
+| Run a saved workflow | `/<workflow-name>` (from `.agent/workflows/<name>.md`) |
+| Start a new conversation | `Cmd/Ctrl+Shift+L` |
+| Open / toggle Agent panel | `Cmd/Ctrl+L`, `Cmd/Ctrl+Shift+I` |
+| Inline edit or run a natural-language terminal command | `Cmd/Ctrl+I` |
+| Accept inline completion | `Tab` |
+| Plan before coding | Planning Mode in Manager selector |
+| Spawn async agent in its own workspace | New Agent / Spawn Agent in Manager |
+| Attach a file / folder / symbol / problems / terminal / selection | `@file`, `@folder`, `@codebase`, `@workspace`, `@selection`, `@terminal`, `@problems` |
+| Fetch a URL or doc | `@url` / `@web`, `@docs` |
+| Use an MCP server (Supabase, Firebase, Linear, Vercel...) | `@<MCP-server>` |
+| Control what the agent may do | Agent Permissions (v1.22.2, April 2026) |
+| See what the agent did | Artifacts panel: Plan, Task List, Walkthrough, Screenshots, Browser Recordings |
+| Have the agent browse | Browser subagent, invoked automatically |
+
+Source: [antigravity.google/docs/command](https://antigravity.google/docs/command), [antigravity.google/docs/agent](https://antigravity.google/docs/agent), [developers.googleblog.com](https://developers.googleblog.com/build-with-google-antigravity-our-new-agentic-development-platform/)
+
+</div>
+
+</Tabs>
+
+## Exercise
+
+Try one new command or feature you have not used before. Suggestions:
+
+- **Claude Code**: `/insights` for a report on how you have been using it this session, or `/stats` for your daily usage, streaks, and model preferences.
+- **Cursor, VS Code + Copilot, Antigravity**: the chat window has icons around the input box (paperclip, model picker, mode switcher, microphone, etc.). Hover each one to read the tooltip.

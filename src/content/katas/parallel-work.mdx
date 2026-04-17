@@ -1,0 +1,69 @@
+---
+feeling: "Parallel work strategies"
+lastUpdated: "2026-04-17"
+status: done
+tags:
+    - "workflow"
+    - "parallel"
+---
+
+Let's look at Claude Code for some typical examples.
+
+## 1. Subagents: you already use them
+
+When you ask Claude Code to find something across the codebase, it usually launches an Explore subagent.
+
+> find every caller of `useAuth` and list them with line numbers
+
+```
+⏺ Explore(find useAuth callers)
+  ⎿ Done (7 tool uses · ~14k tokens · 11.8s)
+
+Found 23 callers:
+  src/app/Header.tsx:12
+  src/app/Profile.tsx:8
+  ...
+```
+
+You got the answer. The ~14k tokens of searching stayed inside the subagent.
+
+**Why it matters:** your main thread doesn't fill up with tokens you don't need. The harness usually does this for you, but once you know the concept you can ask for it on purpose.
+
+## 2. Research: subagents in parallel
+
+Ask for something that needs multiple angles and the tool will often fan out on its own.
+
+> research current best practices for idempotent webhook retries. compare a dedupe table, an idempotency-key header, and a request-hash approach.
+
+```
+⏺ Task(dedupe-table)
+⏺ Task(idempotency-key)
+⏺ Task(request-hash)
+  ⎿ 3 tasks complete (28s)
+```
+
+Each `Task` is a subagent. Three fresh contexts, three summaries back, running at once instead of in sequence.
+
+**Why it matters:** often automatic, but once you know it exists you can ask for it. Useful when you want to take advantage of the model's stochastic output, e.g. generating several different prototypes of the same thing in parallel and picking one. (This kata was built that way.)
+
+## 3. Working on the same codebase in parallel
+
+If you want two agents working on your local codebase at the same time, you need two copies of it checked out side by side. Git has a built-in feature for this called a **worktree**: the same repo on two different branches, in two different directories, sharing history.
+
+You don't need to memorize the commands. You need to know the concept, so you can ask:
+
+> set up a worktree for branch `hotfix` next to this repo. open a new terminal there. give me a `PORT` for `npm run dev` that won't collide with my current dev server.
+
+**Why it matters:** worktrees share `.git`, not runtime. Two dev servers will fight over the same port, and so will any local service (Postgres, Redis, MailHog) that binds one. A per-worktree port avoids the ten minutes you'd otherwise lose to `EADDRINUSE`.
+
+## 4. A second pair of eyes on your work
+
+After a long session, your agent has a lot of invested opinions about the code it just wrote. It's unlikely to volunteer that any of it is wrong.
+
+You may want to hand your current work to a separate agent with a blank-slate context. It has no stake in the choices you made.
+
+> open a new session (or spawn a reviewer subagent). give it `git diff main` and `docs/spec.md` only. ask if it has any concerns.
+
+Framing matters. "Is this good?" trends toward agreement. "Any concerns?" trends toward a list.
+
+**Why it matters:** a fresh context can't read over your bugs, because it doesn't know what you meant to write. It only knows the code and the spec.

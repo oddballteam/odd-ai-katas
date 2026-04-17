@@ -1,0 +1,60 @@
+---
+feeling: "When should I stop typing into this session and open a second one?"
+lastUpdated: "2026-04-17"
+description: "Five felt-in-the-body cues that it's time to parallelize, and the shape of the move for each."
+status: draft
+tags:
+    - "workflow"
+    - "parallel"
+---
+
+You usually know. You just keep typing anyway. Here are five cues, and what the move looks like when you finally make it.
+
+## When: branch-flipping is eating your afternoon
+
+You've `git stash`-ed three times in an hour. You keep losing your running dev server. The agent's memory of "where we were" resets every time you switch.
+
+![Two worktrees on the same repo, one agent per worktree, running on different ports](/odd-ai-katas/images/katas/parallel-work/worktrees.svg)
+
+```bash
+git worktree add ../repo.hotfix hotfix
+git worktree add ../repo.feature feature
+```
+
+Two directories, two agents, two ports, one `.git`. Commit a distinct `PORT` in each worktree's `.env.local` before you ever run `npm run dev` twice. The runtime collisions (ports, local DB, caches) are the thing nobody warns you about.
+
+## When: the first answer is the one you'll ship and you know it
+
+You asked how to model the new table. The agent gave one design. You liked it. That's suspicious. A single thread tends to refine its first idea, not surface a second one.
+
+![One orchestrator fans out to four subagents each with own context, then merges](/odd-ai-katas/images/katas/parallel-work/fan-out.svg)
+
+Fan out. "Spawn four subagents in parallel. Each one proposes a different schema. Return a one-page comparison." In Claude Code that's multiple Task calls in one message; each subagent has its own context window and does its own reading. You see the comparison, not the research.
+
+## When: you need options, not opinions
+
+Design reviews go better with three sketches than with one. Same for code.
+
+![Same prompt to three parallel agents yields three different prototypes, keep v2](/odd-ai-katas/images/katas/parallel-work/prototypes.svg)
+
+Same prompt, three worktrees, same deadline. Let stochasticity do the divergence. You'll get genuinely different approaches. Keep one, delete two. This works because the variance lives across sessions, not within a single thread where the model anchors on its first attempt.
+
+## When: the agent has started saying "great idea" too often
+
+You've been in this chat for hours. It's agreeing with everything. You've stopped being able to tell whether the code is right or whether you've accidentally trained it to flatter you. Sycophancy in long sessions is a measured failure mode.
+
+![Writer agent with long context hands diff to reviewer agent with only the diff and spec](/odd-ai-katas/images/katas/parallel-work/qa-fresh-eyes.svg)
+
+Hand the diff to a fresh context. New session or subagent, doesn't matter. Give it the diff, the spec, and an instruction to find problems and not be agreeable. The reviewer can't read over the bugs because it doesn't know the story. That is the feature.
+
+## When: the work is long, boring, and well-specified
+
+Migration across 120 files. Port from one test framework to another. The kind of task that's mostly mechanical once the rules are clear.
+
+![Eight accept-all agents in a container emitting commits, host machine untouched](/odd-ai-katas/images/katas/parallel-work/swarm-container.svg)
+
+Accept-all permissions (`--dangerously-skip-permissions` in Claude Code, `--full-auto` in Codex, background agents in Cursor) plus a scheduler. Commits are your rollback. The container is your insurance: Anthropic's own demo of sixteen parallel accept-all agents ran each one in a sandbox, not on the host. Assume you will eventually ship an agent the wrong command. Decide now where that wrong command gets to run.
+
+## Exercise
+
+Next time one of the five cues above shows up this week, try the corresponding move instead of typing the next message. Notice how much of the friction was the single-thread habit.

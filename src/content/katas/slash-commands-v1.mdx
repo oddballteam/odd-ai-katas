@@ -1,0 +1,271 @@
+---
+feeling: "What can I actually type into this thing?"
+lastUpdated: "2026-04-17"
+description: "Every built-in slash command your AI tool ships with, in one tab view."
+status: draft
+tags:
+    - "basics"
+    - "tools"
+---
+
+import Tabs from '../../components/Tabs.astro';
+
+Most AI coding tools ship a pile of built-in commands and most engineers only ever use two of them. Typing `/` in the chat box opens the full menu. Do it once a month and you will find a feature you did not know you had.
+
+Below is the catalog as of April 2026. Commands change fast, so treat this as a starting point and run `/help` yourself.
+
+## What's new in the last two months
+
+<Tabs labels={["Claude Code", "Cursor", "Copilot (VS Code)", "Antigravity"]}>
+
+<div class="kata-tab-panel">
+
+- `/ultraplan`, `/ultrareview`, `/batch`, `/autofix-pr`, `/loop` (`/proactive`), `/schedule` (`/routines`), `/teleport`, `/rewind`, `/branch`, `/btw`, `/insights`, `/recap`, `/team-onboarding`, `/powerup`, `/voice`, `/fast`, `/tui`, `/remote-control`. MCP prompts auto-appear as `/mcp__<server>__<prompt>`.
+
+</div>
+
+<div class="kata-tab-panel">
+
+- `/plan`, `/ask`, `/auto-run`, `/max-mode`, `/sandbox`, `/compress`, `/create-skill`, `/migrate-to-skills` (2.4+), `/mcp list|enable|disable`. Old action slashes (`/edit`, `/fix`, `/explain`, `/test`, `/docs`, `/commit`) removed - the agent decides. Old context `@`s (`@Web`, `@Git`, `@Definitions`, `@Linter Errors`, `@Codebase`, `@Terminal`) now automatic.
+
+</div>
+
+<div class="kata-tab-panel">
+
+- `/plan` (Agent), `/troubleshoot` (Agent), `/yolo` / `/disableYolo` auto-approval, `/create-agent`, `/create-skill`, `/create-prompt`, `/create-instruction`, `/create-hook`, config UIs `/agents` `/hooks` `/instructions` `/prompts` `/skills`, `/init` (Agent), `/fork`, `/compact`. `@workspace` retired.
+
+</div>
+
+<div class="kata-tab-panel">
+
+Late-2025 launch, so most of the surface is new by definition: Planning Mode in Manager, Spawn Agent (async in own workspace), Browser subagent, Artifacts panel (Plan, Task List, Walkthrough, Screenshots, Browser Recordings), `@<MCP-server>` mentions for configured MCPs.
+
+</div>
+
+</Tabs>
+
+## Attach files and keyboard shortcuts
+
+<Tabs labels={["Claude Code", "Cursor", "Copilot (VS Code)", "Antigravity"]}>
+
+<div class="kata-tab-panel">
+
+**Attach files**
+- `@<path>` fuzzy-matches files. Drag-drop files or images on supported terminals. Paste images (iTerm2, Ghostty, Alacritty). `/add-dir <path>` extends session roots. `/memory` edits CLAUDE.md.
+
+**Keyboard shortcuts**
+- `Shift+Tab` cycle plan / accept / auto-accept. `Esc` interrupt; double-`Esc` opens rewind. `Ctrl+R` verbose. `Ctrl+L` clear screen (context intact). `Shift+Enter` newline (after `/terminal-setup`). `Tab` completes `/command`, `@path`, `#memory`. `Up` cycles prior prompts.
+
+</div>
+
+<div class="kata-tab-panel">
+
+**Attach files**
+- `@Files`, `@Folders`, `@Code`, `@Docs`, `@Past Chats`. Drag-drop files and images. Paste images from clipboard. `.cursorignore` controls indexing.
+
+**Keyboard shortcuts**
+- `Cmd/Ctrl+K` inline edit / generate at cursor. `Cmd/Ctrl+Shift+Enter` apply file-wide. `Alt+Enter` inside Cmd-K asks a question ("do it" to commit). `Cmd/Ctrl+L` send to Chat / toggle pane. `Cmd/Ctrl+I` open Composer. `Cmd/Ctrl+Shift+L` new chat. Terminal `Cmd/Ctrl+K` NL-to-shell. `Tab` accept completion.
+
+</div>
+
+<div class="kata-tab-panel">
+
+**Attach files**
+- `#file:<name>`, `#folder:`, `#selection`, `#problems`, `#codebase`, `#testFailure`, `#terminalLastCommand`, `#terminalSelection`. Drag from Explorer into Chat. Paste images. `.github/copilot-instructions.md` and `AGENTS.md` auto-load.
+
+**Keyboard shortcuts**
+- `Cmd/Ctrl+I` Inline Chat on selection. `Cmd/Ctrl+Alt+I` toggle Chat view. `Cmd/Ctrl+Shift+I` Quick Chat. `Cmd/Ctrl+L` new chat. `Cmd/Ctrl+Enter` accept Inline; `Esc` dismiss. `Cmd/Ctrl+Right` accept next word of completion. `Cmd/Ctrl+Shift+A` next edit suggestion.
+
+</div>
+
+<div class="kata-tab-panel">
+
+**Attach files**
+- `@file`, `@folder`, `@codebase`, `@workspace`, `@selection`, `@terminal`, `@problems`. `@url` / `@web` for URLs; `@docs` for indexed docs. Drag-drop files and images into the Agent panel. `.agent/workflows/*.md` are your slashes; `AGENTS.md` auto-loaded.
+
+**Keyboard shortcuts**
+- `Cmd/Ctrl+I` inline edit / NL terminal command. `Cmd/Ctrl+L` toggle Agent panel. `Cmd/Ctrl+Shift+I` open Agent panel. `Cmd/Ctrl+Shift+L` new conversation. `Tab` accept completion.
+
+</div>
+
+</Tabs>
+
+## Full command catalog
+
+<Tabs labels={["Claude Code", "Cursor", "Copilot (VS Code)", "Antigravity"]}>
+
+<div class="kata-tab-panel">
+
+**Session and context**
+- `/help` - list everything
+- `/clear` (aliases `/new`, `/reset`) - start over
+- `/compact [focus]` - summarize conversation
+- `/context` - visualize context window as a grid
+- `/rewind` (`/checkpoint`, `/undo`) - back up in conversation and code
+- `/branch` (`/fork`) - side-thread without polluting main
+- `/btw` - quick aside that does not join the main thread
+- `/resume [session]` / `/recap` / `/rename` / `/export`
+- `/copy [N]` - copy last (or nth-latest) response
+
+**Model and effort**
+- `/model` - pick model
+- `/effort low|medium|high|xhigh|max|auto`
+- `/fast on|off` - Opus fast mode
+- `/plan [description]` - enter plan mode
+- `/ultraplan <prompt>` - drafted plan, reviewed, then executed
+- `/voice` - push-to-talk dictation
+
+**Review and verify**
+- `/review [PR]` - local PR review
+- `/ultrareview [PR]` - multi-agent cloud review
+- `/security-review` - scan diff for vulns
+- `/diff` - interactive diff viewer
+- `/simplify`, `/debug`, `/insights`
+
+**Config**
+- `/config` (`/settings`), `/theme`, `/color`, `/statusline`, `/tui`, `/keybindings`, `/terminal-setup`
+- `/memory` - edit CLAUDE.md, toggle auto-memory
+- `/permissions` (`/allowed-tools`), `/sandbox`, `/hooks`
+- `/add-dir <path>` - extend working dirs this session
+
+**Extensions**
+- `/agents`, `/skills`, `/plugin`, `/reload-plugins`, `/mcp`
+- `/batch <instruction>` - 5-30 parallel worktrees
+- `/loop [interval] [prompt]` (`/proactive`)
+- `/schedule [description]` (`/routines`) - cron
+- `/claude-api`, `/less-permission-prompts`
+
+**Automation and routing**
+- `/autofix-pr [prompt]`, `/chrome`, `/ide`, `/remote-control`, `/remote-env`, `/teleport`, `/desktop`, `/mobile`, `/install-github-app`, `/install-slack-app`, `/web-setup`
+
+**Account and billing**
+- `/login`, `/logout`, `/status`, `/cost`, `/usage`, `/stats`, `/extra-usage`, `/upgrade`, `/privacy-settings`, `/passes`, `/stickers`
+
+**Diagnostics**
+- `/doctor`, `/heapdump`, `/feedback` (`/bug`), `/release-notes`, `/tasks` (`/bashes`), `/powerup`, `/team-onboarding`, `/exit` (`/quit`)
+
+**Cloud setup**
+- `/setup-bedrock`, `/setup-vertex`
+
+Source: [code.claude.com/docs/en/commands](https://code.claude.com/docs/en/commands)
+
+</div>
+
+<div class="kata-tab-panel">
+
+Cursor 2.0 collapsed most of the old per-action slashes (`/edit`, `/fix`, `/explain`, `/test`, `/docs`, `/commit`) into Agent modes. Current built-ins:
+
+**Modes**
+- `/plan` - design before coding
+- `/ask` - read-only exploration
+- `/auto-run on|off|status` - toggle autonomous actions
+- `/max-mode` - long-context mode on supporting models
+- `/sandbox` - network and FS scoping
+
+**Session**
+- `/new-chat`, `/resume`, `/compress` (summarize to free tokens)
+- `/model`, `/vim`, `/setup-terminal`, `/logout`, `/quit`, `/help`, `/about`
+
+**Customization**
+- `/rules` - project rules
+- `/commands` - manage custom commands
+- `/create-skill` - generate a reusable skill
+- `/migrate-to-skills` - convert rules/commands into skills (2.4+)
+- `/mcp list|enable|disable`
+
+**Meta**
+- `/usage`, `/feedback`, `/copy-request-id`, `/copy-conversation-id`
+
+**@ mentions (context)**
+- `@Files`, `@Folders`, `@Code`, `@Docs`, `@Past Chats`
+
+Removed in 2.0 (agent now gathers these automatically): `@Web`, `@Git`, `@Definitions`, `@Linter Errors`, `@Codebase`, `@Terminal`.
+
+**Cmd-K (inline edit)** - no named slashes, single prompt surface. `Cmd-Shift-Enter` applies file-wide. `Alt-Enter` inside Cmd-K asks a question; reply "do it" to convert to code. Terminal Cmd-K turns natural language into a shell command.
+
+Source: [cursor.com/docs/cli/reference/slash-commands](https://cursor.com/docs/cli/reference/slash-commands), [cursor.com/docs/context/commands](https://cursor.com/docs/context/commands)
+
+</div>
+
+<div class="kata-tab-panel">
+
+Modes: **Ask** (chat), **Edit**, **Agent**, **Inline** (Cmd/Ctrl+I).
+
+**Code actions**
+- `/explain` - explain selection (Ask + Inline)
+- `/fix` - fix code or compiler errors (Ask + Inline + Edit)
+- `/tests` - generate tests (Ask + Inline)
+- `/doc` - generate doc comments (Inline)
+- `/setupTests` - set up a test framework
+- `/fixTestFailure` - diagnose a failing test
+
+**Scaffolding**
+- `/new` - new workspace or file
+- `/newNotebook` - new Jupyter notebook
+- `/search` - generate a Search-view query
+- `/startDebugging` - generate launch.json and run
+
+**Session**
+- `/help`, `/clear`, `/compact`, `/fork`, `/debug`, `/troubleshoot` (Agent)
+
+**Agent planning**
+- `/plan` - implementation plan
+- `/init` - generate AGENTS.md / copilot-instructions
+
+**Open config UIs**
+- `/agents`, `/hooks`, `/instructions`, `/prompts`, `/skills`
+
+**AI-authored customizations**
+- `/create-agent`, `/create-skill`, `/create-prompt`, `/create-instruction`, `/create-hook`
+
+**Auto-approval (Agent)**
+- `/yolo` (alias `/autoApprove`), `/disableYolo`
+
+**Chat participants**
+- `@vscode` - VS Code settings and APIs
+- `@terminal` - shell questions
+- `@github` - GitHub skills via MCP
+
+`@workspace` was retired in 2026; workspace context is implicit in Ask/Edit/Agent.
+
+Source: [code.visualstudio.com/docs/copilot/reference/copilot-vscode-features](https://code.visualstudio.com/docs/copilot/reference/copilot-vscode-features), [docs.github.com/copilot](https://docs.github.com/en/copilot/using-github-copilot/copilot-chat/github-copilot-chat-cheat-sheet)
+
+</div>
+
+<div class="kata-tab-panel">
+
+<div class="callout warn">
+<div class="callout-label">Heads up</div>
+Antigravity ships no fixed catalog of built-in slashes. Typing `/` opens a dropdown of workflows defined in `.agent/workflows/*.md`. Every slash you see is a workflow file, either yours or from the community default pack.
+</div>
+
+**Slash surface**
+- `/<workflow-name>` - run `.agent/workflows/<name>.md`. Starter packs include `/generate-unit-tests`, `/fix-errors`, etc. but none are hardcoded.
+
+**@ mentions (built-in context)**
+- `@file`, `@folder`, `@codebase`, `@workspace`, `@selection`, `@terminal`, `@problems`, `@url` / `@web`, `@docs`
+- `@<MCP-server>` - any configured MCP server (Supabase, Firebase, Linear, Vercel, etc.)
+
+**Keyboard-invoked surfaces (native)**
+- `Cmd/Ctrl+I` - inline edit / natural-language terminal command
+- `Cmd/Ctrl+L` - toggle Agent panel
+- `Cmd/Ctrl+Shift+L` - new conversation
+- `Cmd/Ctrl+Shift+I` - open Agent panel
+- `Tab` - accept inline completion
+
+**Manager actions (not slashes)**
+- New Agent / Spawn Agent - async agents in their own workspaces
+- Planning Mode - agent produces a Plan artifact before coding
+- Browser subagent, Walkthrough, Task List, Screenshots, Recordings - generated artifacts in the Trust Layer
+
+Source: [antigravity.google/docs/command](https://antigravity.google/docs/command), [antigravity.google/docs/agent](https://antigravity.google/docs/agent)
+
+</div>
+
+</Tabs>
+
+## Exercise
+
+1. Open your tool of choice, type `/` in the chat box, and read the full list without picking anything. Note two commands you have never used.
+2. Run one of them. If it is a config command (`/memory`, `/hooks`, `/permissions`, `/rules`), just open it and look.
+3. Ask the AI: "what is the most under-used built-in command in this tool and when should I reach for it?"

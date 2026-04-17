@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 260" role="img" aria-label="Two git worktrees sharing one repo, running on different ports">
+  <style>
+    .bg{fill:#0b0d10}
+    .stroke{stroke:#d1d5db;stroke-width:1.5;fill:none}
+    .dim{stroke:#6b7280;stroke-width:1.25;fill:none;stroke-dasharray:3 3}
+    .label{fill:#e5e7eb;font:12px ui-monospace,SFMono-Regular,Menlo,monospace}
+    .muted{fill:#9ca3af;font:11px ui-monospace,SFMono-Regular,Menlo,monospace}
+    .accent{fill:#f59e0b;font:11px ui-monospace,SFMono-Regular,Menlo,monospace}
+  </style>
+  <rect class="bg" width="640" height="260"/>
+
+  <rect class="stroke" x="40"  y="30" width="240" height="90" rx="4"/>
+  <text class="label" x="56" y="54">worktree: feature-a</text>
+  <text class="muted" x="56" y="76">agent A</text>
+  <text class="accent" x="56" y="96">npm run dev  --port 4321</text>
+
+  <rect class="stroke" x="360" y="30" width="240" height="90" rx="4"/>
+  <text class="label" x="376" y="54">worktree: feature-b</text>
+  <text class="muted" x="376" y="76">agent B</text>
+  <text class="accent" x="376" y="96">npm run dev  --port 4322</text>
+
+  <path class="stroke" d="M160 120 L160 170 L480 170 L480 120"/>
+  <path class="stroke" d="M320 170 L320 200"/>
+
+  <rect class="stroke" x="240" y="200" width="160" height="40" rx="4"/>
+  <text class="label" x="288" y="225">.git  (shared)</text>
+</svg>

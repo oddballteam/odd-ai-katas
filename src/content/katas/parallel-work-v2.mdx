@@ -1,0 +1,58 @@
+---
+feeling: "My long session keeps agreeing with me and I'm not sure it's right anymore."
+lastUpdated: "2026-04-17"
+description: "Why a second session, a subagent, or a worktree often beats typing one more message into the long one."
+status: draft
+tags:
+    - "workflow"
+    - "parallel"
+    - "trust"
+---
+
+## The problem with one long thread
+
+Three things go wrong as a session gets long:
+
+1. **Context fills up.** The model starts missing details, repeating itself, and losing track of earlier decisions.
+2. **It starts agreeing with you.** Sycophancy is a documented failure mode: models learn that flattering responses get higher ratings, so the longer the thread, the more every new idea gets a "great idea, let's do it." You lose your skeptic.
+3. **You anchor on the first answer.** Iterating inside a thread refines the original idea. It rarely generates a new one. If the first approach was mediocre, ten turns later you have a mediocre approach, polished.
+
+A second context, run in parallel, fixes all three. Not because the model is better, but because the context is fresh.
+
+## Patterns that use this on purpose
+
+**Side-by-side work.** Two tasks, two sessions, two terminal panes. Each stays on topic, neither drags the other's history along. The simplest parallel pattern and the one most people underuse.
+
+**Worktrees for same-repo parallelism.** A git worktree is a second checkout of the same repo on a different branch. Point one agent at each. No branch flipping, no stashing.
+
+```bash
+git worktree add ../myrepo.feature-a feature-a
+git worktree add ../myrepo.feature-b feature-b
+```
+
+Claude Code's Task tool supports worktree isolation directly (each subagent gets its own, merges when done). The Codex app ships worktree support natively. Cursor and Antigravity both support parallel agents, with worktree isolation available via their background-agent configs.
+
+**Heads up on ports and state.** Worktrees isolate files. They don't isolate runtime. Two `npm run dev` calls fight over port 3000. Two test runs fight over the same local DB. Either give each worktree a distinct port (`--port 4322`) and `.env.local`, or share the shared services deliberately. Tools like portree automate port allocation across worktrees if you run many.
+
+**Fan out, fan in.** One orchestrator dispatches several subagents in parallel, each with a narrow task, then merges the results. In Claude Code: multiple Task tool calls in a single message (up to ~10 at once). Each subagent has **its own context window**, which is the entire point. They can pull in big files, run searches, and dump tool output without any of that reaching your main thread. You see summaries, not raw logs.
+
+The stochasticity is load-bearing. Three subagents asked "what's the best way to do X" will often return three different approaches. Pick or combine. Asking one agent the same question three times in a row gets you three variations on the first answer.
+
+**Fresh-eyes QA.** The agent that wrote the code is the worst reviewer of it. It knows what it meant, so it reads over bugs. It wants to be done, so it grades leniently. Spawn a reviewer subagent (Claude Code: `.claude/agents/reviewer.md`; Cursor/Copilot: a custom chatmode or agent) and give it the diff plus the spec, nothing else. The reviewer's lack of context is the whole trick.
+
+**Autonomous swarms.** Long refactors can grind overnight with `claude --dangerously-skip-permissions` (or the equivalent "accept all" flag in Codex / Antigravity / Cursor) paired with `/loop` or `/schedule`. Nicholas Carlini demoed 16 parallel agents this way in early 2026, and every variant of that demo comes with the same warning: run them in containers, not on your actual machine. Git history is your rollback. Accept-all plus your main checkout plus no sandbox is how people lose work.
+
+## When not to parallelize
+
+- **Coupled tasks.** Two agents on the same files will clobber each other. Two on the same migration will race.
+- **Unclear spec.** Parallel streams multiply confusion. Fix the brief before fanning out.
+- **No merge strategy.** Three prototypes you can't compare is worse than one you can ship.
+- **More streams than you can read.** Five active agents while you pay attention to none isn't parallel, it's a queue of regrets.
+
+Most people top out at 3-5 worktrees plus a browser session or two. Start with two. Add a third when the first two have obvious idle time.
+
+## Exercise
+
+1. Open a git worktree on a throwaway branch (`git worktree add ../demo.experiment experiment`). Start a second agent session there and have it do something small, in parallel with your current session. Notice how little it costs.
+2. In your current session, dispatch a fan-out: "Spawn 3 subagents in parallel. Each should research a different approach to [question] and return a summary." Compare the three answers.
+3. After your next non-trivial change, open a fresh session (or spawn a reviewer subagent) and paste the diff with: "Find problems. Do not be agreeable. Be specific." Note what the fresh context catches that the long one didn't.

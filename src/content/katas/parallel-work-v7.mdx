@@ -1,0 +1,110 @@
+---
+feeling: "What does running things in parallel actually look like in my terminal?"
+lastUpdated: "2026-04-17"
+description: "Five concrete transcripts. Prompt in, observable result out."
+status: draft
+tags:
+    - "workflow"
+    - "parallel"
+---
+
+Every time Claude Code prints `⏺ Explore(...)`, that's a subagent. New context window, does the noisy reading, returns a line. The patterns below are the same mechanism, on purpose.
+
+## 1. The subagent you already use
+
+**You type:**
+
+> find every caller of `useAuth` and list them with line numbers
+
+**Main transcript shows:**
+
+```
+⏺ Explore(find useAuth callers)
+  ⎿ Done (7 tool uses · ~14k tokens · 11.8s)
+
+Found 23 callers. Here's the list:
+  src/app/Header.tsx:12
+  src/app/Profile.tsx:8
+  ...
+```
+
+You paid ~200 tokens in main context. The subagent spent 14k and died.
+
+**Why it matters:** the main thread stays clean. Everything below extends this.
+
+## 2. Fan out to three approaches at once
+
+**You type:**
+
+> Spawn 3 subagents in parallel. Each proposes a different way to handle idempotent webhook retries: (a) dedupe table, (b) idempotency-key header, (c) request-hash. One paragraph each + tradeoffs.
+
+**Main transcript shows:**
+
+```
+⏺ Task(dedupe-table approach)
+⏺ Task(idempotency-key approach)
+⏺ Task(request-hash approach)
+  ⎿ 3 tasks complete (28s)
+```
+
+Three summaries come back. You compare, pick one, move on. Main context grew by ~1k instead of 30k.
+
+**Why it matters:** three fresh contexts answering the same question beat one thread iterating on its first answer.
+
+## 3. Two worktrees, two agents, two ports
+
+**You type at the shell:**
+
+```
+git worktree add ../app.hotfix hotfix
+git worktree add ../app.feature feature
+
+echo 'PORT=4321' > ../app.hotfix/.env.local
+echo 'PORT=4322' > ../app.feature/.env.local
+```
+
+Open one Claude Code session per directory. Both run `npm run dev` without colliding.
+
+**Why it matters:** worktrees share `.git`, not runtime. Skip the port step and your second `npm run dev` fails silently.
+
+## 4. A reviewer that doesn't know what you meant
+
+**You type (after four hours in the same session):**
+
+> Spawn a reviewer subagent. Give it `git diff main` and `docs/spec.md` only. Find spec violations and missing edge cases. Do not be agreeable.
+
+**What comes back:**
+
+```
+5 findings:
+  1. [BUG] spec §3.2 requires 401 on expired tokens; handler returns 403
+  2. [MISSING] no test covers empty-array input (spec §4.1)
+  3. [NIT] error messages leak internal stack trace
+  ...
+```
+
+Two of those are real bugs you walked past because you wrote them.
+
+**Why it matters:** the reviewer can't read over your bugs because it doesn't know what you intended.
+
+## 5. Overnight work, sandboxed
+
+**Task:** port 140 `*.test.js` files from Mocha to Vitest.
+
+**You type inside a container:**
+
+```bash
+docker run -it --rm -v "$PWD:/w" -w /w claude-sandbox
+claude -p "Port every *.test.js under src/ from Mocha to Vitest. \
+Commit after each file. Run the suite after each file; \
+if it fails, revert and keep going." \
+--dangerously-skip-permissions
+```
+
+**Morning:** 112 green commits on a branch, 28 reverts with explanatory messages.
+
+**Why it matters:** permissions prompts break unattended runs. Git gives you rollback. The container gives you rollback if git isn't enough.
+
+## Exercise
+
+Open a second terminal. Run `git worktree add ../repo.scratch scratch`. Start a Claude Code session there. Ask it to do something small in parallel with your current session. Notice what you learn about ports in the first five minutes.

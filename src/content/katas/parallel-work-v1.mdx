@@ -1,0 +1,106 @@
+---
+feeling: "Can I run more than one of these at a time?"
+lastUpdated: "2026-04-17"
+description: "When to split work across parallel sessions, worktrees, and subagents, and when one thread is already enough."
+status: draft
+tags:
+    - "workflow"
+    - "parallel"
+---
+
+Most people keep typing into one long session until it gets weird. A second session, a worktree, or a subagent is often the right move. Here are the cases.
+
+<details>
+<summary>You have two unrelated things to do today. What do you do?</summary>
+
+**Run two sessions side by side, one per task.** Two terminal panes, two chat windows, two sets of files changing. Nothing fancy, just two instances of your tool. The only rule: different branches or different repos so file writes don't collide.
+
+The reason this works isn't speed, it's focus. Each session stays on topic, its context stays relevant, and you stop dragging yesterday's auth refactor into this morning's bug fix.
+</details>
+
+<details>
+<summary>Both tasks are in the same repo on different branches. Can you still run them in parallel?</summary>
+
+**Use git worktrees.** A worktree is a second checkout of the same repo on a different branch, sharing history. Point one Claude Code / Cursor / Codex session at each. No stashing, no branch flipping, no stepping on your own edits.
+
+```bash
+git worktree add ../myrepo.feature-a feature-a
+git worktree add ../myrepo.feature-b feature-b
+```
+
+Claude Code also has built-in worktree isolation you can hand to the Task tool (subagents): each gets its own worktree and merges back when done. Codex app ships worktree support natively.
+
+**The catch nobody warns you about: ports.** Two worktrees both running `npm run dev` will fight over port 3000. Two test runs will fight over the same database. Fix it per worktree:
+
+- Different ports: `npm run dev -- --port 4322` in the second worktree. Commit a `.env.local` with a distinct port per worktree.
+- Different databases: separate test DB names, or a shared one with careful migrations.
+- Different temp dirs, browser profiles, cache dirs if the tool pins them.
+
+Worktrees isolate files. They don't isolate runtime.
+</details>
+
+<details>
+<summary>You need to research something from several angles at once. What do you do?</summary>
+
+**Fan out, fan in.** Dispatch several subagents in parallel, each with a narrow question, then have the orchestrator merge their findings. In Claude Code this is the Task tool with multiple tool calls in one message (up to ~10 in parallel). In Cursor and Codex it's sub-agents with similar shape.
+
+Why this beats a single long prompt: each subagent gets its own fresh context window, so none of them pollute yours with raw search output or file dumps. You only see the summaries.
+
+The stochasticity is a feature, not a bug. Three subagents given "find the best way to do X" will often return three different approaches. Pick the best, or combine. Far more useful than asking one agent the same question three times in the same thread, where it will anchor on its first answer.
+</details>
+
+<details>
+<summary>You want three different prototypes of the same feature. What do you do?</summary>
+
+**Three worktrees, three sessions, same prompt.** Because model output is stochastic, you'll get three genuinely different implementations. Review them side by side, keep the best, delete the other two worktrees.
+
+This is faster than iterating in one session because iteration inside a thread tends to refine the first idea rather than generate a new one. Parallel fresh starts explore the space; sequential edits exploit one point in it.
+</details>
+
+<details>
+<summary>You've been working on a feature for two hours and the agent keeps agreeing with you. Is that real progress?</summary>
+
+**Probably not.** Long sessions drift toward agreement. The model has learned that flattering responses get better ratings, and once it's said "great idea" ten times, turn eleven is unlikely to be "actually your whole approach is wrong." Sycophancy is a documented failure mode.
+
+**Get a second opinion from a fresh context.** Open a new session (or dispatch a subagent) with no history and tell it: "Here is the diff. Find problems. Do not be agreeable." It will catch things your current thread won't, specifically because it doesn't know why you made the choices you made. The absent context is the whole point.
+</details>
+
+<details>
+<summary>You want the AI to QA its own work. Can it?</summary>
+
+**Only from a fresh context.** An agent that just wrote the code is the worst reviewer of it. It knows the intent, so it reads over the bugs. It wants the task marked done, so it grades leniently.
+
+Spawn a subagent (or a new session) and give it the diff and the spec, nothing else. Tell it to look for bugs, missing edge cases, and spec violations. You're deliberately creating an ignorant reviewer. That's the whole trick.
+
+In Claude Code: a custom subagent in `.claude/agents/reviewer.md` with its own instructions. In Cursor and Copilot: a custom chatmode or agent definition plays the same role.
+</details>
+
+<details>
+<summary>You want an agent to grind on a long refactor overnight while you sleep. What do you do?</summary>
+
+**Accept-all permissions plus a container.** Claude Code's `--dangerously-skip-permissions` (a.k.a. YOLO mode) lets the agent run tools without prompting. Pair with `/loop` or `/schedule` (added March 2026) for recurring runs. Codex, Cursor, and Antigravity have their equivalents.
+
+Do not run this on your actual machine. The Anthropic safeguards researcher who demoed 16 parallel agents this way explicitly ran each one in a container. Use a Docker sandbox, a cloud VM, or Claude Code's cloud/desktop isolation. Git history is your rollback.
+
+Accept-all is the right move for long autonomous work. It is the wrong move in your main checkout.
+</details>
+
+<details>
+<summary>When is parallel actually worse than one session?</summary>
+
+**When the tasks share state.** Two agents editing the same files in the same branch will clobber each other. Two agents depending on a migration order will hit race conditions. Two agents on the same port will fail silently in ways that waste more time than the parallelism saved.
+
+**When you don't have a way to merge results.** Three prototypes you can't compare is worse than one prototype you can ship.
+
+**When you're still figuring out what you want.** Parallelism multiplies work. If the spec is unclear, all three streams go the wrong direction at once.
+
+One-shot, clearly scoped, independent work is where parallelism pays. Ambiguous, coupled, exploratory work usually wants one careful thread.
+</details>
+
+<details>
+<summary>How many parallel sessions can you actually run before it stops helping?</summary>
+
+**Most people cap out around 3-5 active worktrees plus a couple browser sessions.** Not because the tool can't handle more, but because you can't. You still have to read diffs, resolve merges, and decide what ships. Agents don't reduce that load, they multiply it.
+
+Start with two. Add a third only when the first two have obvious idle time. If you're switching between five and paying attention to none, you're not parallel, you're thrashing.
+</details>

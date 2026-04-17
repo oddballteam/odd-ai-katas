@@ -1,0 +1,141 @@
+---
+feeling: "How do people run more than one agent at once without it becoming a mess?"
+lastUpdated: "2026-04-17"
+description: "A playbook of parallel patterns: side-by-side, worktrees, fan-out subagents, fresh-eyes QA, autonomous swarms."
+status: draft
+tags:
+    - "workflow"
+    - "parallel"
+---
+import Tabs from '../../components/Tabs.astro';
+
+Parallel isn't one technique, it's five. Each solves a different problem.
+
+## 1. Two things, side by side
+
+Two unrelated tasks, two sessions, two terminal panes. Simplest pattern, most underused. Each context stays clean. Don't drag this morning's bug fix into the auth refactor you started yesterday.
+
+## 2. Worktrees for same-repo parallelism
+
+A git worktree is a second checkout of the same repo on a different branch, sharing history. You can run an agent in each with zero branch-flipping.
+
+```bash
+git worktree add ../myrepo.feature-a feature-a
+git worktree add ../myrepo.feature-b feature-b
+```
+
+**Watch for port and state collisions.** Worktrees isolate files, not runtime. Two `npm run dev` will fight over port 3000. Two test runs will fight over the same local DB. Fix it deliberately:
+
+- Distinct port per worktree (`npm run dev -- --port 4322`), committed to that worktree's `.env.local`.
+- Separate test DB names, or share carefully.
+- Tools like [portree](https://github.com/fairy-pitta/portree) auto-allocate ports across worktrees.
+
+<Tabs labels={["Claude Code", "Codex app", "Cursor", "Antigravity"]}>
+
+<div class="kata-tab-panel">
+
+Built-in worktree isolation for subagents. Add to `.claude/agents/<name>.md` frontmatter:
+
+```yaml
+---
+name: prototyper
+isolation: worktree
+---
+```
+
+Each run gets its own worktree and merges back when done. Or just run `claude` in two worktrees manually.
+</div>
+
+<div class="kata-tab-panel">
+
+Worktrees are first-class in the Codex app. "New worktree" from the repo picker; each task gets its own checkout and branch. Merge via the built-in PR flow.
+</div>
+
+<div class="kata-tab-panel">
+
+Use background agents with per-agent branches (Cursor 2.4+). For manual parallelism, open one Cursor window per worktree path.
+</div>
+
+<div class="kata-tab-panel">
+
+Workspaces map to directories, so open each worktree as its own workspace. Antigravity's `.agent/workflows/` can be invoked independently in each.
+</div>
+
+</Tabs>
+
+## 3. Fan out, fan in
+
+One orchestrator dispatches several subagents in parallel, each with its own narrow task and its own context window, then merges results. The fresh per-subagent context is the whole point: each one can pull big files, run searches, and dump tool output without any of it reaching your main thread.
+
+Use it for:
+
+- **Research from several angles** at once. Stochastic variation across subagents gives you genuinely different answers, not three rewordings of the first one.
+- **Multiple prototypes** of the same feature. Ask three subagents to implement X differently. Review side by side, keep one.
+- **Broad codebase sweeps** where you need five searches answered without burning your main context on raw grep output.
+
+In Claude Code: multiple Task tool calls in one message, up to ~10 in parallel. Cursor and Copilot have custom agents with similar fan-out patterns.
+
+## 4. Fresh-eyes QA
+
+The agent that wrote the code is the worst reviewer of it. It knows the intent, so it reads over bugs. It wants to mark the task done, so it grades leniently. Long sessions also drift toward agreement (sycophancy is a documented failure mode), so by turn fifty the model is unlikely to tell you your approach is wrong.
+
+**Fix: a reviewer with no context.** Spawn a subagent or open a fresh session. Give it the diff and the spec, nothing else. Tell it to find bugs, missing edge cases, and spec violations, and not to be agreeable.
+
+<Tabs labels={["Claude Code", "Cursor", "Copilot"]}>
+
+<div class="kata-tab-panel">
+
+`.claude/agents/reviewer.md`:
+
+```markdown
+---
+name: reviewer
+description: Reviews diffs against a spec with no prior context.
+---
+
+You review code. You have not seen this codebase before.
+Do not assume the author's intent. Find bugs, missing edge cases,
+spec violations. Be specific. Do not be agreeable.
+```
+
+Invoke from the orchestrator with the Task tool and the diff + spec.
+</div>
+
+<div class="kata-tab-panel">
+
+Custom chatmode in `.cursor/rules/` or a dedicated subagent (Cursor 2.4). Same instructions: fresh context, diff + spec, adversarial tone.
+</div>
+
+<div class="kata-tab-panel">
+
+`.github/chatmodes/reviewer.chatmode.md` with the same fresh-eyes framing. Invoke in a new chat window so it genuinely starts with no context.
+</div>
+
+</Tabs>
+
+## 5. Autonomous swarms
+
+For long refactors or overnight work, pair accept-all permissions with a scheduler.
+
+- Claude Code: `claude --dangerously-skip-permissions`, often with `/loop` or `/schedule` (both added March 2026).
+- Codex CLI: `--full-auto` plus the equivalent non-interactive mode.
+- Cursor background agents: run on their infra, which is the sandbox.
+
+**Do not run accept-all on your main checkout.** Anthropic's own safeguards team runs these in containers. Use Docker, a cloud VM, or the tool's cloud/desktop sandbox. Git history is your rollback, but only if the agent can't touch your other repos, credentials, or machine.
+
+## When parallelism is the wrong move
+
+- **Coupled work.** Same files or same migration order. They'll race.
+- **Unclear spec.** You'll multiply the wrong direction.
+- **No merge plan.** Three prototypes you can't compare beats none, but barely.
+- **More streams than you can read.** Five active agents plus zero attention equals a queue of regrets.
+
+Cap: most people top out at 3-5 worktrees plus a browser session or two. Start with two.
+
+## Exercise
+
+Pick the one you haven't tried:
+
+1. Open two worktrees on the same repo, assign each agent a small independent task, run them at the same time with different dev server ports.
+2. Ask your current session to "spawn 3 subagents in parallel, each researching a different approach to [a design question you're stuck on]" and compare the answers.
+3. After your next real change, open a fresh session (or reviewer subagent) and paste the diff with the instruction "find problems, do not be agreeable." Write down what it caught.

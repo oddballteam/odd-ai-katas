@@ -22,6 +22,18 @@ Your editor probably already ships one:
 
 If you mostly want "show me what the page looks like" and "click around to verify," start here. Zero setup.
 
+## Headless mode
+
+The agent writes a Playwright or Cypress script, runs it headless, and reads the screenshots or video. Nothing opens on your screen.
+
+```text
+Write a Playwright script that opens http://localhost:3001/checkout,
+fills the form with valid data, and screenshots each step to ./out/.
+Run it headless, then tell me what you see.
+```
+
+Use when you're working in your own browser, want CI parity, or need artifacts to diff later.
+
 ## MCP servers (for real automation)
 
 When you need scripted flows, network inspection, perf traces, or cross tool support, install an MCP server. Two dominate, ranked by GitHub stars and weekly npm downloads:

@@ -1,0 +1,172 @@
+---
+feeling: "Same pattern across tools. What does it look like in mine?"
+lastUpdated: "2026-04-17"
+description: "Five parallel patterns, shown side by side in Claude Code, Codex, and Cursor."
+status: draft
+tags:
+    - "workflow"
+    - "parallel"
+---
+import Tabs from '../../components/Tabs.astro';
+
+Every `Explore` / `Task` call you've ever seen is already a subagent: fresh context, does the reading, returns a summary. The patterns below use the same mechanism on purpose.
+
+## 1. Fan out: one prompt, many contexts
+
+> Spawn 3 subagents in parallel. Each proposes a different retry strategy for webhooks (dedupe table, idempotency-key header, request-hash). Return tradeoffs.
+
+<Tabs labels={["Claude Code", "Codex", "Cursor"]}>
+
+<div class="kata-tab-panel">
+
+```
+⏺ Task(dedupe-table)
+⏺ Task(idempotency-key)
+⏺ Task(request-hash)
+  ⎿ 3 tasks complete (28s)
+```
+
+Main context: +~1k tokens. Three summaries back.
+
+</div>
+
+<div class="kata-tab-panel">
+
+```
+> /delegate dedupe-table "..."
+> /delegate idempotency-key "..."
+> /delegate request-hash "..."
+⏺ 3 delegates running
+⏺ delegates complete (32s)
+```
+
+Each delegate is a fresh CLI session; main transcript stays clean.
+
+</div>
+
+<div class="kata-tab-panel">
+
+Background agents panel: click `+` three times, one per approach. Each runs in its own branch and returns a PR.
+
+</div>
+
+</Tabs>
+
+## 2. Worktrees: two branches, two agents, two ports
+
+```bash
+git worktree add ../app.hotfix hotfix
+git worktree add ../app.feature feature
+echo 'PORT=4321' > ../app.hotfix/.env.local
+echo 'PORT=4322' > ../app.feature/.env.local
+```
+
+<Tabs labels={["Claude Code", "Codex", "Cursor"]}>
+
+<div class="kata-tab-panel">
+
+Open `claude` in each directory. Or add `isolation: worktree` to a subagent's frontmatter and it runs in its own ephemeral worktree.
+
+</div>
+
+<div class="kata-tab-panel">
+
+Codex app has a native "New worktree" picker. Each task gets its own checkout and branch, merged via the built-in PR flow.
+
+</div>
+
+<div class="kata-tab-panel">
+
+Open each worktree as its own Cursor window. Background agents accept an explicit worktree path.
+
+</div>
+
+</Tabs>
+
+Worktrees share `.git`, not runtime. Pin a port per worktree or the second `npm run dev` dies with `EADDRINUSE`.
+
+## 3. A reviewer with the diff and nothing else
+
+> Spawn a reviewer. Give it `git diff main` and `docs/spec.md` only. Find spec violations and missing edge cases. Do not be agreeable.
+
+Typical output:
+
+```
+5 findings:
+  1. [BUG] spec §3.2: 401 on expired tokens, handler returns 403
+  2. [MISSING] no test for empty-array input
+  ...
+```
+
+<Tabs labels={["Claude Code", "Codex", "Cursor"]}>
+
+<div class="kata-tab-panel">
+
+`.claude/agents/reviewer.md` with `description: Reviews diffs against a spec. Invoked with @reviewer.` and an instruction block: "no prior context, find problems, do not be agreeable."
+
+</div>
+
+<div class="kata-tab-panel">
+
+Custom agent in `.codex/agents/reviewer.md`. Invoke with `/agent reviewer <diff> <spec>`.
+
+</div>
+
+<div class="kata-tab-panel">
+
+Custom chatmode in `.cursor/rules/reviewer.mdc` or a dedicated subagent (Cursor 2.4+). New chat window is the cleanest way to guarantee no context bleed.
+
+</div>
+
+</Tabs>
+
+## 4. Accept-all in a sandbox for long work
+
+Port 140 test files overnight. On your host machine: no. In a container:
+
+```bash
+docker run -it --rm -v "$PWD:/w" -w /w claude-sandbox
+```
+
+<Tabs labels={["Claude Code", "Codex", "Cursor"]}>
+
+<div class="kata-tab-panel">
+
+```bash
+claude -p "Port every *.test.js to Vitest. Commit per file. Revert on fail." \
+  --dangerously-skip-permissions
+```
+
+</div>
+
+<div class="kata-tab-panel">
+
+```bash
+codex run "Port every *.test.js to Vitest. Commit per file. Revert on fail." \
+  --full-auto
+```
+
+</div>
+
+<div class="kata-tab-panel">
+
+Background agent on Cursor's infra is itself the sandbox. Point it at the branch and let it run.
+
+</div>
+
+</Tabs>
+
+Morning: green commits on a branch. Reverts are documented in the log. The container means a mis-issued `rm -rf` hits the container, not your laptop.
+
+## 5. Two things at once, nothing clever
+
+```
+pane 1: claude  (in ../app.hotfix,  port 4321)
+pane 2: claude  (in ../app.feature, port 4322)
+```
+
+Two sessions, two contexts, no setup beyond step 2. The simplest parallel pattern and the one most people don't use because they keep typing into one long thread instead.
+
+## Exercise
+
+Pick any one of the five. Run it once. Note where it surprised you (usually: a port collision, or how clean your main transcript stays after a fan-out).

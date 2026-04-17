@@ -2,8 +2,9 @@
  * Controls the display order of katas on the index page.
  * Katas not listed here appear at the end in alphabetical order.
  *
- * Pedagogical order: pick a tool, learn the vocab, customize it,
- * manage context, set guardrails, extend capabilities, integrate git workflow.
+ * Pedagogical order: pick a tool, learn the vocab, discover what ships with it,
+ * customize it, manage context, set guardrails, give it eyes, integrate git workflow,
+ * parallelize, and work remotely.
  * Drafts are grouped immediately after their graduated primary.
  */
 export const kataSequence: string[] = [
@@ -25,6 +26,12 @@ export const kataSequence: string[] = [
   'glossary-v5',
   'glossary-v6',
   'glossary-v7',
+
+  // Discover what ships with it (native commands and features)
+  'slash-commands',
+  'slash-commands-v1',
+  'slash-commands-v2',
+  'slash-commands-v3',
 
   // Customize it for your project
   'config-files',
@@ -67,6 +74,7 @@ export const kataSequence: string[] = [
   'browser-devtools-v4',
   'browser-devtools-v5',
   'browser-devtools-v6',
+  'browser-devtools-v7',
 
   // Integrate with your git workflow
   'issues-commits-prs',
@@ -77,6 +85,18 @@ export const kataSequence: string[] = [
   'issues-commits-prs-v5',
   'issues-commits-prs-v6',
   'issues-commits-prs-v7',
+
+  // Run more than one at a time
+  'parallel-work',
+  'parallel-work-v1',
+  'parallel-work-v2',
+  'parallel-work-v3',
+  'parallel-work-v4',
+  'parallel-work-v5',
+  'parallel-work-v6',
+  'parallel-work-v7',
+  'parallel-work-v8',
+  'parallel-work-v9',
 
   // Work from anywhere (drafts only, not yet graduated)
   'on-the-go-v1',

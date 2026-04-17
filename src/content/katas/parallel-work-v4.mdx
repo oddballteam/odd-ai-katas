@@ -1,0 +1,62 @@
+---
+feeling: "It's Thursday, I have two tickets due Friday, and I'm still typing into one session."
+lastUpdated: "2026-04-17"
+description: "Five real moments that call for a second session, a worktree, or a subagent."
+status: draft
+tags:
+    - "workflow"
+    - "parallel"
+---
+
+Five situations you've probably already had this week. Each has a shape you can reach for.
+
+## The Thursday-afternoon two-tickets problem
+
+PROD-412 needs a migration rollback by tomorrow morning. PROD-418 is the little UI fix everyone forgot about. Both are in the same repo, different branches. Switching branches blows away your running dev server and the agent's train of thought.
+
+![Two worktrees on the same repo, one agent per worktree, sharing .git](/odd-ai-katas/images/katas/parallel-work/worktrees.svg)
+
+Two worktrees, two agents, two dev servers on two ports. One command:
+
+```bash
+git worktree add ../repo.prod-412 prod-412
+git worktree add ../repo.prod-418 prod-418
+```
+
+Give each its own `.env.local` with a different `PORT`. Worktrees isolate files. They do not isolate ports, databases, or caches. The sooner you learn that the first time you run `npm run dev` in both, the better.
+
+## The "I need three opinions before I commit to a schema" moment
+
+You're about to change a database schema and you don't want to pick the first answer your agent gives. A single thread will refine its first answer, not generate new ones.
+
+![One orchestrator fans out to four subagents, each with its own context, then merges](/odd-ai-katas/images/katas/parallel-work/fan-out.svg)
+
+Fan out. In Claude Code, that's multiple Task tool calls in a single message; each subagent runs with its own fresh context window. They can scan the codebase, read your existing migrations, and pull in docs without any of that reaching your main thread. You get four summaries back instead of four transcripts. Stochasticity across subagents is the feature, not a bug: the three answers actually differ.
+
+## The PM who wants "three directions for the landing page by Monday"
+
+Three worktrees, same prompt, different branches. Let the model's variance do the divergence for you.
+
+![Same prompt to three parallel agents yields three different prototypes, keep v2](/odd-ai-katas/images/katas/parallel-work/prototypes.svg)
+
+Review them side by side, keep the one that feels right, delete the other two worktrees. This is faster than iterating inside one session because iteration in a thread sharpens the first idea; parallel fresh starts explore the space.
+
+## The four-hour refactor where everything your agent says sounds right
+
+You've been in this session since lunch. You've corrected it twice. Now it's agreeing with every idea and you can't tell if the code is good or if you've just trained it to flatter you. Long sessions drift toward agreement. That is a documented failure mode, not your imagination.
+
+![Writer agent with long context hands diff to a reviewer agent with only the diff and spec](/odd-ai-katas/images/katas/parallel-work/qa-fresh-eyes.svg)
+
+Open a new session (or spawn a reviewer subagent). Give it the diff and the spec and nothing else. Tell it: "Find problems. Do not be agreeable." The reviewer's lack of context is what makes it useful. It can't read over the bugs because it doesn't know what you meant.
+
+## The Friday-night "just get the Rust port done by Monday"
+
+You want to leave the machine running and come back to a branch with 40 commits on it.
+
+![Eight accept-all agents inside a container sandbox, emitting commits to git, host machine untouched](/odd-ai-katas/images/katas/parallel-work/swarm-container.svg)
+
+`claude --dangerously-skip-permissions` in a container, paired with `/loop` or `/schedule`. Git history is the rollback. The part people skip is the container: Anthropic's own safeguards researcher who demoed sixteen parallel agents this way ran every one of them in a container, for a reason. Accept-all on your main checkout is how Monday starts with a restore from backup.
+
+## Exercise
+
+Pick one of these five that happened to you this week and run it once on a throwaway branch. Notice what it costs you to set up. It's almost always less than you expect.

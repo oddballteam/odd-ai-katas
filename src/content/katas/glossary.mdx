@@ -11,13 +11,16 @@ tags:
 |------|----------------------|
 | **Token** | The unit AI reads and writes in. ~3/4 of a word. Everything costs tokens. A 200-line file is about 800. |
 | **Context window** | The AI's memory limit for one session. Everything has to fit: your messages, its responses, files, instructions. When full, older content gets compacted or summarized. |
-| **Model** | The specific AI brain (Opus, Sonnet, GPT-5, Gemini 3). Different speed, cost, and smarts. You can usually switch. |
+| **LLM** | Large Language Model. AKA the model. AKA the brain. |
+| **Model** | The specific LLM you're using (Opus, Sonnet, GPT-5, Gemini 3). Different speed, cost, and smarts. You can pick. If you are only using Sonnet 4.5, or GPT-4, you are missing out big time. |
 | **Prompt** | What you type into the chat. In GitHub Copilot specifically, "prompt" also refers to a reusable saved prompt file (`.github/prompts/<name>.prompt.md`) you invoke with `/name`. Cursor and Claude Code call the same thing a "skill". |
 | **System prompt** | The built-in instructions the tool sends to the model before your first message. Anthropic [publishes Claude's](https://platform.claude.com/docs/en/release-notes/system-prompts); most vendors don't. Community copies: [x1xhlol/system-prompts-and-models-of-ai-tools](https://github.com/x1xhlol/system-prompts-and-models-of-ai-tools). |
 | **Skills** | Specialized knowledge your agent loads on demand, not upfront. Like downloading kung fu in The Matrix. You can invoke them yourself (`/review-pr`) or the agent can auto-load them when it recognizes key phrases in what you're asking. |
 | **Agent** | AI that takes actions: reads files, runs tests, edits code, creates commits. Most AI coding tools are agents. |
 | **Subagent** | A child agent that works in its own context, separate from the main conversation. Often scoped to a single task or skill (e.g. "research this", "review that file"). Keeps your main thread clean - the subagent does the work and comes back with just the important bits. |
+| **Tools** | The individual actions an agent can take: read a file, run a bash command, edit code, search the web. The model decides which tool to call and with what arguments; the harness actually runs it. MCP is one way to add more. |
 | **MCP** | Model Context Protocol. Plug-in system connecting your AI to external services. e.g. an MCP server that lets your AI read your Figma designs, pull frames from Miro, or drive a Chrome browser. |
+| **Modes** | Preset operating states that change what the agent can do without asking. Common flavors: a read-only/plan mode for exploring and scoping, an auto-accept mode that skips prompts for edits, and a fully autonomous mode for sandboxes. |
 | **Hooks** | Shell scripts (not prompts) that the harness runs on specific events like `PreToolUse`, `PostToolUse`, `Stop`. e.g. run lint after every file edit, or block any `rm -rf`. The AI can't skip them. |
 | **Commands / Slash commands** | Shortcuts built into your tool (like `/context`, `/init`, `/memory`). Increasingly these are just skills you can invoke by name. |
 | **Rules / Instructions** | Files that tell the AI how to behave in your project. Can be always-on (`CLAUDE.md`, `AGENTS.md`), path-scoped (`.github/instructions/*.instructions.md` with an `applyTo` glob), or attached on demand (Cursor `.mdc` rules). e.g. "always use yarn" can be always-on; "no snapshot tests" only applies to test files. |
@@ -31,6 +34,8 @@ tags:
 | **Dispatch** | Sending a task to an agent asynchronously. Assign an issue, close your laptop, come back to a PR. |
 | **Background agent** | An agent running in a sandbox, not in your active session. You dispatch work to it and check back later. Cursor, Codex, and Copilot all have these. |
 | **Hallucination** | AI confidently stating something false. e.g. referencing a function that doesn't exist or inventing an API flag. Normal. Always verify. |
+| **Stochastic** | The opposite of deterministic. Given the same input, models produce different outputs. Don't expect reproducibility; expect a range. |
+| **Sycophancy** | The model's tendency to agree with you, validate your idea, and soften pushback. Watch for it when you're asking "is this a good idea?" - ask "concerns with this approach?" instead. |
 | **RAG** | Retrieval-Augmented Generation. A technique that enables an AI to retrieve and incorporate new information from external data sources. |
 | **Context engineering** | Deliberately shaping what information the AI sees so it gives better results. The real skill in using AI tools well. |
 | **Memory** | What your tool remembers between sessions. Your preferences, project context, past corrections. |

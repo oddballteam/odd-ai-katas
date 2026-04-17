@@ -1,0 +1,108 @@
+---
+feeling: "Just show me the commands and what they print."
+lastUpdated: "2026-04-17"
+description: "Five parallel patterns as terminal in / terminal out."
+status: draft
+tags:
+    - "workflow"
+    - "parallel"
+---
+
+Shell first. Every `⏺ Explore(...)` line Claude Code prints is a subagent with its own context. The patterns below are the same machinery used on purpose.
+
+## 1. The subagent that already runs on every search
+
+```
+> find every caller of useAuth
+⏺ Explore(find useAuth callers)
+  ⎿ Done (7 tool uses · ~14k tokens · 11.8s)
+23 callers found, list follows...
+```
+
+Main context grew by ~200 tokens. 14k stayed inside the subagent. That isolation is the primitive.
+
+## 2. Fan out
+
+```
+> Spawn 3 subagents. Each proposes a different retry strategy for webhooks
+> (dedupe table, idempotency-key header, request-hash). Return tradeoffs.
+
+⏺ Task(dedupe-table)
+⏺ Task(idempotency-key)
+⏺ Task(request-hash)
+  ⎿ 3 tasks complete (28s)
+```
+
+Three summaries back, ~1k added to your context. Same prompt run three times serially in one thread costs 10x that and gives you three variations on the first answer.
+
+## 3. Two branches, side by side
+
+```bash
+$ git worktree add ../app.hotfix hotfix
+Preparing worktree (checking out 'hotfix')
+
+$ git worktree add ../app.feature feature
+Preparing worktree (checking out 'feature')
+
+$ cd ../app.hotfix  && echo 'PORT=4321' > .env.local
+$ cd ../app.feature && echo 'PORT=4322' > .env.local
+```
+
+Open one Claude Code per directory. Both `npm run dev` run. Nothing collides.
+
+Skip the `.env.local` step and the second dev server dies with `EADDRINUSE`. Same goes for local Postgres, Redis, MailHog, anything that binds a port.
+
+## 4. A reviewer with the diff and nothing else
+
+```
+> /agents
+  reviewer — fresh context, reviews diffs against specs
+
+> @reviewer review git diff main against docs/spec.md
+⏺ Task(reviewer)
+  ⎿ 5 findings:
+    1. [BUG] spec §3.2: 401 on expired tokens, handler returns 403
+    2. [MISSING] no test for empty-array input (spec §4.1)
+    3. ...
+```
+
+`.claude/agents/reviewer.md`:
+
+```markdown
+---
+name: reviewer
+description: Reviews diffs against a spec. Invoked with @reviewer.
+---
+
+You have not seen this code before. You do not know the author's intent.
+Read the diff and the spec. Find bugs, missing edge cases, spec violations.
+Be specific. Do not be agreeable.
+```
+
+## 5. Long run, container only
+
+```bash
+$ docker run -it --rm -v "$PWD:/w" -w /w claude-sandbox
+(in container) $ claude -p "Port every *.test.js from Mocha to Vitest. \
+  Commit after each file. Run the suite after each; revert on fail." \
+  --dangerously-skip-permissions
+
+... 6 hours later ...
+
+$ git log --oneline feat/vitest-port | wc -l
+140
+$ git log --oneline feat/vitest-port | grep -c "revert"
+28
+```
+
+`--dangerously-skip-permissions` on your host checkout is how you lose a weekend. In a container, commits are your only escape channel.
+
+## Exercise
+
+```bash
+git worktree add ../repo.scratch scratch
+cd ../repo.scratch && echo "PORT=4399" > .env.local
+claude
+```
+
+Then, from your original session, ask for a fan-out: "Spawn 3 subagents, each reads a different file in `src/`, return a one-line summary each." Watch the `⏺ Task` lines and compare your main context usage before and after.

@@ -1,0 +1,45 @@
+---
+feeling: "Show me, don't tell me."
+lastUpdated: "2026-04-17"
+description: "Five diagrams for five parallel-work situations, with just enough words to make them actionable."
+status: draft
+tags:
+    - "workflow"
+    - "parallel"
+---
+
+Five pictures. Each one shows up when a different kind of work piles up.
+
+## Two branches, same repo, same afternoon
+
+![Two worktrees on the same repo sharing one .git, running on different ports](/odd-ai-katas/images/katas/parallel-work/worktrees.svg)
+
+Worktrees share history, not runtime. Give each its own port and `.env.local`. `git worktree add ../repo.branch branch`, then start one agent per directory.
+
+## One question, several angles, at once
+
+![Orchestrator fans out to four subagents each with their own context, then merges](/odd-ai-katas/images/katas/parallel-work/fan-out.svg)
+
+Each subagent gets a fresh context window. They do the reading; you get the summaries. Best for research, multi-file sweeps, or "what are three ways to do this."
+
+## Three prototypes of the same feature
+
+![Same prompt sent to three parallel agents yields three different prototypes, you keep one](/odd-ai-katas/images/katas/parallel-work/prototypes.svg)
+
+Same prompt, three worktrees, let the model's variance do the exploration. Iterating one session sharpens the first idea; parallel runs find a different one.
+
+## A reviewer that doesn't know what you meant
+
+![Writer agent with 47 turns of history hands diff to reviewer with only the diff and spec](/odd-ai-katas/images/katas/parallel-work/qa-fresh-eyes.svg)
+
+The agent that wrote the code is the worst reviewer of it. Spawn a reviewer with no prior context. Give it the diff and the spec. Tell it not to be agreeable. The missing context is the whole point.
+
+## Overnight work, sandboxed
+
+![Eight accept-all agents in a container emitting commits to git, host machine untouched](/odd-ai-katas/images/katas/parallel-work/swarm-container.svg)
+
+Accept-all plus a scheduler lets an agent grind on a long task without you. Accept-all plus your main checkout is how you lose a weekend. Container or cloud VM, always.
+
+## Exercise
+
+Pick the diagram your week looked like. Run that one pattern on a throwaway branch and notice what changes.
