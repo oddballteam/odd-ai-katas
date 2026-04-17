@@ -1,0 +1,45 @@
+---
+feeling: "How do I manage my AI's context?"
+lastUpdated: "2026-04-16"
+description: "Six moves that matter: clear, compact, rewind, fork, resume, plan-and-reset. Plus what gets loaded without you asking."
+status: draft
+tags:
+    - "basics"
+    - "context"
+tools:
+    - "claude-code"
+    - "cursor"
+---
+
+## What you start with
+
+Before you type anything, your session already holds:
+
+- **Config files**: `CLAUDE.md`, `AGENTS.md`, `.cursor/rules/*`, `GEMINI.md`.
+- **Memory files**: user-level notes (`~/.claude/CLAUDE.md`, `~/.gemini/GEMINI.md`) and project-level.
+- **Tool definitions**: every built-in tool plus every MCP server's schema (often 5-20k tokens per MCP server).
+- **System prompt**: the tool's own instructions.
+
+That's 15-40k tokens gone before "hello." Worth knowing because every MCP server you leave enabled is rent you pay every session.
+
+Inspect with `/context` (Claude Code) or the token indicator in Cursor and Copilot.
+
+## The six moves
+
+**1. Clear** (`/clear`, "New Chat"). Wipe the conversation. Files on disk stay. Use between unrelated tasks, or when a thread has gone sideways and you're tired of correcting it.
+
+**2. Compact** (`/compact [focus]` in Claude Code, `/compress` in Gemini CLI, `/compact` in Copilot CLI). Summarize older history into a short form so you can keep going. In Claude Code you can steer the summary: `/compact focus on the auth refactor, drop the test noise`. Tools auto-compact at ~80% full, but you get a better summary by doing it earlier and on purpose.
+
+**3. Rewind** (`/rewind` or Esc+Esc in Claude Code, per-message rewind button in Cursor). Go back to a checkpoint. Restore the conversation, or the conversation plus files, or keep the work and just drop the messages. Useful when "let me try that again, but different."
+
+**4. Fork** (`/branch` or `claude --resume <id> --fork-session` in Claude Code). Take the current state and branch into an experiment without losing the original thread. Files are shared across branches, so writes still leak. Few tools have this natively.
+
+**5. Resume** (`claude --continue`, `codex resume --last`, Cursor chat history sidebar). Pick a conversation back up where you left off.
+
+**6. Plan, then reset.** Use plan mode (`/plan` or Shift+Tab in Claude Code, Plan tab in Cursor) to have the AI produce a concrete plan without writing anything. Save it to `HANDOFF.md` or `PLAN.md`. `/clear`. Start a fresh session that loads only the plan. A clean session with a precise plan outperforms a long session with accumulated corrections almost every time.
+
+## Exercise
+
+1. Run `/context` now. Note what's already loaded before you've done anything.
+2. Disable one MCP server you're not using this session. Run `/context` again and see the difference.
+3. In your next long task, try the plan-then-reset pattern: produce a plan, save it as `HANDOFF.md`, `/clear`, and start fresh with "Read HANDOFF.md and continue." Compare the output to your usual long-thread approach.

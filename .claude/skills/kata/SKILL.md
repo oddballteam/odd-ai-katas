@@ -7,6 +7,14 @@ description: Create a new AI kata for the odd-ai-katas project. Use this skill w
 
 A kata teaches one concept about working with AI tools. It starts with a feeling or question engineers have, explains what's going on, shows 1-2 concrete tool examples, and ends with an exercise.
 
+## Local Development
+
+Run the dev server in the background and share the clickable link.
+
+- `npm run dev` serves on http://localhost:4321/odd-ai-katas
+- If port 4321 is taken, pass an explicit port: `npm run dev -- --port 4322`. Always share the actual URL you started.
+- **New `.mdx` files require a restart.** Astro's glob loader only scans at startup. Edits to existing files hot-reload fine; new files do not appear until you restart the server.
+
 ## Process
 
 ### Step 1: Research

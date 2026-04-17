@@ -1,0 +1,39 @@
+---
+feeling: "My AI keeps drifting off course"
+lastUpdated: "2026-04-16"
+description: "Context hygiene. Think of the AI's context like a working desk: a clean one helps it focus, a cluttered one buries the important stuff."
+status: draft
+tags:
+    - "basics"
+    - "context"
+tools:
+    - "claude-code"
+    - "cursor"
+---
+
+## Context is a desk
+
+Everything the AI has seen in this session is sitting on its desk: files it read, commands it ran, stuff you said five messages ago, and the failed attempt from an hour back. The more stuff piles up, the harder it is to find the important thing. Models don't read every token equally. Things in the middle of a long context get less attention (often called "context rot"). Old failed attempts confuse new ones.
+
+Good habits keep the desk clean.
+
+## Habits that work
+
+- **Finish a task, then clear.** `/clear` in Claude Code, "New Chat" in Cursor/Copilot. A session that carries three finished tasks plus the current one is noisier than a fresh one.
+- **Start over when you've gone sideways.** If the AI misunderstood 10 turns ago and you've been arguing since, clear and restate the goal from scratch. Faster than untangling.
+- **Use subagents for side quests.** Need to research a library, review a PR, or read 20 files? Spin a subagent. It works in its own context and gives you back just the conclusion.
+- **Be picky about attachments.** Attaching a whole repo "just in case" is like dumping every file on the desk before asking a question.
+
+## See the clutter
+
+In **Claude Code**, `/context` shows a breakdown of what's loaded.
+
+![Claude Code /context output](/odd-ai-katas/images/katas/what-does-it-already-know/claude-code-see-context.png)
+
+In **Cursor**, the chat input shows a context indicator. You can also remove specific attachments from a turn before you send it.
+
+## Exercise
+
+1. Next time your AI does something off-base twice in a row, don't try to correct it a third time. `/clear` and restate.
+2. Pick a recent session that went long. Ask: "Summarize what we accomplished in one paragraph so I can start fresh." Paste that into a new session as your starting point.
+3. Run `/context` before and after a `/clear`. Feel the difference.

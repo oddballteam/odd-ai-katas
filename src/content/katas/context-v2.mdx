@@ -1,0 +1,46 @@
+---
+feeling: "Why does my AI get dumber in long sessions?"
+lastUpdated: "2026-04-16"
+description: "Context is a budget. Everything you add costs tokens, and quality drops when the window fills up. Treat it like a resource you spend carefully."
+status: draft
+tags:
+    - "basics"
+    - "context"
+tools:
+    - "claude-code"
+    - "vscode"
+---
+
+## Your context window is a budget
+
+Every session has a fixed ceiling. Anthropic models today are at 200k to 1M tokens. That sounds like a lot until you start spending it:
+
+- A single 1000-line file: ~4k tokens.
+- Ten tool outputs (grep, read, bash): ~15k tokens.
+- A long back-and-forth exchange: grows every turn.
+- Your config files and system prompt: ~20k before you type anything.
+
+When the budget runs out, the tool either auto-compacts old turns into a summary or starts evicting them. Both are lossy. And well before you hit the ceiling, models start missing things. Attention gets worse as context grows. You've probably felt this: the AI forgets what you said 30 messages ago, or repeats a mistake it just fixed.
+
+## See your burn rate
+
+In **Claude Code**, type `/context` to see exactly what you've spent.
+
+![Claude Code /context output](/odd-ai-katas/images/katas/what-does-it-already-know/claude-code-see-context.png)
+
+In **VS Code Copilot**, the token count is tucked into the bottom right of the chat input.
+
+![VS Code Copilot context window](/odd-ai-katas/images/katas/what-does-it-already-know/vscode-see-context.png)
+
+## Spend it wisely
+
+- **Short sessions beat long ones.** When a task wraps, `/clear` and start fresh.
+- **Don't read what you don't need.** Pointing the agent at a 5000-line file for a 10-line change is expensive and dilutes its focus.
+- **Delegate to subagents.** A subagent runs in its own budget and returns a summary, keeping your main thread cheap.
+- **Compact before you're desperate.** Running `/compact` at 70% full gives you room. Waiting until 95% full means the summary is rushed.
+
+## Exercise
+
+1. Start a session. Run `/context` and note the starting number.
+2. Do a normal chunk of work: a few edits, a test run, some chat. Run `/context` again.
+3. Ask your AI: "Which of the files I've read in this session can you forget? What would help most to clear from context?" See what it suggests.

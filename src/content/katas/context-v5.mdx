@@ -1,0 +1,52 @@
+---
+feeling: "My AI gets worse the longer I talk to it"
+lastUpdated: "2026-04-16"
+description: "Context rot is real, even at 1M tokens. Recognize the signs, know when to clear vs compact, and use plan-then-fresh-session for hard stretches."
+status: draft
+tags:
+    - "basics"
+    - "context"
+tools:
+    - "claude-code"
+    - "cursor"
+---
+
+## Bigger windows, same problem
+
+Sonnet 4.5 at 1M tokens retrieves accurately only ~18% of the time. GPT-class models degrade similarly. The "lost in the middle" effect means things buried in a long history get less attention than the top and bottom. Bigger context windows move the cliff out, they don't remove it.
+
+Treat anything past ~30-40% of the window as degraded territory. Once you notice the drop, do something about it.
+
+## Signs your context has gone stale
+
+- It repeats a suggestion you already tried.
+- It re-reads a file it read ten minutes ago.
+- It agrees with something that contradicts what you said earlier.
+- It reintroduces a bug you just fixed.
+- Answers get shorter, vaguer, or more generic.
+
+When any of these show up, stop correcting and reset.
+
+## Clear vs compact
+
+- **Clear** (`/clear`, "New Chat") wipes the conversation. Fast, cheap, clean. Use when your next task is unrelated, or when the thread is poisoned.
+- **Compact** (`/compact [focus]` in Claude Code, `/compress` in Gemini CLI) summarizes the history into a shorter form so you can keep going. Use mid-task when continuity matters. Steer the summary: `/compact focus on the auth refactor`. Don't wait for auto-compact at ~80% full; a proactive compact gives you a better summary.
+
+## Plan, then reset
+
+The highest-leverage move for a hard task: use plan mode to produce a concrete plan without writing code, save it as `HANDOFF.md`, clear, and start a fresh session that reads only the handoff. A clean session with a precise plan beats a long session with accumulated corrections.
+
+- **Claude Code**: `/plan` or Shift+Tab.
+- **Cursor**: Plan tab.
+- **Codex CLI**: `/plan`.
+
+Handoff prompt: "Write `HANDOFF.md`: what you tried, what worked, what didn't, and next steps. The next agent loads only this file."
+
+## Commits as free context
+
+Every commit is a natural checkpoint the AI can read cheaply. Instead of re-explaining a change from earlier, ask: "Read the last five commits and tell me where we left off." Commit small and often so the diffs stay useful. `gh`, `git log`, and `git diff` are the cheapest, highest-signal context sources you have.
+
+## Exercise
+
+1. Next time the AI repeats a suggestion it already tried, stop correcting. Say "Write HANDOFF.md with what we tried and what's next." Then `/clear` and paste the handoff into a new session.
+2. On your next long session, commit whenever you finish a logical chunk. Tomorrow, open a new session and start with "Read the last 5 commits to get caught up." Notice how much less you have to explain.

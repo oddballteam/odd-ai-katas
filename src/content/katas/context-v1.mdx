@@ -1,0 +1,48 @@
+---
+feeling: "What actually goes into my AI's context?"
+lastUpdated: "2026-04-16"
+description: "The full picture of what's in a session: system prompt, history, files, tool outputs, and memory. Plus how to see and control each piece."
+status: draft
+tags:
+    - "basics"
+    - "context"
+tools:
+    - "claude-code"
+    - "vscode"
+    - "cursor"
+---
+
+## Context is everything the model sees
+
+Every message you send, the AI receives one big bundle called the context. Your chat input is only a small piece of it. The bundle also includes:
+
+- **System prompt**: the tool's built-in instructions plus your config files (`CLAUDE.md`, `.github/copilot-instructions.md`, `.cursor/rules/`, `GEMINI.md`).
+- **Conversation history**: every message in this session, yours and the AI's.
+- **Attached files**: anything you `@`-mentioned, pasted, or the agent opened with Read.
+- **Tool output**: results from every bash command, grep, web fetch, or MCP call the agent ran.
+- **Memory**: notes the tool persisted from past sessions about you or the project.
+
+All of it counts against the context window (typically 200k to 1M tokens in 2026). When it fills up, tools either auto-compact (summarize older turns) or start dropping the oldest content. Both lose information.
+
+## See what's in yours
+
+In **Claude Code**, type `/context` to see a breakdown by category.
+
+![Claude Code /context output](/odd-ai-katas/images/katas/what-does-it-already-know/claude-code-see-context.png)
+
+In **VS Code Copilot**, hover the token circle at the bottom right of the chat input.
+
+![VS Code Copilot context window showing token usage](/odd-ai-katas/images/katas/what-does-it-already-know/vscode-see-context.png)
+
+## Control it
+
+- **Clear** when you switch tasks: `/clear` in Claude Code, "New Chat" in Copilot/Cursor.
+- **Compact** when you want to keep going but trim history: `/compact` in Claude Code.
+- **Be selective** with file attachments. Reading a 10k-line file spends 40k+ tokens.
+- **Use subagents** for heavy lifts (big research, deep reviews) so the main thread stays clean.
+
+## Exercise
+
+1. Run `/context` (or your tool's equivalent) right now. Note the numbers.
+2. Ask the AI to read three large files in your repo. Run `/context` again. See how much grew.
+3. `/clear` and start fresh. Confirm you're back to baseline.

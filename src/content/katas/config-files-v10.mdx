@@ -1,0 +1,251 @@
+---
+feeling: "AI Config Files"
+lastUpdated: "2026-04-16"
+description: "A single markdown file plus optional per-tool surfaces. You only need to know the vocabulary."
+status: draft
+tags:
+    - "basics"
+    - "context"
+tools:
+    - "claude-code"
+    - "vscode"
+    - "cursor"
+    - "antigravity"
+---
+import Tabs from '../../components/Tabs.astro';
+
+Every tool loads one markdown file into every session. That's your foundation. Everything else is optional.
+
+## The foundation file
+
+Named differently per tool — `CLAUDE.md`, `.github/copilot-instructions.md`, `.cursor/rules/project.mdc`, `GEMINI.md` — contents are the same shape. Put stuff in here when the AI doesn't already know it:
+
+```markdown
+# my-app
+
+Next.js 15 + Postgres. Playwright for e2e.
+
+## Things you'd miss without me telling you
+- Migrations in `db/migrations/` are append-only.
+- `src/legacy/` is frozen unless I say otherwise.
+- Auth always goes through `requireUser()`.
+- Keep files under 500 lines.
+```
+
+Don't hand-write it. `/init` or "draft a short CLAUDE.md from this repo."
+
+## The rest of the surface
+
+Everything below is optional — you'd add it when you hit a specific pain. **You don't need to remember the file paths.** If you can say the word (hook, skill, subagent, permission, MCP, rule), the AI can set it up for you.
+
+<Tabs labels={["Claude Code", "GitHub Copilot", "Cursor", "Antigravity"]}>
+
+<div class="kata-tab-panel">
+
+```
+your-project/
+│
+├── CLAUDE.md                          # always-loaded project instructions
+├── .mcp.json                          # project MCP servers (committed)
+├── .worktreeinclude                   # files to copy into git worktrees
+└── .claude/
+    ├── settings.json                  # permissions, hooks, env (team-shared)
+    ├── settings.local.json            # personal overrides (gitignored)
+    ├── rules/                         # split workspace rules (complement CLAUDE.md)
+    ├── agents/
+    │   └── reviewer.md                # custom subagent (Task tool can spawn)
+    ├── commands/                      # /command shortcuts (older)
+    ├── skills/                        # auto-invoked workflows (preferred over commands now)
+    │   └── kata/SKILL.md
+    ├── hooks/                         # shell scripts on tool events
+    ├── output-styles/                 # response style presets (e.g. teaching.md)
+    └── agent-memory/                  # Claude-written persistent agent memory
+        └── <agent-name>/MEMORY.md
+
+~/.claude.json                          # top-level user config (distinct from below)
+~/.claude/                              # user-global, same shape as project
+├── CLAUDE.md                          # personal preferences across all projects
+├── settings.json                      # global permissions / deny lists
+├── keybindings.json                   # custom keybindings
+├── rules/, agents/, commands/, skills/, hooks/, output-styles/, agent-memory/
+├── plugins/                           # installed marketplace plugins
+└── projects/<project>/memory/MEMORY.md  # auto-memory per project
+```
+
+> **Note:** Commands and skills are now the same mechanism. For new workflows, use `skills/`.
+
+A starter `.claude/settings.json`:
+
+```json
+{
+  "permissions": {
+    "allow": ["Bash(npm run *)", "Read", "Edit", "Write"],
+    "deny": ["Bash(rm -rf *)"]
+  }
+}
+```
+
+</div>
+
+<div class="kata-tab-panel">
+
+```
+your-project/
+│
+├── AGENTS.md                          # cross-tool fallback (also read by copilot)
+└── .github/
+    ├── copilot-instructions.md        # always-loaded project instructions
+    ├── instructions/
+    │   └── tests.instructions.md      # path-scoped via applyTo frontmatter
+    ├── prompts/
+    │   └── refactor.prompt.md         # /refactor reusable prompt
+    ├── chatmodes/
+    │   └── reviewer.chatmode.md       # custom chat mode (chat / edit / agent)
+    ├── agents/
+    │   └── code-reviewer.agent.md     # custom cloud agent (2026)
+    └── skills/
+        └── deploy/
+            └── SKILL.md               # agent skill (workspace-scoped)
+
+# Org/enterprise scope (separate repo): .github-private/agents/<name>.agent.md
+
+~/.copilot/skills/                     # personal skills (install via `gh skill install`)
+~/.agents/skills/                      # cross-tool fallback skills dir
+VS Code user settings (~/.config/Code/User/settings.json on Linux,
+                       ~/Library/Application Support/Code/User on Mac)
+└── settings.json                      # personal Copilot prefs, MCP, model picks
+
+# Org-level instructions: GitHub.com org settings (no on-disk file)
+# Copilot also discovers skills from .claude/skills/ and .agents/skills/
+```
+
+A path-scoped `tests.instructions.md`:
+
+```markdown
+---
+applyTo: "**/*.test.{ts,tsx}"
+---
+Use vitest. Prefer `describe` + `it`. No snapshot tests.
+```
+
+</div>
+
+<div class="kata-tab-panel">
+
+```
+your-project/
+│
+├── AGENTS.md                          # cross-tool fallback (also read by cursor)
+├── .cursorignore                      # files cursor never reads
+├── .cursorrules                       # legacy single-file rules (deprecated v2.2)
+└── .cursor/
+    ├── rules/
+    │   ├── always.mdc                 # alwaysApply: true
+    │   ├── auto.mdc                   # auto-attached by description
+    │   └── manual.mdc                 # invoked with @ruleName
+    ├── commands/
+    │   └── ship.md                    # saved prompt shortcuts (/ship)
+    ├── skills/                        # on-demand workflows (Cursor 2.4, Jan 2026)
+    │   └── deploy/SKILL.md
+    ├── mcp.json                       # project MCP servers
+    └── hooks.json                     # lifecycle hooks (Cursor 2.x)
+
+~/.cursor/                              # user-global, merged with project
+├── rules/, commands/, skills/
+└── hooks.json
+
+# User rules also editable in Cursor Settings → Rules
+# Subagents (Cursor 2.4) ship alongside skills, configured via the same .cursor/ surface
+```
+
+A `.cursor/hooks.json`:
+
+```json
+{
+  "version": 1,
+  "hooks": {
+    "beforeShellExecution": [
+      { "command": "sh -lc 'block-dangerous-commands.sh'" }
+    ],
+    "afterFileEdit": [
+      { "command": "sh -lc 'npm run lint:fix'" }
+    ]
+  }
+}
+```
+
+</div>
+
+<div class="kata-tab-panel">
+
+```
+your-project/
+│
+├── AGENTS.md                          # cross-tool fallback (Antigravity v1.20.3+)
+├── GEMINI.md                          # Antigravity-specific; takes precedence over AGENTS.md
+└── .agent/
+    ├── rules/                         # split workspace rules into multiple files
+    │   ├── code-style.md
+    │   └── testing.md
+    ├── skills/
+    │   └── deploy-staging/SKILL.md    # workspace skill (directory-based package)
+    └── workflows/                     # step-by-step automation recipes
+        └── release.md                 # supports `// turbo` for auto-run
+
+subdir/
+└── AGENTS.md                          # nested files apply to that folder only
+                                       # (toggle: Settings → Agent → load nested)
+
+~/.gemini/                              # user-global
+├── GEMINI.md                          # personal Antigravity rules
+├── AGENTS.md                          # personal cross-tool rules (v1.20.3+)
+└── antigravity/
+    └── skills/                        # global skills (workspace overrides by name)
+```
+
+> **Note:** `.agent/` (singular) is Antigravity's own dir. `.agents/skills/` (plural) is the cross-tool *skills* fallback that Copilot reads. Different things.
+
+</div>
+
+</Tabs>
+
+## Exercise
+
+Go to the [glossary](/odd-ai-katas/kata/glossary/). Tell your AI:
+
+> Quiz me on *skill*, *subagent*, *hook*, *MCP*, and *system prompt*. One term at a time. Tell me what I missed after each.
+
+Then pick the term you felt shakiest on and say: "Add one of those to this project that would actually be useful." See what files appear — that's the surface you didn't have to memorize.
+
+<script>
+{`
+(function () {
+  function ready(fn) {
+    if (document.readyState !== 'loading') fn();
+    else document.addEventListener('DOMContentLoaded', fn);
+  }
+  ready(function () {
+    document.querySelectorAll('.kata-tabs').forEach(function (root) {
+      var btns = root.querySelectorAll('.kata-tab-btn');
+      var panels = root.querySelectorAll('.kata-tab-panel');
+      if (!panels.length) return;
+      panels.forEach(function (p, i) {
+        p.classList.toggle('active', i === 0);
+      });
+      btns.forEach(function (b) {
+        b.addEventListener('click', function () {
+          var idx = Number(b.dataset.idx);
+          btns.forEach(function (bb, i) {
+            bb.classList.toggle('active', i === idx);
+            bb.setAttribute('aria-selected', i === idx ? 'true' : 'false');
+          });
+          panels.forEach(function (p, i) {
+            p.classList.toggle('active', i === idx);
+          });
+        });
+      });
+    });
+  });
+})();
+`}
+</script>

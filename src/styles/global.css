@@ -962,3 +962,97 @@ a:hover {
   .filter-pill[data-filter="all"] { padding: 6px 12px; }
   .filter-bar { gap: 0.4rem; }
 }
+
+/* ===== Tabs (used in some katas) ===== */
+.kata-tabs {
+  margin: 1.5rem 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--bg-card);
+}
+.kata-tabs-bar {
+  display: flex;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.kata-tab-btn {
+  background: transparent;
+  border: none;
+  padding: 0.7rem 1.2rem;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+.kata-tab-btn:hover {
+  color: var(--text-bright);
+  background: var(--bg-card-hover);
+}
+.kata-tab-btn.active {
+  color: var(--text-bright);
+  border-bottom-color: var(--accent);
+}
+.kata-tabs .kata-tab-panel {
+  display: none;
+  padding: 1.25rem 1.5rem;
+}
+.kata-tabs .kata-tab-panel.active {
+  display: block;
+}
+.kata-tabs .kata-tab-panel > *:first-child { margin-top: 0; }
+.kata-tabs .kata-tab-panel > *:last-child { margin-bottom: 0; }
+
+/* ===== Reveal (<details>) used in kata scenarios ===== */
+.kata-body details {
+  margin: 1rem 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-card);
+  overflow: hidden;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.kata-body details[open] {
+  border-color: var(--accent);
+  box-shadow: 0 0 16px var(--accent-glow);
+}
+.kata-body details > summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 0.85rem 1.1rem 0.85rem 2.4rem;
+  font-weight: 500;
+  color: var(--text-bright);
+  position: relative;
+  user-select: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.kata-body details > summary::-webkit-details-marker { display: none; }
+.kata-body details > summary::before {
+  content: "+";
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.1rem;
+  line-height: 1;
+  color: var(--accent);
+  font-weight: 600;
+}
+.kata-body details[open] > summary::before {
+  content: "−";
+}
+.kata-body details > summary:hover {
+  background: var(--bg-card-hover);
+}
+.kata-body details > :not(summary) {
+  padding: 0 1.1rem;
+}
+.kata-body details > :not(summary):first-of-type {
+  padding-top: 0.4rem;
+}
+.kata-body details > :last-child {
+  padding-bottom: 1rem;
+}

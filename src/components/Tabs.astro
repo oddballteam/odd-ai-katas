@@ -1,0 +1,52 @@
+---
+interface Props {
+  labels: string[];
+}
+const { labels } = Astro.props;
+---
+
+<div class="kata-tabs">
+  <div class="kata-tabs-bar" role="tablist">
+    {labels.map((label, i) => (
+      <button
+        type="button"
+        role="tab"
+        class:list={['kata-tab-btn', { active: i === 0 }]}
+        data-idx={i}
+        aria-selected={i === 0 ? 'true' : 'false'}
+      >
+        {label}
+      </button>
+    ))}
+  </div>
+  <div class="kata-tabs-panels">
+    <slot />
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    function wireTabs() {
+      document.querySelectorAll('.kata-tabs').forEach(function (root) {
+        if (root.dataset.wired === '1') return;
+        root.dataset.wired = '1';
+        var btns = root.querySelectorAll('.kata-tab-btn');
+        var panels = root.querySelectorAll('.kata-tab-panel');
+        if (!panels.length) return;
+        panels.forEach(function (p, i) { p.classList.toggle('active', i === 0); });
+        btns.forEach(function (b) {
+          b.addEventListener('click', function () {
+            var idx = Number(b.dataset.idx);
+            btns.forEach(function (bb, i) {
+              bb.classList.toggle('active', i === idx);
+              bb.setAttribute('aria-selected', i === idx ? 'true' : 'false');
+            });
+            panels.forEach(function (p, i) { p.classList.toggle('active', i === idx); });
+          });
+        });
+      });
+    }
+    if (document.readyState !== 'loading') wireTabs();
+    else document.addEventListener('DOMContentLoaded', wireTabs);
+  })();
+</script>

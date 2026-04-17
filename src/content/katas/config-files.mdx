@@ -1,0 +1,205 @@
+---
+feeling: "AI Config Files"
+lastUpdated: "2026-04-16"
+status: done
+tags:
+    - "basics"
+    - "context"
+tools:
+    - "claude-code"
+    - "vscode"
+    - "cursor"
+    - "antigravity"
+---
+import Tabs from '../../components/Tabs.astro';
+
+Every tool has one markdown file that gets prepended to every chat: `CLAUDE.md`, `.github/copilot-instructions.md`, `.cursor/rules/project.mdc`, or `GEMINI.md`.
+
+## What to put in it
+
+**Do**
+- Explain the project at a high level.
+- Call out gotchas and things that aren't intuitive.
+- Call out common terminology and key files.
+- Include any common workflows.
+- Update it when the AI is consistently getting something wrong.
+
+**Don't**
+- Don't put commands that are obvious to the AI (e.g. `npm run dev`, `git status`).
+- Don't let it grow unbounded. When it does, break pieces out into skills, instructions, or rules.
+- Don't let the AI draft the whole thing and ship it as-is. It'll add slop. This file should be concise and your own guidance.
+
+Example first few lines of a `CLAUDE.md`:
+
+```markdown
+# my-app
+
+Internal admin tool for the ops team to manage customer accounts, refunds,
+and feature flags.
+
+Stack: Next.js 15 + Postgres 16 + Drizzle. Auth through Clerk. Deployed on
+Vercel. Playwright for e2e.
+
+## Gotchas
+- Migrations in `db/migrations/` are append-only. Never edit an applied one.
+- `src/legacy/` is frozen. Don't touch unless asked.
+- Auth paths always go through `requireUser()`. Never read cookies directly.
+
+...
+```
+
+## Everything else
+
+Each tool has a folder full of other surfaces: permissions, hooks, skills, subagents, commands. You don't need to memorize the paths. If you know the word, ask your AI to add it. "Add a hook that runs lint after every edit." Done.
+
+<Tabs labels={["Claude Code", "GitHub Copilot", "Cursor", "Antigravity"]}>
+
+<div class="kata-tab-panel">
+
+```
+your-project/
+│
+├── CLAUDE.md                          # always-loaded project instructions
+├── .mcp.json                          # project MCP servers (committed)
+├── .worktreeinclude                   # files to copy into git worktrees
+└── .claude/
+    ├── settings.json                  # permissions, hooks, env (team-shared)
+    ├── settings.local.json            # personal overrides (gitignored)
+    ├── rules/                         # split workspace rules (complement CLAUDE.md)
+    ├── agents/
+    │   └── reviewer.md                # custom subagent (Task tool can spawn)
+    ├── commands/                      # /command shortcuts (older)
+    ├── skills/                        # auto-invoked workflows (preferred over commands now)
+    │   └── kata/SKILL.md
+    ├── hooks/                         # shell scripts on tool events
+    ├── output-styles/                 # response style presets (e.g. teaching.md)
+    └── agent-memory/                  # Claude-written persistent agent memory
+        └── <agent-name>/MEMORY.md
+
+~/.claude.json                          # top-level user config (distinct from below)
+~/.claude/                              # user-global, same shape as project
+├── CLAUDE.md                          # personal preferences across all projects
+├── settings.json                      # global permissions / deny lists
+├── keybindings.json                   # custom keybindings
+├── rules/, agents/, commands/, skills/, hooks/, output-styles/, agent-memory/
+├── plugins/                           # installed marketplace plugins
+└── projects/<project>/memory/MEMORY.md  # auto-memory per project
+```
+
+> **Note:** Commands and skills are now the same mechanism. For new workflows, use `skills/`.
+
+</div>
+
+<div class="kata-tab-panel">
+
+```
+your-project/
+│
+├── AGENTS.md                          # cross-tool fallback (also read by copilot)
+└── .github/
+    ├── copilot-instructions.md        # always-loaded project instructions
+    ├── instructions/
+    │   └── tests.instructions.md      # path-scoped via applyTo frontmatter
+    ├── prompts/
+    │   └── refactor.prompt.md         # /refactor reusable prompt
+    ├── chatmodes/
+    │   └── reviewer.chatmode.md       # custom chat mode (chat / edit / agent)
+    ├── agents/
+    │   └── code-reviewer.agent.md     # custom cloud agent (2026)
+    └── skills/
+        └── deploy/
+            └── SKILL.md               # agent skill (workspace-scoped)
+
+# Org/enterprise scope (separate repo): .github-private/agents/<name>.agent.md
+
+~/.copilot/skills/                     # personal skills (install via `gh skill install`)
+~/.agents/skills/                      # cross-tool fallback skills dir
+VS Code user settings (~/.config/Code/User/settings.json on Linux,
+                       ~/Library/Application Support/Code/User on Mac)
+└── settings.json                      # personal Copilot prefs, MCP, model picks
+
+# Org-level instructions: GitHub.com org settings (no on-disk file)
+# Copilot also discovers skills from .claude/skills/ and .agents/skills/
+```
+
+</div>
+
+<div class="kata-tab-panel">
+
+```
+your-project/
+│
+├── AGENTS.md                          # cross-tool fallback (also read by cursor)
+├── .cursorignore                      # files cursor never reads
+├── .cursorrules                       # legacy single-file rules (deprecated v2.2)
+└── .cursor/
+    ├── rules/
+    │   ├── always.mdc                 # alwaysApply: true
+    │   ├── auto.mdc                   # auto-attached by description
+    │   └── manual.mdc                 # invoked with @ruleName
+    ├── commands/
+    │   └── ship.md                    # saved prompt shortcuts (/ship)
+    ├── skills/                        # on-demand workflows (Cursor 2.4, Jan 2026)
+    │   └── deploy/SKILL.md
+    ├── mcp.json                       # project MCP servers
+    └── hooks.json                     # lifecycle hooks (Cursor 2.x)
+
+~/.cursor/                              # user-global, merged with project
+├── rules/, commands/, skills/
+└── hooks.json
+
+# User rules also editable in Cursor Settings → Rules
+# Subagents (Cursor 2.4) ship alongside skills, configured via the same .cursor/ surface
+```
+
+</div>
+
+<div class="kata-tab-panel">
+
+```
+your-project/
+│
+├── AGENTS.md                          # cross-tool fallback (Antigravity v1.20.3+)
+├── GEMINI.md                          # Antigravity-specific; takes precedence over AGENTS.md
+└── .agent/
+    ├── rules/                         # split workspace rules into multiple files
+    │   ├── code-style.md
+    │   └── testing.md
+    ├── skills/
+    │   └── deploy-staging/SKILL.md    # workspace skill (directory-based package)
+    └── workflows/                     # step-by-step automation recipes
+        └── release.md                 # supports `// turbo` for auto-run
+
+subdir/
+└── AGENTS.md                          # nested files apply to that folder only
+                                       # (toggle: Settings → Agent → load nested)
+
+~/.gemini/                              # user-global
+├── GEMINI.md                          # personal Antigravity rules
+├── AGENTS.md                          # personal cross-tool rules (v1.20.3+)
+└── antigravity/
+    └── skills/                        # global skills (workspace overrides by name)
+```
+
+> **Note:** `.agent/` (singular) is Antigravity's own dir. `.agents/skills/` (plural) is the cross-tool *skills* fallback that Copilot reads. Different things.
+
+</div>
+
+</Tabs>
+
+## Exercise
+
+Visit the official docs for your tool and skim the customization page:
+
+- [Claude Code](https://docs.claude.com/en/docs/claude-code/overview)
+- [Claude desktop](https://code.claude.com/docs/en/desktop)
+- [GitHub Copilot](https://docs.github.com/en/copilot/customizing-copilot/about-customizing-github-copilot-chat-responses)
+- [Cursor](https://docs.cursor.com/context/rules)
+- [Windsurf](https://docs.windsurf.com/)
+- [Antigravity](https://antigravity.google/docs/get-started)
+- [Gemini CLI](https://geminicli.com/docs/)
+- [Codex CLI](https://developers.openai.com/codex/cli/)
+- [Codex app](https://developers.openai.com/codex/app)
+- [GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/cli-best-practices)
+
+Pick one surface you didn't know about and ask your AI to set it up in a real project of yours.

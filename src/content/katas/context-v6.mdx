@@ -1,0 +1,57 @@
+---
+feeling: "How do I get the right context in, and the wrong stuff out?"
+lastUpdated: "2026-04-16"
+description: "Context engineering in three moves: pull in what's needed (files, commits, notes, boards), push out what you learned (memory, rules), and reset when the window gets stale."
+status: draft
+tags:
+    - "basics"
+    - "context"
+tools:
+    - "claude-code"
+    - "cursor"
+---
+
+## Context engineering is three things
+
+Every session is a loop: **pull in** the right source material, **push out** what's worth keeping, and **reset** before the window rots.
+
+## Pull in
+
+The files you `@`-attach are the obvious source, but there are others that cost less and often help more:
+
+- **Recent commits**: "Read the last 5 commits and tell me where we left off." Cheap. High signal.
+- **PRs and issues**: `gh pr view 1234`, `gh issue view 567`. The agent gets the discussion, not just your summary.
+- **Notes app**: point Obsidian, Notion, or Apple Notes at the agent via MCP. Your own design docs are often better context than pasting the code.
+- **Project board**: Linear and GitHub Projects ship official MCP servers. "What's on my board?" pulls real state.
+- **Docs sites**: Confluence and Atlassian have official MCP servers in 2026. Internal wikis work too.
+
+One warning: every MCP server you leave enabled spends 5-20k tokens on its tool schemas every session. Turn off what you're not using (`/mcp` in Claude Code).
+
+## Push out
+
+When you learn something the AI should remember next time, get it out of the chat before you close the session. Options:
+
+- **Claude Code**: start a message with `#` and it prompts where to save (project `CLAUDE.md`, user `~/.claude/CLAUDE.md`, or auto-memory).
+- **Gemini CLI**: `/memory add <text>` appends to `GEMINI.md`.
+- **Cursor**: "Turn this into a rule" and the agent writes a `.cursor/rules/*.mdc` file.
+- **Any tool**: just say "Add this to our CLAUDE.md" or "update AGENTS.md with this rule."
+
+Rule of thumb: if the AI got something wrong twice, the fix belongs in the instructions file, not in the chat. Otherwise you'll keep correcting it every session.
+
+For bigger handoffs, write a `HANDOFF.md` at the end of a session summarizing what you tried, what worked, what didn't, and what's next. Next session opens with "Read HANDOFF.md" instead of a 20-minute recap.
+
+## Reset
+
+The same three resets every tool supports in some form:
+
+- **Clear** (`/clear`, "New Chat") when the next task is unrelated or the thread is poisoned.
+- **Compact** (`/compact [focus]` in Claude Code, `/compress` in Gemini CLI) when you want continuity but the window is getting heavy. Steer the summary.
+- **Rewind** (`/rewind` or Esc+Esc in Claude Code, per-message button in Cursor) when the last few turns went the wrong way.
+
+And the highest-leverage move: **plan, then reset.** Use plan mode to produce a concrete plan, save it, clear, and start a fresh session with just the plan. Beats long sessions with accumulated corrections almost every time.
+
+## Exercise
+
+1. Pick a project with a few recent commits. Start a fresh session and say "Read the last 5 commits and summarize what's been happening." See how close that gets you to "caught up."
+2. Next session where you correct the AI on the same thing twice, stop. Say "Add a rule to CLAUDE.md so you don't make this mistake again." Verify the file was updated.
+3. If you keep notes in Obsidian, Notion, or Apple Notes, find an MCP server for it and connect your agent. Ask it to summarize a design doc from your notes as context for your next task.
